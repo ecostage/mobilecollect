@@ -1,27 +1,25 @@
 package br.com.ecostage.mobilecollect
 
-import android.content.pm.PackageManager
-import android.support.v7.app.AppCompatActivity
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import com.google.android.gms.tasks.Task
-import android.content.IntentSender
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.common.api.CommonStatusCodes
+import android.support.v7.app.AppCompatActivity
 import com.google.android.gms.common.api.ApiException
-import android.support.annotation.NonNull
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_map.*
 
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -49,6 +47,25 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+
+
+        sign_out_button.setOnClickListener { signOut() }
+    }
+
+    /**
+     * Sign out user.
+     *
+     *
+     */
+    fun signOut() {
+        // Firebase sign out
+        FirebaseAuth.getInstance().signOut()
+
+        val intent = Intent(this@MapActivity, LoginActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or  Intent.FLAG_ACTIVITY_NEW_TASK)
+        this@MapActivity.startActivity(intent)
+
+
     }
 
     override fun onResume() {
@@ -79,11 +96,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         this.map = map
         map.setMapType(GoogleMap.MAP_TYPE_SATELLITE)
         if (canAccessLocation()) {
-            map.setMyLocationEnabled(true);
+            map.setMyLocationEnabled(true)
         } else {
             ActivityCompat.requestPermissions(this,
                     arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-                    LOCATION_REQUEST_CODE);
+                    LOCATION_REQUEST_CODE)
         }
     }
 
@@ -92,8 +109,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                                             permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             LOCATION_REQUEST_CODE -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    map.setMyLocationEnabled(true);
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    map.setMyLocationEnabled(true)
                 }
             }
         }
