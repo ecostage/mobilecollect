@@ -82,6 +82,21 @@
                 android:textColor="@color/colorPrimary"
                 android:visibility="invisible" />
 
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/or"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary" />
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/google_sign_in_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_sign_in_with_google"/>
+
         </LinearLayout>
 
     </ScrollView>
