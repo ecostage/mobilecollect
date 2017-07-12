@@ -1,34 +1,28 @@
 package br.com.ecostage.mobilecollect
 
-import android.content.pm.PackageManager
-import android.support.v7.app.AppCompatActivity
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import com.google.android.gms.tasks.Task
-import android.content.IntentSender
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.common.api.CommonStatusCodes
+import android.support.v7.app.AppCompatActivity
 import com.google.android.gms.common.api.ApiException
-import android.support.annotation.NonNull
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.maps.CameraUpdateFactory
-
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     val LOCATION_REQUEST_CODE = 0
-    lateinit var map : GoogleMap
-    lateinit var mLocationRequest : LocationRequest
-    lateinit var mLocationCallback : LocationCallback
+    lateinit var map: GoogleMap
+    lateinit var mLocationRequest: LocationRequest
+    lateinit var mLocationCallback: LocationCallback
     private var mFusedLocationClient: FusedLocationProviderClient? = null
     private val REQUEST_CHECK_SETTINGS = 1
 
@@ -42,10 +36,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this)
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        mLocationCallback = object:LocationCallback() {
-             override fun onLocationResult(locationResult : LocationResult) {
-                for (location in locationResult.getLocations()) {
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.getLatitude(), location.getLongitude()), 14.0f))
+        mLocationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                for (location in locationResult.locations) {
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 14.0f))
                 }
             }
         }
@@ -77,13 +71,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         this.map = map
-        map.setMapType(GoogleMap.MAP_TYPE_SATELLITE)
+        map.mapType = GoogleMap.MAP_TYPE_SATELLITE
         if (canAccessLocation()) {
-            map.setMyLocationEnabled(true);
+            map.isMyLocationEnabled = true
         } else {
             ActivityCompat.requestPermissions(this,
-                    arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-                    LOCATION_REQUEST_CODE);
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    LOCATION_REQUEST_CODE)
         }
     }
 
@@ -92,8 +86,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                                             permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             LOCATION_REQUEST_CODE -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    map.setMyLocationEnabled(true);
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    map.isMyLocationEnabled = true
                 }
             }
         }
@@ -101,9 +95,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     protected fun createLocationRequest() {
         mLocationRequest = LocationRequest()
-        mLocationRequest.setInterval(5000)
-        mLocationRequest.setFastestInterval(5000)
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        mLocationRequest.interval = 5000
+        mLocationRequest.fastestInterval = 5000
+        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
         val builder = LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest)
 
@@ -128,7 +122,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    protected fun canAccessLocation() : Boolean {
+    protected fun canAccessLocation(): Boolean {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 }
