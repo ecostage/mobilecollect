@@ -37,6 +37,7 @@ dependencies {
     compile 'com.google.firebase:firebase-auth:11.0.2'
     implementation 'com.google.android.gms:play-services-maps:11.0.2'
     compile 'com.google.android.gms:play-services-location:11.0.2'
+    compile 'com.google.android.gms:play-services-auth:11.0.2'
 
 }
 
