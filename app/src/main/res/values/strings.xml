@@ -17,4 +17,5 @@
     <string name="unknown_error">An unknown error occurred</string>
 
     <string name="map">Mapa</string>
+    <string name="map_permission_needed">É necessário permissão de localização para utilizar os serviços com GPS.</string>
 </resources>

@@ -112,7 +112,7 @@ class MapActivity : AppCompatActivity(),
                 }
                 googleMap.isMyLocationEnabled = true
             } else {
-                Toast.makeText(this, "The map need permission", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, resources.getString(R.string.map_permission_needed), Toast.LENGTH_LONG).show()
             }
         }
     }
