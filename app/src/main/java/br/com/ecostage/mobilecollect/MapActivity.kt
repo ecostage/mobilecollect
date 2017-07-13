@@ -65,6 +65,12 @@ class MapActivity : AppCompatActivity(),
         if (canAccessLocation()) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this)
         }
+
+        val lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
+        if (lastLocation != null) {
+            val zoomLevel = 16f
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lastLocation.latitude, lastLocation.longitude), zoomLevel))
+        }
     }
 
     override fun onConnectionSuspended(i: Int) {
@@ -85,8 +91,15 @@ class MapActivity : AppCompatActivity(),
 
     override fun onLocationChanged(location: Location?) {
         if (location != null) {
-            val zoomLevel = 17f
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), zoomLevel))
+            // Test draw grid in my point
+//            googleMap.addPolyline(PolylineOptions().geodesic(true)
+//                    .width(15f)
+//                    .color(Color.BLACK)
+//                    .add(LatLng(myLocation.latitude + 0.10, myLocation.longitude + 0.10))
+//                    .add(LatLng(myLocation.latitude + 0.10, myLocation.longitude + 0.10))
+//                    .add(LatLng(myLocation.latitude + 0.10, myLocation.longitude + 0.10))
+//                    .add(LatLng(myLocation.latitude + 0.10, myLocation.longitude + 0.10))
+//            )
         }
     }
 
