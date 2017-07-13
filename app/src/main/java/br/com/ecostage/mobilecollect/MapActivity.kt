@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -27,7 +28,7 @@ class MapActivity : AppCompatActivity(),
 
     private val MAP_PERMISSION_REQUEST_CODE = 1
     private lateinit var googleMap: GoogleMap
-    private lateinit var googleApiClient: GoogleApiClient
+    private var googleApiClient: GoogleApiClient? = null
     private lateinit var locationRequest: LocationRequest
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,12 +65,11 @@ class MapActivity : AppCompatActivity(),
 
         if (canAccessLocation()) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this)
-        }
-
-        val lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
-        if (lastLocation != null) {
-            val zoomLevel = 16f
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lastLocation.latitude, lastLocation.longitude), zoomLevel))
+            val lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
+            if (lastLocation != null) {
+                val zoomLevel = 16f
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lastLocation.latitude, lastLocation.longitude), zoomLevel))
+            }
         }
     }
 
@@ -103,13 +103,27 @@ class MapActivity : AppCompatActivity(),
         }
     }
 
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when(requestCode) {
+            MAP_PERMISSION_REQUEST_CODE -> if (!grantResults.isEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (googleApiClient == null) {
+                    buildGoogleApiClient()
+                }
+                googleMap.isMyLocationEnabled = true
+            } else {
+                Toast.makeText(this, "The map need permission", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     @Synchronized private fun buildGoogleApiClient() {
         googleApiClient = GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build()
-        googleApiClient.connect()
+        googleApiClient?.connect()
     }
 
     private fun setupUiSettings(map: GoogleMap) {
