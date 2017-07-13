@@ -15,4 +15,6 @@
     </string>
     <string name="auth_failed">Incorrect user or password</string>
     <string name="unknown_error">An unknown error occurred</string>
+
+    <string name="map">Mapa</string>
 </resources>
