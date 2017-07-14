@@ -3,6 +3,7 @@
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
 version: 2
-dependencies:
-    override:
-        - echo y | android update sdk --no-ui --all
+jobs:
+  build:
+    - checkout
+    - run: yes | android update sdk --no-ui --all
