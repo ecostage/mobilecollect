@@ -18,6 +18,8 @@
     <string name="or">or</string>
     <string name="action_sign_in_with_google">Sign In With Google</string>
     <string name="action_sign_out">Sign Out</string>
+    <string name="sign_in_with_google_failure_message">Google Play Services error.</string>
+    <string name="sign_in_with_email_failure_message">User or password invalid</string>
 
 
 </resources>
