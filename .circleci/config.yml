@@ -1,4 +1,0 @@
-jobs:
-  build:
-    steps:
-      - run: yes | android update sdk --no-ui --all
