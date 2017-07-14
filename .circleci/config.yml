@@ -1,4 +1,4 @@
-version: 1
-dependencies:
-    override:
-        - yes | android update sdk --no-ui --all
+jobs:
+  build:
+    steps:
+      - run: yes | android update sdk --no-ui --all
