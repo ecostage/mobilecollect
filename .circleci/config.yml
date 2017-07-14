@@ -3,9 +3,6 @@
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
 version: 2
-jobs:
-  build:
-    steps:
-      checkout:
-        post:
-          - cp -r licenses/. $ANDROID_HOME/licenses
+dependencies:
+    override:
+        - echo y | android update sdk --no-ui --all
