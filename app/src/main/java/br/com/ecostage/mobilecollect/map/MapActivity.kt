@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect
+package br.com.ecostage.mobilecollect.map
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.widget.Toast
+import br.com.ecostage.mobilecollect.R
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -24,40 +26,42 @@ class MapActivity : AppCompatActivity(),
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener,
+        MapView {
 
+    private val mapPresenter: MapPresenter = MapPresenterImpl(this)
     private val MAP_PERMISSION_REQUEST_CODE = 1
-    private lateinit var googleMap: GoogleMap
     private var googleApiClient: GoogleApiClient? = null
+
+    private lateinit var googleMap: GoogleMap
     private lateinit var locationRequest: LocationRequest
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        supportActionBar?.title = resources.getString(R.string.map)
-
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
-        mapFragment?.getMapAsync(this)
+        setupView()
     }
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+
         setupUiSettings(googleMap)
 
         if (canAccessLocation()) {
             buildGoogleApiClient()
             map.isMyLocationEnabled = true
         } else {
-            requestPermissions()
+            showMapPermissionRequest()
         }
     }
 
     @SuppressLint("MissingPermission")
     override fun onConnected(bundle: Bundle?) {
-//        Log.i(MapActivity::class.simpleName, "Location services connected")
+        Log.i(MapActivity::class.java.simpleName, "Location services connected")
+
         locationRequest = LocationRequest()
         locationRequest.interval = 10000
         locationRequest.fastestInterval = 10000
@@ -65,6 +69,7 @@ class MapActivity : AppCompatActivity(),
 
         if (canAccessLocation()) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this)
+
             val lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
             if (lastLocation != null) {
                 val zoomLevel = 16f
@@ -74,11 +79,11 @@ class MapActivity : AppCompatActivity(),
     }
 
     override fun onConnectionSuspended(i: Int) {
-//        Log.i(MapActivity::class.simpleName, "Location services suspended")
+        Log.i(MapActivity::class.java.simpleName, "Location services suspended")
     }
 
     override fun onConnectionFailed(connectionResult: ConnectionResult) {
-//        Log.e(MapActivity::class.simpleName, "Location services failed to connect")
+        Log.e(MapActivity::class.java.simpleName, "Location services failed to connect")
     }
 
     override fun onPause() {
@@ -89,19 +94,7 @@ class MapActivity : AppCompatActivity(),
         }
     }
 
-    override fun onLocationChanged(location: Location?) {
-        if (location != null) {
-            // Test draw grid in my point
-//            googleMap.addPolyline(PolylineOptions().geodesic(true)
-//                    .width(15f)
-//                    .color(Color.BLACK)
-//                    .add(LatLng(myLocation.latitude + 0.10, myLocation.longitude + 0.10))
-//                    .add(LatLng(myLocation.latitude + 0.10, myLocation.longitude + 0.10))
-//                    .add(LatLng(myLocation.latitude + 0.10, myLocation.longitude + 0.10))
-//                    .add(LatLng(myLocation.latitude + 0.10, myLocation.longitude + 0.10))
-//            )
-        }
-    }
+    override fun onLocationChanged(location: Location?) {}
 
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -110,6 +103,7 @@ class MapActivity : AppCompatActivity(),
                 if (googleApiClient == null) {
                     buildGoogleApiClient()
                 }
+
                 googleMap.isMyLocationEnabled = true
             } else {
                 Toast.makeText(this, resources.getString(R.string.map_permission_needed), Toast.LENGTH_LONG).show()
@@ -132,10 +126,17 @@ class MapActivity : AppCompatActivity(),
         uiSettings.isZoomControlsEnabled = true
     }
 
-    private fun requestPermissions() {
+    override fun showMapPermissionRequest() {
         ActivityCompat.requestPermissions(this,
                 arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
                 MAP_PERMISSION_REQUEST_CODE)
+    }
+
+    private fun setupView() {
+        supportActionBar?.title = resources.getString(R.string.map)
+
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
+        mapFragment?.getMapAsync(this)
     }
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
