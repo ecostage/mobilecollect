@@ -1,4 +1,9 @@
 package br.com.ecostage.mobilecollect.map
 
-class MapPresenterImpl(mapView: MapView) : MapPresenter {
+import android.Manifest
+import android.content.pm.PackageManager
+import android.support.v4.content.ContextCompat
+
+class MapPresenterImpl(val mapView: MapView) : MapPresenter {
+
 }
