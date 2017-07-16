@@ -16,6 +16,7 @@ import br.com.ecostage.mobilecollect.MapActivity
 import br.com.ecostage.mobilecollect.R
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.SignInButton
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -48,8 +49,11 @@ class LoginActivity : AppCompatActivity(), LoginView {
         presenter = LoginPresenterImpl(this, this, getString(R.string.default_web_client_id))
         presenter?.onCreate()
 
+//        email_sign_in_button.clearFocus()
+
         email_sign_in_button.setOnClickListener { attemptSignInWithEmail() }
         google_sign_in_button.setOnClickListener { attemptSignInWithGoogle() }
+        setGooglePlusButtonText(google_sign_in_button, getString(R.string.action_sign_in_with_google))
         password.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
             if (id == R.id.login || id == EditorInfo.IME_NULL) {
                 attemptSignInWithEmail()
@@ -57,6 +61,18 @@ class LoginActivity : AppCompatActivity(), LoginView {
             }
             false
         })
+    }
+
+    protected fun setGooglePlusButtonText(signInButton: SignInButton, buttonText: String) {
+        // Find the TextView that is inside of the SignInButton and set its text
+        for (i in 0..signInButton.childCount - 1) {
+            val v = signInButton.getChildAt(i)
+
+            if (v is TextView) {
+                v.text = buttonText
+                return
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

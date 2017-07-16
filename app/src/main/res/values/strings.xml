@@ -4,7 +4,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in">Sign In</string>
     <string name="action_register">or Register</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -20,6 +20,8 @@
     <string name="action_sign_out">Sign Out</string>
     <string name="sign_in_with_google_failure_message">Google Play Services error.</string>
     <string name="sign_in_with_email_failure_message">User or password invalid</string>
+    <string name="label_sign_in">Sign In</string>
+    <string name="or_enter_in_you_account_info">or with your e-mail</string>
 
 
 </resources>
