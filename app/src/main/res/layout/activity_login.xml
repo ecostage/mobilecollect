@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -31,15 +32,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:text="@string/app_name"-->
+                <!--android:textAlignment="center"-->
+                <!--android:textSize="25sp"-->
+                <!--android:textStyle="bold"-->
+                <!--android:layout_marginBottom="16dp"-->
+                <!--android:layout_marginTop="24dp"/>-->
+
+            <ImageView
+                android:id="@+id/imageView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/app_name"
-                android:textAlignment="center"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="24dp"/>
+                android:layout_height="wrap_content"
+                app:srcCompat="@mipmap/mapbiomas_logo_line" />
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/google_sign_in_button"
@@ -138,6 +145,7 @@
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimary"
                 android:visibility="invisible" />
+
 
         </LinearLayout>
 
