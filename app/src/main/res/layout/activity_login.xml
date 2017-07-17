@@ -32,20 +32,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!--<TextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:text="@string/app_name"-->
-                <!--android:textAlignment="center"-->
-                <!--android:textSize="25sp"-->
-                <!--android:textStyle="bold"-->
-                <!--android:layout_marginBottom="16dp"-->
-                <!--android:layout_marginTop="24dp"/>-->
-
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:layout_marginTop="32dp"
                 app:srcCompat="@mipmap/mapbiomas_logo_line" />
 
             <com.google.android.gms.common.SignInButton
@@ -65,9 +57,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:layout_marginBottom="28dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:layout_marginBottom="28dp"
                     android:layout_marginTop="28dp"
                     android:text="@string/or_enter_in_you_account_info"
                     android:textAlignment="center"
