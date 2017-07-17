@@ -22,6 +22,8 @@
     <string name="sign_in_with_email_failure_message">User or password invalid</string>
     <string name="label_sign_in">Sign In</string>
     <string name="or_enter_in_you_account_info">or with your e-mail</string>
+    <string name="developers_logo_tipo">Developers logo tipo</string>
+    <string name="logo_da_aplica_o">Logo da aplicação</string>
 
 
 </resources>
