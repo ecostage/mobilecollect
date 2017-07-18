@@ -4,7 +4,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in">Sign In</string>
     <string name="action_register">or Register</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -18,4 +18,15 @@
 
     <string name="map">Mapa</string>
     <string name="map_permission_needed">É necessário permissão de localização para utilizar os serviços com GPS.</string>
+    <string name="or">or</string>
+    <string name="action_sign_in_with_google">Sign In With Google</string>
+    <string name="action_sign_out">Sign Out</string>
+    <string name="sign_in_with_google_failure_message">Google Play Services error.</string>
+    <string name="sign_in_with_email_failure_message">User or password invalid</string>
+    <string name="label_sign_in">Sign In</string>
+    <string name="or_enter_in_you_account_info">or with your e-mail</string>
+    <string name="developers_logo_tipo">Developers logo tipo</string>
+    <string name="logo_da_aplica_o">Logo da aplicação</string>
+
+
 </resources>
