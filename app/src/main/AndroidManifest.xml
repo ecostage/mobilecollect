@@ -37,11 +37,21 @@
 
         <activity
             android:name=".map.MapActivity"
+            android:label="@string/action_label_map"
+            android:theme="@style/AppTheme"
             android:configChanges="orientation"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".profile.ProfileActivity"
+            android:label="@string/action_label_profile"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".ranking.RankingActivity"
+            android:label="@string/action_label_ranking"
+            android:theme="@style/AppTheme" />
+
         <activity android:name=".collect.CollectActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"

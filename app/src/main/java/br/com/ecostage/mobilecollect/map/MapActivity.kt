@@ -7,9 +7,9 @@ import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.collect.CollectIntent
 import com.google.android.gms.common.ConnectionResult
@@ -27,7 +27,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import org.jetbrains.anko.startActivity
 import kotlinx.android.synthetic.main.activity_map.*
 
-class MapActivity : AppCompatActivity(),
+
+class MapActivity : BottomNavigationActivity(),
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -178,5 +179,13 @@ class MapActivity : AppCompatActivity(),
 
     override fun removeMarkers() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getContentViewId(): Int {
+        return R.layout.activity_map
+    }
+
+    override fun getNavigationMenuItemId(): Int {
+        return R.id.action_map
     }
 }
