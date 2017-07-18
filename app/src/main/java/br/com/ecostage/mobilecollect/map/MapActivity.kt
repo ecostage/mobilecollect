@@ -2,7 +2,6 @@ package br.com.ecostage.mobilecollect.map
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -12,7 +11,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import br.com.ecostage.mobilecollect.R
-import br.com.ecostage.mobilecollect.login.LoginActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -24,12 +22,15 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.maps.model.MarkerOptions
+import org.jetbrains.anko.startActivity
 import kotlinx.android.synthetic.main.activity_map.*
 
 class MapActivity : AppCompatActivity(),
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnMapLongClickListener,
         LocationListener,
         MapView {
 
@@ -45,21 +46,20 @@ class MapActivity : AppCompatActivity(),
         setContentView(R.layout.activity_map)
 
         sign_out_button.setOnClickListener {
-
             FirebaseAuth.getInstance().signOut()
-            var intent = Intent(this@MapActivity, LoginActivity::class.java)
-            this@MapActivity.startActivity(intent)
-
-
+            startActivity<MapActivity>()
         }
 
         setupView()
+        setupMap()
     }
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+
+        googleMap.setOnMapLongClickListener(this)
 
         setupUiSettings(googleMap)
 
@@ -124,6 +124,10 @@ class MapActivity : AppCompatActivity(),
         }
     }
 
+    override fun onMapLongClick(latLng: LatLng?) {
+        mapPresenter.mark(latLng?.latitude, latLng?.longitude)
+    }
+
     @Synchronized private fun buildGoogleApiClient() {
         googleApiClient = GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -147,10 +151,23 @@ class MapActivity : AppCompatActivity(),
 
     private fun setupView() {
         supportActionBar?.title = resources.getString(R.string.map)
+    }
 
+    private fun setupMap() {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
     }
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    override fun showMarkerAt(latitude: Double?, longitude: Double?) {
+        if (latitude != null && longitude != null) {
+            val position: LatLng = LatLng(latitude, longitude)
+            googleMap.addMarker(MarkerOptions().position(position))
+        }
+    }
+
+    override fun removeMarkers() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
