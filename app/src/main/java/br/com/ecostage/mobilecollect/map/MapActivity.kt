@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.collect.CollectIntent
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -125,7 +126,8 @@ class MapActivity : AppCompatActivity(),
     }
 
     override fun onMapLongClick(latLng: LatLng?) {
-        mapPresenter.mark(latLng?.latitude, latLng?.longitude)
+        if (latLng != null)
+            mapPresenter.mark(latLng.latitude, latLng.longitude)
     }
 
     @Synchronized private fun buildGoogleApiClient() {
@@ -160,11 +162,18 @@ class MapActivity : AppCompatActivity(),
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-    override fun showMarkerAt(latitude: Double?, longitude: Double?) {
-        if (latitude != null && longitude != null) {
-            val position: LatLng = LatLng(latitude, longitude)
-            googleMap.addMarker(MarkerOptions().position(position))
-        }
+    override fun showMarkerAt(latitude: Double, longitude: Double) {
+        val position: LatLng = LatLng(latitude, longitude)
+        googleMap.addMarker(MarkerOptions().position(position))
+        mapPresenter.showCollect(null, latitude, longitude)
+    }
+
+    override fun navigateToCollectActivity(collectId: Int) {
+        startActivity(CollectIntent(collectId))
+    }
+
+    override fun navigateToCollectActivity(latitude: Double, longitude: Double) {
+        startActivity(CollectIntent(latitude, longitude))
     }
 
     override fun removeMarkers() {
