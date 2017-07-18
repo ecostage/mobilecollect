@@ -37,10 +37,16 @@
 
         <activity
             android:name=".map.MapActivity"
+            android:configChanges="orientation"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+        </activity>
+        <activity android:name=".collect.CollectActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:label="@string/app_name" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
