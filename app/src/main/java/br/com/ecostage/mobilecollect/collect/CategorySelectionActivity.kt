@@ -1,7 +1,8 @@
-package br.com.ecostage.mobilecollect
+package br.com.ecostage.mobilecollect.collect
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import br.com.ecostage.mobilecollect.R
 
 class CategorySelectionActivity : AppCompatActivity() {
 
