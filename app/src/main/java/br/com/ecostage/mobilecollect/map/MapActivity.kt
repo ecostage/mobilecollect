@@ -11,7 +11,7 @@ import android.util.Log
 import android.widget.Toast
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
-import br.com.ecostage.mobilecollect.collect.CollectIntent
+import br.com.ecostage.mobilecollect.collect.CollectActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -170,11 +170,11 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     override fun navigateToCollectActivity(collectId: Int) {
-        startActivity(CollectIntent(collectId))
+        startActivity<CollectActivity>(CollectActivity.COLLECT_ID to collectId.toString())
     }
 
     override fun navigateToCollectActivity(latitude: Double, longitude: Double) {
-        startActivity(CollectIntent(latitude, longitude))
+        startActivity<CollectActivity>(CollectActivity.MARKER_LATITUDE to latitude.toString(), CollectActivity.MARKER_LONGITUDE to longitude.toString())
     }
 
     override fun removeMarkers() {
