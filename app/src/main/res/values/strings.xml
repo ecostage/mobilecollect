@@ -42,6 +42,7 @@
     <string name="collect_classification_hint">Classificação</string>
     <string name="collect_team_hint">Time</string>
     <string name="collect_save_btn">Save</string>
+    <string name="collect_lat_lng_text">%1$s / %2$s</string>
 
 
 </resources>
