@@ -12,13 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".SplashScreenActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,37 +25,39 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".login.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.Design.Light.NoActionBar"
             android:windowSoftInputMode="adjustPan"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:noHistory="true" />
 
         <activity
             android:name=".map.MapActivity"
-            android:label="@string/action_label_map"
-            android:theme="@style/AppTheme"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
-
+            android:label="@string/action_label_map"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".profile.ProfileActivity"
             android:label="@string/action_label_profile"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".ranking.RankingActivity"
             android:label="@string/action_label_ranking"
             android:theme="@style/AppTheme" />
-
-        <activity android:name=".collect.CollectActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
+        <activity
+            android:name=".collect.CollectActivity"
             android:configChanges="orientation"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".CategorySelectionActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
