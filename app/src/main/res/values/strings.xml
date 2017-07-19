@@ -37,5 +37,11 @@
     <string name="action_label_ranking">Ranking</string>
     <string name="action_label_map">Map</string>
 
+    <string name="collect_name_hint">Apelido</string>
+    <string name="collect_lat_lng_hint">Latitude / Longitude</string>
+    <string name="collect_classification_hint">Classificação</string>
+    <string name="collect_team_hint">Time</string>
+    <string name="collect_save_btn">Save</string>
+
 
 </resources>

@@ -6,6 +6,53 @@
     android:layout_height="match_parent"
     tools:context="br.com.ecostage.mobilecollect.collect.CollectActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="165dp"
+                app:srcCompat="@mipmap/map_snapshot" />
+
+            <EditText
+                android:id="@+id/collectName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:hint="@string/collect_name_hint"/>
+
+            <EditText
+                android:id="@+id/collectLatLng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/collect_lat_lng_hint"
+                android:maxLines="1" />
+
+            <EditText
+                android:id="@+id/collectClassification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/collect_classification_hint"
+                android:maxLines="1" />
+
+            <EditText
+                android:id="@+id/collectTeam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/collect_team_hint"
+                android:maxLines="1" />
+
+            <Button
+                android:id="@+id/collectSaveBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/collect_save_btn" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

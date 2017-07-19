@@ -5,6 +5,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import br.com.ecostage.mobilecollect.R
+import kotlinx.android.synthetic.main.activity_collect.*
 
 fun Context.CollectIntent(collectId : Int) : Intent {
     return Intent(this, CollectActivity::class.java).apply {
