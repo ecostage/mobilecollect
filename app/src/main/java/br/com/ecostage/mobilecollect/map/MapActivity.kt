@@ -2,6 +2,7 @@ package br.com.ecostage.mobilecollect.map
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
@@ -22,12 +23,14 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.gms.maps.model.MarkerOptions
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.intentFor
 import kotlinx.android.synthetic.main.activity_map.*
 
 class MapActivity : BottomNavigationActivity(),
@@ -40,10 +43,14 @@ class MapActivity : BottomNavigationActivity(),
         AnkoLogger,
         MapView {
 
+    companion object {
+        val COLLECT_REQUEST = 1
+    }
+
     private val mapPresenter: MapPresenter = MapPresenterImpl(this)
     private val MAP_PERMISSION_REQUEST_CODE = 1
     private var googleApiClient: GoogleApiClient? = null
-    private var lastMarkerLatLgn : LatLng? = null
+    private val markers : MutableList<Marker> = ArrayList()
 
     private lateinit var googleMap: GoogleMap
     private lateinit var locationRequest: LocationRequest
@@ -74,6 +81,14 @@ class MapActivity : BottomNavigationActivity(),
     private fun setupMap() {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when(requestCode) {
+            COLLECT_REQUEST -> {
+                if (resultCode == Activity.RESULT_CANCELED) mapPresenter.removeLastMarker()
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -152,10 +167,11 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     override fun onSnapshotReady(mapSnapshot: Bitmap?) {
-        if (lastMarkerLatLgn != null) {
+        if (!markers.isEmpty()) {
             val compressedSnapshot = mapPresenter.compressMapSnapshot(mapSnapshot)
+            val lastMarkerPosition = markers.last().position
 
-            mapPresenter.collect(lastMarkerLatLgn!!.latitude, lastMarkerLatLgn!!.longitude, compressedSnapshot)
+            mapPresenter.collect(lastMarkerPosition.latitude, lastMarkerPosition.longitude, compressedSnapshot)
         }
     }
 
@@ -178,8 +194,8 @@ class MapActivity : BottomNavigationActivity(),
 
     override fun showMarkerAt(latitude: Double, longitude: Double) {
         val position: LatLng = LatLng(latitude, longitude)
-        googleMap.addMarker(MarkerOptions().position(position))
-        lastMarkerLatLgn = position
+        val marker = googleMap.addMarker(MarkerOptions().position(position))
+        markers.add(marker)
     }
 
     override fun takeMapSnapshot() {
@@ -191,13 +207,15 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     override fun navigateToCollectActivity(latitude: Double, longitude: Double, compressedMapSnapshot: ByteArray) {
-        startActivity<CollectActivity>(CollectActivity.MARKER_LATITUDE to latitude.toString(),
+        startActivityForResult(intentFor<CollectActivity>(CollectActivity.MARKER_LATITUDE to latitude.toString(),
                 CollectActivity.MARKER_LONGITUDE to longitude.toString(),
-                CollectActivity.COMPRESSED_MAP_SNAPSHOT to compressedMapSnapshot)
+                CollectActivity.COMPRESSED_MAP_SNAPSHOT to compressedMapSnapshot), COLLECT_REQUEST)
     }
 
-    override fun removeMarkers() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun removeLastMarkerFromMap() {
+        if (!markers.isEmpty()) {
+            markers.last().remove()
+        }
     }
 
     override fun getContentViewId(): Int {

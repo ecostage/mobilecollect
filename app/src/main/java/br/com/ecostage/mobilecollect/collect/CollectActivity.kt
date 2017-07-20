@@ -63,12 +63,9 @@ class CollectActivity : AppCompatActivity(), CollectView {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            if (collectLastImage != null) {
-                collectImage.setImageURI(collectLastImage)
-            }
+        when (requestCode) {
+            CAMERA_REQUEST -> if (resultCode == Activity.RESULT_OK) collectImage.setImageURI(collectLastImage)
         }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {

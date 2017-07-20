@@ -7,7 +7,6 @@ class MapPresenterImpl(val mapView: MapView) : MapPresenter {
 
     override fun onPermissionDenied(message: String) = mapView.showMessageAsLongToast(message)
 
-
     override fun mark(latitude: Double, longitude: Double) {
         mapView.showMarkerAt(latitude, longitude)
         mapView.takeMapSnapshot()
@@ -27,4 +26,6 @@ class MapPresenterImpl(val mapView: MapView) : MapPresenter {
 
         return bytes
     }
+
+    override fun removeLastMarker() = mapView.removeLastMarkerFromMap()
 }
