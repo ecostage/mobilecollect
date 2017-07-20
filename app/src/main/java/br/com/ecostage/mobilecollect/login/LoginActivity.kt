@@ -6,12 +6,12 @@ import android.annotation.TargetApi
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
+import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.map.MapActivity
 import com.google.android.gms.auth.api.Auth
@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 /**
  * A sign in  screen that offers sign in via email/password and google.
  */
-class LoginActivity : AppCompatActivity(), LoginView {
+class LoginActivity : BaseActivity(), LoginView {
 
     // TODO: Inject LoginActivity with dagger.
     private var presenter: LoginPresenter? =  null
@@ -49,13 +49,14 @@ class LoginActivity : AppCompatActivity(), LoginView {
         presenter = LoginPresenterImpl(this, this, getString(R.string.default_web_client_id))
         presenter?.onCreate()
 
-//        email_sign_in_button.clearFocus()
+
+        setupKeyboardUI(activity_login)
 
         email_sign_in_button.setOnClickListener { attemptSignInWithEmail() }
         google_sign_in_button.setOnClickListener { attemptSignInWithGoogle() }
         setGooglePlusButtonText(google_sign_in_button, getString(R.string.action_sign_in_with_google))
-        password.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
-            if (id == R.id.login || id == EditorInfo.IME_NULL) {
+        password_text.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
+            if (id == EditorInfo.IME_ACTION_DONE) {
                 attemptSignInWithEmail()
                 return@OnEditorActionListener true
             }
@@ -99,12 +100,13 @@ class LoginActivity : AppCompatActivity(), LoginView {
 
         Log.d(TAG, "firebaseAuthWithGoogle: ${acct.id}")
 
-        showProgress(true)
+        showProgress()
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         presenter?.signInWithCredential(credential)
     }
 
     override fun showProgress() {
+        hideSoftKeyboard(this)
         showProgress(true)
     }
 
@@ -120,16 +122,16 @@ class LoginActivity : AppCompatActivity(), LoginView {
 
     override fun setUsernameError() {
         // Reset errors.
-        email.error = null
-        email.error = getString(R.string.error_invalid_email)
-        requestFocus(email)
+        email_text.error = null
+        email_text.error = getString(R.string.error_invalid_email)
+        requestFocus(email_text)
     }
 
     override fun setPasswordError() {
         // Reset errors.
-        password.error = null
-        password.error = getString(R.string.error_invalid_password)
-        requestFocus(password)
+        password_text.error = null
+        password_text.error = getString(R.string.error_invalid_password)
+        requestFocus(password_text)
     }
 
     override fun showSignInWithFailure() {
@@ -162,7 +164,7 @@ class LoginActivity : AppCompatActivity(), LoginView {
      * errors are presented and no actual login attempt is made.
      */
     private fun attemptSignInWithEmail() {
-        presenter?.validateCredentials(email.text.toString(), password.text.toString())
+        presenter?.validateCredentials(email_text.text.toString(), password_text.text.toString())
     }
 
     /**
