@@ -24,7 +24,7 @@ class CollectActivity : AppCompatActivity(), CollectView {
         val COLLECT_ID = "CollectActivity:collectId"
         val MARKER_LATITUDE = "CollectActivity:markerLatitude"
         val MARKER_LONGITUDE = "CollectActivity:markerLongitude"
-        val MAP_SNAPSHOT = "CollectActivity:MapSnapshot"
+        val COMPRESSED_MAP_SNAPSHOT = "CollectActivity:MapSnapshot"
         val CAMERA_REQUEST = 1888
         val CAMERA_PERMISSION_REQUEST_CODE = 2
         val LAST_COLLECT_PHOTO_FILE_NAME = "LAST_COLLECT.jpg"
@@ -32,7 +32,7 @@ class CollectActivity : AppCompatActivity(), CollectView {
 
     private val collectPresenter: CollectPresenter = CollectPresenterImpl(this)
 
-    var collectLastImage : Uri? = null
+    private var collectLastImage : Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +45,10 @@ class CollectActivity : AppCompatActivity(), CollectView {
         val collectId = intent.getStringExtra(COLLECT_ID)
         val latitude = intent.getStringExtra(MARKER_LATITUDE)
         val longitude = intent.getStringExtra(MARKER_LONGITUDE)
-        //        val mapSnapshot : Bitmap? = intent.getParcelableArrayExtra(MAP_SNAPSHOT) as? Bitmap
+        val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
 
         collectLatLng.setText(resources.getString(R.string.collect_lat_lng_text, latitude, longitude))
-        //        collectMapImg.setImageBitmap(mapSnapshot)
+        collectMapImg.setImageBitmap(collectPresenter.decompressMapSnapshot(compressedMapSnapshot))
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)

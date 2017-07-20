@@ -18,6 +18,8 @@
 
     <string name="map">Mapa</string>
     <string name="map_permission_needed">É necessário permissão de localização para utilizar os serviços com GPS.</string>
+    <string name="map_info_connection_suspended">Location services suspended</string>
+    <string name="map_error_connection_failed">Location services failed to connect</string>
     <string name="or">or</string>
     <string name="action_sign_in_with_google">Sign In With Google</string>
     <string name="action_sign_out">Sign Out</string>

@@ -3,12 +3,12 @@ package br.com.ecostage.mobilecollect.map
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import android.widget.Toast
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.collect.CollectActivity
@@ -24,21 +24,26 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.gms.maps.model.MarkerOptions
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
 import kotlinx.android.synthetic.main.activity_map.*
-
 
 class MapActivity : BottomNavigationActivity(),
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMapLongClickListener,
+        GoogleMap.SnapshotReadyCallback,
         LocationListener,
+        AnkoLogger,
         MapView {
 
     private val mapPresenter: MapPresenter = MapPresenterImpl(this)
     private val MAP_PERMISSION_REQUEST_CODE = 1
     private var googleApiClient: GoogleApiClient? = null
+    private var lastMarkerLatLgn : LatLng? = null
 
     private lateinit var googleMap: GoogleMap
     private lateinit var locationRequest: LocationRequest
@@ -56,6 +61,21 @@ class MapActivity : BottomNavigationActivity(),
         setupMap()
     }
 
+    private fun setupUiSettings(map: GoogleMap) {
+        val uiSettings = map.uiSettings
+
+        uiSettings.isZoomControlsEnabled = true
+    }
+
+    private fun setupView() {
+        supportActionBar?.title = resources.getString(R.string.map)
+    }
+
+    private fun setupMap() {
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
+        mapFragment?.getMapAsync(this)
+    }
+
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
@@ -69,7 +89,7 @@ class MapActivity : BottomNavigationActivity(),
             buildGoogleApiClient()
             map.isMyLocationEnabled = true
         } else {
-            showMapPermissionRequest()
+            mapPresenter.onPermissionNeeded()
         }
     }
 
@@ -94,11 +114,11 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     override fun onConnectionSuspended(i: Int) {
-        Log.i(MapActivity::class.java.simpleName, "Location services suspended")
+        info(R.string.map_info_connection_suspended)
     }
 
     override fun onConnectionFailed(connectionResult: ConnectionResult) {
-        Log.e(MapActivity::class.java.simpleName, "Location services failed to connect")
+        error(R.string.map_error_connection_failed)
     }
 
     override fun onPause() {
@@ -121,7 +141,7 @@ class MapActivity : BottomNavigationActivity(),
 
                 googleMap.isMyLocationEnabled = true
             } else {
-                Toast.makeText(this, resources.getString(R.string.map_permission_needed), Toast.LENGTH_LONG).show()
+                mapPresenter.onPermissionDenied(resources.getString(R.string.map_permission_needed))
             }
         }
     }
@@ -129,6 +149,14 @@ class MapActivity : BottomNavigationActivity(),
     override fun onMapLongClick(latLng: LatLng?) {
         if (latLng != null)
             mapPresenter.mark(latLng.latitude, latLng.longitude)
+    }
+
+    override fun onSnapshotReady(mapSnapshot: Bitmap?) {
+        if (lastMarkerLatLgn != null) {
+            val compressedSnapshot = mapPresenter.compressMapSnapshot(mapSnapshot)
+
+            mapPresenter.collect(lastMarkerLatLgn!!.latitude, lastMarkerLatLgn!!.longitude, compressedSnapshot)
+        }
     }
 
     @Synchronized private fun buildGoogleApiClient() {
@@ -140,25 +168,10 @@ class MapActivity : BottomNavigationActivity(),
         googleApiClient?.connect()
     }
 
-    private fun setupUiSettings(map: GoogleMap) {
-        val uiSettings = map.uiSettings
-
-        uiSettings.isZoomControlsEnabled = true
-    }
-
-    override fun showMapPermissionRequest() {
+    override fun showMapPermissionRequestDialog() {
         ActivityCompat.requestPermissions(this,
                 arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
                 MAP_PERMISSION_REQUEST_CODE)
-    }
-
-    private fun setupView() {
-        supportActionBar?.title = resources.getString(R.string.map)
-    }
-
-    private fun setupMap() {
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
-        mapFragment?.getMapAsync(this)
     }
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -166,15 +179,21 @@ class MapActivity : BottomNavigationActivity(),
     override fun showMarkerAt(latitude: Double, longitude: Double) {
         val position: LatLng = LatLng(latitude, longitude)
         googleMap.addMarker(MarkerOptions().position(position))
-        mapPresenter.showCollect(null, latitude, longitude)
+        lastMarkerLatLgn = position
+    }
+
+    override fun takeMapSnapshot() {
+        googleMap.snapshot(this)
     }
 
     override fun navigateToCollectActivity(collectId: Int) {
         startActivity<CollectActivity>(CollectActivity.COLLECT_ID to collectId.toString())
     }
 
-    override fun navigateToCollectActivity(latitude: Double, longitude: Double) {
-        startActivity<CollectActivity>(CollectActivity.MARKER_LATITUDE to latitude.toString(), CollectActivity.MARKER_LONGITUDE to longitude.toString())
+    override fun navigateToCollectActivity(latitude: Double, longitude: Double, compressedMapSnapshot: ByteArray) {
+        startActivity<CollectActivity>(CollectActivity.MARKER_LATITUDE to latitude.toString(),
+                CollectActivity.MARKER_LONGITUDE to longitude.toString(),
+                CollectActivity.COMPRESSED_MAP_SNAPSHOT to compressedMapSnapshot)
     }
 
     override fun removeMarkers() {
@@ -187,5 +206,9 @@ class MapActivity : BottomNavigationActivity(),
 
     override fun getNavigationMenuItemId(): Int {
         return R.id.action_map
+    }
+
+    override fun showMessageAsLongToast(message: String) {
+        longToast(message)
     }
 }
