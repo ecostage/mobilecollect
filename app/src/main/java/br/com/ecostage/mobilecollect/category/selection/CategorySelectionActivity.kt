@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect.collect
+package br.com.ecostage.mobilecollect.category.selection
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
