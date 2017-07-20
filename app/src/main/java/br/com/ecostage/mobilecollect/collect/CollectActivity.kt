@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import br.com.ecostage.mobilecollect.R
 import kotlinx.android.synthetic.main.activity_collect.*
+import org.jetbrains.anko.startActivity
 
 class CollectActivity : AppCompatActivity() {
 
@@ -29,6 +30,10 @@ class CollectActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        collectClassification.setOnClickListener {
+            startActivity<CategorySelectionActivity>()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
