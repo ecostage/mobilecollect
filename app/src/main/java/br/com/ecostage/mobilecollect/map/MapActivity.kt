@@ -2,6 +2,7 @@ package br.com.ecostage.mobilecollect.map
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.login.LoginActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -21,6 +23,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_map.*
 
 class MapActivity : AppCompatActivity(),
         OnMapReadyCallback,
@@ -39,6 +43,15 @@ class MapActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
+
+        sign_out_button.setOnClickListener {
+
+            FirebaseAuth.getInstance().signOut()
+            var intent = Intent(this@MapActivity, LoginActivity::class.java)
+            this@MapActivity.startActivity(intent)
+
+
+        }
 
         setupView()
     }
@@ -98,7 +111,7 @@ class MapActivity : AppCompatActivity(),
 
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when(requestCode) {
+        when (requestCode) {
             MAP_PERMISSION_REQUEST_CODE -> if (!grantResults.isEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (googleApiClient == null) {
                     buildGoogleApiClient()
