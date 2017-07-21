@@ -14,6 +14,7 @@ import android.util.Log
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.collect.CollectActivity
+import br.com.ecostage.mobilecollect.login.LoginActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -25,14 +26,24 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
-import com.google.firebase.auth.FirebaseAuth
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_map.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.intentFor
-import kotlinx.android.synthetic.main.activity_map.*
+import kotlin.Array
+import kotlin.Boolean
+import kotlin.ByteArray
+import kotlin.Double
+import kotlin.Int
+import kotlin.IntArray
+import kotlin.String
+import kotlin.arrayOf
+import kotlin.error
+import kotlin.to
 
 class MapActivity : BottomNavigationActivity(),
         OnMapReadyCallback,
@@ -58,11 +69,11 @@ class MapActivity : BottomNavigationActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
 
         sign_out_button.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
-            startActivity<MapActivity>()
+            startActivity<LoginActivity>()
+            finish()
         }
 
         setupView()
