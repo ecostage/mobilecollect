@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.collect.Collect
 import br.com.ecostage.mobilecollect.collect.CollectActivity
 import br.com.ecostage.mobilecollect.login.LoginActivity
 import com.google.android.gms.common.ConnectionResult
@@ -34,16 +35,7 @@ import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
-import kotlin.Array
-import kotlin.Boolean
-import kotlin.ByteArray
-import kotlin.Double
-import kotlin.Int
-import kotlin.IntArray
-import kotlin.String
-import kotlin.arrayOf
 import kotlin.error
-import kotlin.to
 
 class MapActivity : BottomNavigationActivity(),
         OnMapReadyCallback,
@@ -57,6 +49,7 @@ class MapActivity : BottomNavigationActivity(),
 
     companion object {
         val COLLECT_REQUEST = 1
+        val COLLECT_DATA_RESULT = "MapActivity:collectDataResult"
     }
 
     private val mapPresenter: MapPresenter = MapPresenterImpl(this)
@@ -98,7 +91,14 @@ class MapActivity : BottomNavigationActivity(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when(requestCode) {
             COLLECT_REQUEST -> {
-                if (resultCode == Activity.RESULT_CANCELED) mapPresenter.removeLastMarker()
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    mapPresenter.removeLastMarker()
+                } else if (resultCode == Activity.RESULT_OK) {
+                    // Populate marker
+                    val collect : Collect? = data?.getParcelableExtra<Collect>(COLLECT_DATA_RESULT)
+
+                    this.populateMarker(markers.last(), collect)
+                }
             }
         }
     }
@@ -221,7 +221,8 @@ class MapActivity : BottomNavigationActivity(),
     override fun navigateToCollectActivity(latitude: Double, longitude: Double, compressedMapSnapshot: ByteArray) {
         startActivityForResult(intentFor<CollectActivity>(CollectActivity.MARKER_LATITUDE to latitude.toString(),
                 CollectActivity.MARKER_LONGITUDE to longitude.toString(),
-                CollectActivity.COMPRESSED_MAP_SNAPSHOT to compressedMapSnapshot), COLLECT_REQUEST)
+                CollectActivity.COMPRESSED_MAP_SNAPSHOT to compressedMapSnapshot),
+                COLLECT_REQUEST)
     }
 
     override fun removeLastMarkerFromMap() {
@@ -240,5 +241,11 @@ class MapActivity : BottomNavigationActivity(),
 
     override fun showMessageAsLongToast(message: String) {
         longToast(message)
+    }
+
+    private fun populateMarker(marker: Marker, collect: Collect?) {
+        marker.title = collect?.name
+        marker.snippet = "Classificacão: " + collect?.classification
+        marker.showInfoWindow()
     }
 }

@@ -22,12 +22,14 @@ class CollectPresenterImpl(val collectView: CollectView) : CollectPresenter {
     override fun save(collect: Collect) {
         collectView.showProgress()
 
-        collectInteractor.save(collect)
-
-        collectView.hideProgress()
-
-        collectView.showCollectRequestSuccess()
-
-        collectView.navigateToMap()
+        if (collect.userId != null) {
+            val collect = collectInteractor.save(collect)
+            collectView.hideProgress()
+            collectView.showCollectRequestSuccess()
+            collectView.returnToMap(collect)
+        } else {
+            collectView.hideProgress()
+            collectView.showNoUserError()
+        }
     }
 }

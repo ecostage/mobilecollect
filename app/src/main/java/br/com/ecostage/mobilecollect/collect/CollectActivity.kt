@@ -15,29 +15,14 @@ import android.view.View
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.category.selection.CategorySelectionActivity
 import br.com.ecostage.mobilecollect.map.MapActivity
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_collect.*
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
 import java.io.File
 
 class CollectActivity : AppCompatActivity(), CollectView {
-    override fun showProgress() {
-        collectProgress.visibility = View.VISIBLE
-    }
-
-    override fun hideProgress() {
-        collectProgress.visibility = View.GONE
-    }
-
-    override fun showCollectRequestSuccess() {
-        longToast(R.string.collect_save_success)
-    }
-
-    override fun navigateToMap() {
-        startActivity<MapActivity>()
-        finishAfterTransition()
-    }
-
     companion object {
         val COLLECT_ID = "CollectActivity:collectId"
         val MARKER_LATITUDE = "CollectActivity:markerLatitude"
@@ -83,7 +68,8 @@ class CollectActivity : AppCompatActivity(), CollectView {
             collectPresenter.save(Collect(name = collectName.text.toString(),
                     latitude = latitude.toDouble(),
                     longitude = longitude.toDouble(),
-                    classification = "Floresta Densa"))
+                    classification = "Floresta Densa",
+                    userId = FirebaseAuth.getInstance().currentUser?.uid))
         }
     }
 
@@ -134,5 +120,28 @@ class CollectActivity : AppCompatActivity(), CollectView {
 
     override fun showMessageAsLongToast(message: String) {
         longToast(message)
+    }
+
+    override fun showProgress() {
+        collectProgress.visibility = View.VISIBLE
+    }
+
+    override fun hideProgress() {
+        collectProgress.visibility = View.GONE
+    }
+
+    override fun showCollectRequestSuccess() {
+        longToast(R.string.collect_save_success)
+    }
+
+    override fun showNoUserError() {
+        this.showMessageAsLongToast(R.string.collect_save_error_no_user_auth.toString())
+    }
+
+    override fun returnToMap(collect: Collect?) {
+        if (collect != null) // This should be parcelable
+            setResult(Activity.RESULT_OK, intentFor<MapActivity>(MapActivity.COLLECT_DATA_RESULT to collect))
+
+        finishAfterTransition()
     }
 }
