@@ -8,4 +8,8 @@ interface CollectView {
     fun showRequestPermissionsDialog()
     fun canAccessCamera() : Boolean
     fun showMessageAsLongToast(message: String)
+    fun showProgress()
+    fun hideProgress()
+    fun showCollectRequestSuccess()
+    fun navigateToMap()
 }

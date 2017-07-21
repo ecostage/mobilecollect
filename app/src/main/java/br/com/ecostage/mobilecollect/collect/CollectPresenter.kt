@@ -7,7 +7,8 @@ import android.graphics.Bitmap
  */
 interface CollectPresenter {
     fun takePhoto()
+    fun decompressMapSnapshot(compressSnapshot: ByteArray) : Bitmap
     fun onPermissionsNeeded()
     fun onPermissionDenied(message: String)
-    fun decompressMapSnapshot(compressSnapshot: ByteArray) : Bitmap
+    fun save(collect: Collect)
 }

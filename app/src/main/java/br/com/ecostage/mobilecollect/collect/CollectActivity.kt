@@ -11,14 +11,32 @@ import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.category.selection.CategorySelectionActivity
+import br.com.ecostage.mobilecollect.map.MapActivity
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
 import java.io.File
 
 class CollectActivity : AppCompatActivity(), CollectView {
+    override fun showProgress() {
+        collectProgress.visibility = View.VISIBLE
+    }
+
+    override fun hideProgress() {
+        collectProgress.visibility = View.GONE
+    }
+
+    override fun showCollectRequestSuccess() {
+        longToast(R.string.collect_save_success)
+    }
+
+    override fun navigateToMap() {
+        startActivity<MapActivity>()
+        finishAfterTransition()
+    }
 
     companion object {
         val COLLECT_ID = "CollectActivity:collectId"
@@ -59,6 +77,13 @@ class CollectActivity : AppCompatActivity(), CollectView {
 
         collectTakePhotoBtn.setOnClickListener {
             collectPresenter.takePhoto()
+        }
+
+        collectSaveBtn.setOnClickListener {
+            collectPresenter.save(Collect(name = collectName.text.toString(),
+                    latitude = latitude.toDouble(),
+                    longitude = longitude.toDouble(),
+                    classification = "Floresta Densa"))
         }
     }
 
