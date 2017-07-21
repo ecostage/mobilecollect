@@ -35,8 +35,7 @@
             android:theme="@style/Theme.Design.Light.NoActionBar"
             android:windowSoftInputMode="adjustPan"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:noHistory="true" />
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".map.MapActivity"
