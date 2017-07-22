@@ -10,5 +10,5 @@ interface CollectPresenter {
     fun decompressMapSnapshot(compressSnapshot: ByteArray) : Bitmap
     fun onPermissionsNeeded()
     fun onPermissionDenied(message: String)
-    fun save(collect: Collect)
+    fun save(name: String, latitude: Double, longitude: Double)
 }

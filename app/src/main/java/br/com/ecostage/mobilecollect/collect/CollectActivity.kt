@@ -15,7 +15,6 @@ import android.view.View
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.category.selection.CategorySelectionActivity
 import br.com.ecostage.mobilecollect.map.MapActivity
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
@@ -65,11 +64,9 @@ class CollectActivity : AppCompatActivity(), CollectView {
         }
 
         collectSaveBtn.setOnClickListener {
-            collectPresenter.save(Collect(name = collectName.text.toString(),
+            collectPresenter.save(name = collectName.text.toString(),
                     latitude = latitude.toDouble(),
-                    longitude = longitude.toDouble(),
-                    classification = "Floresta Densa",
-                    userId = FirebaseAuth.getInstance().currentUser?.uid))
+                    longitude = longitude.toDouble())
         }
     }
 
