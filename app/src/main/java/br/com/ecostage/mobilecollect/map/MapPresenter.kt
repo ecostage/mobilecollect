@@ -10,4 +10,5 @@ interface MapPresenter {
     fun collect(latitude: Double, longitude: Double, compressedMapSnapshot: ByteArray)
     fun compressMapSnapshot(mapSnapshot : Bitmap?): ByteArray
     fun removeLastMarker()
+    fun loadUserCollects()
 }

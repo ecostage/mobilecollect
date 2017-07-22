@@ -10,7 +10,6 @@ import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.collect.Collect
@@ -52,7 +51,7 @@ class MapActivity : BottomNavigationActivity(),
         val COLLECT_DATA_RESULT = "MapActivity:collectDataResult"
     }
 
-    private val mapPresenter: MapPresenter = MapPresenterImpl(this)
+    private val mapPresenter: MapPresenter = MapPresenterImpl(this, this)
     private val MAP_PERMISSION_REQUEST_CODE = 1
     private var googleApiClient: GoogleApiClient? = null
     private val markers : MutableList<Marker> = ArrayList()
@@ -71,6 +70,9 @@ class MapActivity : BottomNavigationActivity(),
 
         setupView()
         setupMap()
+
+        // Load collects to show in map
+        mapPresenter.loadUserCollects()
     }
 
     private fun setupUiSettings(map: GoogleMap) {
@@ -122,7 +124,7 @@ class MapActivity : BottomNavigationActivity(),
 
     @SuppressLint("MissingPermission")
     override fun onConnected(bundle: Bundle?) {
-        Log.i(MapActivity::class.java.simpleName, "Location services connected")
+        info("Location services connected")
 
         locationRequest = LocationRequest()
         locationRequest.interval = 10000
