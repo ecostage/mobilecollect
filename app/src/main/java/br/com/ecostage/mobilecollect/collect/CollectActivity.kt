@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment.getExternalStorageDirectory
@@ -12,6 +14,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.view.Window
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.category.selection.CategorySelectionActivity
 import br.com.ecostage.mobilecollect.map.MapActivity
@@ -21,6 +24,7 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
 import java.io.File
+
 
 class CollectActivity : AppCompatActivity(), CollectView {
     companion object {
@@ -35,10 +39,13 @@ class CollectActivity : AppCompatActivity(), CollectView {
 
     private val collectPresenter: CollectPresenter = CollectPresenterImpl(this)
 
-    private var collectLastImage : Uri? = null
+    private var collectLastImage: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
+
         setContentView(R.layout.activity_collect)
 
         setupView()
@@ -71,6 +78,10 @@ class CollectActivity : AppCompatActivity(), CollectView {
                     classification = "Floresta Densa",
                     userId = FirebaseAuth.getInstance().currentUser?.uid))
         }
+
+
+        supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#00000000")))
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -113,7 +124,7 @@ class CollectActivity : AppCompatActivity(), CollectView {
                 CAMERA_PERMISSION_REQUEST_CODE)
     }
 
-    override fun canAccessCamera(): Boolean  {
+    override fun canAccessCamera(): Boolean {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }

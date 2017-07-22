@@ -17,63 +17,80 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/collectMapImg"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="165dp"
-                app:srcCompat="@mipmap/map_snapshot" />
+                android:layout_height="0dp"
+                android:layout_weight=".50"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/collectName"
+                <ImageView
+                    android:id="@+id/collectMapImg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/collect_map_snapshot_description"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@mipmap/map_snapshot" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:hint="@string/collect_name_hint"/>
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/collectLatLng"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/collect_lat_lng_hint"
-                android:maxLines="1" />
+                <EditText
+                    android:id="@+id/collectName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/collect_name_hint"
+                    android:maxLines="1" />
 
-            <EditText
-                android:id="@+id/collectClassification"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/collect_classification_hint"
-                android:focusableInTouchMode="false"
-                android:maxLines="1" />
+                <EditText
+                    android:id="@+id/collectLatLng"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/collect_lat_lng_hint"
+                    android:maxLines="1" />
 
-            <EditText
-                android:id="@+id/collectTeam"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/collect_team_hint"
-                android:maxLines="1" />
+                <EditText
+                    android:id="@+id/collectClassification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusableInTouchMode="false"
+                    android:hint="@string/collect_classification_hint"
+                    android:maxLines="1" />
 
-            <Button
-                android:id="@+id/collectTakePhotoBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/collect_take_photo_btn" />
+                <EditText
+                    android:id="@+id/collectTeam"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/collect_team_hint"
+                    android:maxLines="1" />
 
-            <ImageView
-                android:id="@+id/collectImage"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content" />
+                <Button
+                    android:id="@+id/collectTakePhotoBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/collect_take_photo_btn" />
 
-            <Button
-                android:id="@+id/collectSaveBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/collect_save_btn" />
+                <ImageView
+                    android:id="@+id/collectImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
+                <Button
+                    android:id="@+id/collectSaveBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/collect_save_btn" />
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
