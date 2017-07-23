@@ -51,4 +51,6 @@
     <string name="collect_save_success">Ponto coletado!</string>
     <string name="collect_save_error_no_user_auth">Não há usuário autenticado para coleta</string>
 
+    <string name="classification_header_title">Classificação</string>
+
 </resources>
