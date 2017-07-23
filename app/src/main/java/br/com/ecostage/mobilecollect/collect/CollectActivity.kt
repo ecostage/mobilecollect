@@ -11,6 +11,8 @@ import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.category.selection.ClassificationActivity
@@ -20,6 +22,8 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
 import java.io.File
+import java.text.DecimalFormat
+
 
 class CollectActivity : AppCompatActivity(), CollectView {
     companion object {
@@ -34,10 +38,11 @@ class CollectActivity : AppCompatActivity(), CollectView {
 
     private val collectPresenter: CollectPresenter = CollectPresenterImpl(this)
 
-    private var collectLastImage : Uri? = null
+    private var collectLastImage: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_collect)
 
         setupView()
@@ -45,11 +50,9 @@ class CollectActivity : AppCompatActivity(), CollectView {
 
     private fun setupView() {
         val collectId = intent.getStringExtra(COLLECT_ID)
-        val latitude = intent.getStringExtra(MARKER_LATITUDE)
-        val longitude = intent.getStringExtra(MARKER_LONGITUDE)
         val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
 
-        collectLatLng.setText(resources.getString(R.string.collect_lat_lng_text, latitude, longitude))
+        collectLatLng.text = resources.getString(R.string.collect_lat_lng_text, latitude(), longitude())
         collectMapImg.setImageBitmap(collectPresenter.decompressMapSnapshot(compressedMapSnapshot))
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -63,11 +66,41 @@ class CollectActivity : AppCompatActivity(), CollectView {
             collectPresenter.takePhoto()
         }
 
-        collectSaveBtn.setOnClickListener {
-            collectPresenter.save(name = collectName.text.toString(),
-                    latitude = latitude.toDouble(),
-                    longitude = longitude.toDouble())
         }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_collect, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+
+        when(item?.itemId) {
+            R.id.action_save_collect -> {
+            collectPresenter.save(name = collectName.text.toString(),
+                    latitude = latitude().toDouble(),
+                    longitude = longitude().toDouble())
+
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun longitude(): String {
+        return doubleFormatted(MARKER_LONGITUDE)
+    }
+
+
+    private fun latitude(): String {
+        return doubleFormatted(MARKER_LATITUDE)
+    }
+
+    private fun doubleFormatted(id: String): String {
+        val value = intent.getStringExtra(id)
+        return DecimalFormat("#.0000000").format(value.toDouble())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -110,7 +143,7 @@ class CollectActivity : AppCompatActivity(), CollectView {
                 CAMERA_PERMISSION_REQUEST_CODE)
     }
 
-    override fun canAccessCamera(): Boolean  {
+    override fun canAccessCamera(): Boolean {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
