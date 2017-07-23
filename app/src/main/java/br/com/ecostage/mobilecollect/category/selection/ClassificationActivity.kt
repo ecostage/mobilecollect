@@ -15,7 +15,9 @@ class ClassificationActivity : AppCompatActivity(), ClassificationView {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        collectClassificationList.adapter = ClassificationListAdapter(this)
+        val adapter = ClassificationListAdapter(this)
+        collectClassificationList.adapter = adapter
+        collectClassificationList.onItemClickListener = adapter
     }
 
     override fun onSupportNavigateUp(): Boolean {

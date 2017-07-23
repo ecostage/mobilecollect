@@ -57,7 +57,6 @@
         <activity
             android:name=".collect.CollectActivity"
             android:configChanges="orientation"
-            android:label="@string/collect_header_title"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustPan" />

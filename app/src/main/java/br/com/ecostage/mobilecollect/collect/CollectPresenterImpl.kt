@@ -19,14 +19,14 @@ class CollectPresenterImpl(val collectView: CollectView)
 
     override fun onPermissionDenied(message: String) = collectView.showMessageAsLongToast(message)
 
-    override fun save(name: String, latitude: Double, longitude: Double) {
+    override fun save(name: String, latitude: Double, longitude: Double, classification: String) {
         collectView.showProgress()
 
         val collect = Collect()
         collect.name = name
         collect.latitude = latitude
         collect.longitude = longitude
-        collect.classification = "Floresta Densa"
+        collect.classification = classification
 
         collectInteractor.save(collect)
     }

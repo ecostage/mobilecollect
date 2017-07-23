@@ -1,5 +1,6 @@
 package br.com.ecostage.mobilecollect.category.selection
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -8,14 +9,17 @@ import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.TextView
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.collect.CollectActivity
+import org.jetbrains.anko.intentFor
 
 /**
  * Created by cmaia on 7/23/17.
  */
-class ClassificationListAdapter(val context: Context) : BaseAdapter()  {
+class ClassificationListAdapter(val context: Context) : BaseAdapter(), AdapterView.OnItemClickListener  {
 
     private val inflator: LayoutInflater = LayoutInflater.from(context)
     private var items: Array<ClassificationViewModel> = arrayOf(
@@ -86,5 +90,10 @@ class ClassificationListAdapter(val context: Context) : BaseAdapter()  {
 
     private class ListRowHolder(row: View?) {
         val label: TextView = row?.findViewById(R.id.collectRowClassification) as TextView
+    }
+
+    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        (context as Activity).setResult(Activity.RESULT_OK, context.intentFor<CollectActivity>(CollectActivity.CLASSIFICATION_DATA_RESULT to items[position]))
+        context.finishAfterTransition()
     }
 }

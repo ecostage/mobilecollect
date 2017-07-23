@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/activity_collect"
     tools:context="br.com.ecostage.mobilecollect.collect.CollectActivity">
 
     <ProgressBar
@@ -53,8 +54,8 @@
                     android:background="@android:color/transparent"
                     android:drawableStart="@drawable/ic_explore_color_accent_24dp"
                     android:hint="@string/collect_name_hint"
+                    android:inputType="text"
                     android:maxLines="1" />
-
 
                 <View style="@style/Divider" />
 
@@ -68,7 +69,7 @@
 
                 <View style="@style/Divider" />
 
-                <EditText
+                <TextView
                     android:id="@+id/collectClassification"
                     style="@style/CollectLine"
                     android:layout_width="match_parent"
