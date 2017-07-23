@@ -99,7 +99,7 @@ class MapActivity : BottomNavigationActivity(),
                     // Populate marker
                     val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(COLLECT_DATA_RESULT)
 
-                    this.populateMarker(markers.last(), collectViewModel)
+                    this.populateMarker(markers.last(), collectViewModel, showInfo = true)
                 }
             }
         }
@@ -206,10 +206,12 @@ class MapActivity : BottomNavigationActivity(),
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-    override fun showMarkerAt(latitude: Double, longitude: Double) {
+    override fun showMarkerAt(latitude: Double, longitude: Double) : Marker {
         val position: LatLng = LatLng(latitude, longitude)
         val marker = googleMap.addMarker(MarkerOptions().position(position))
         markers.add(marker)
+
+        return marker
     }
 
     override fun takeMapSnapshot() {
@@ -245,9 +247,11 @@ class MapActivity : BottomNavigationActivity(),
         longToast(message)
     }
 
-    private fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?) {
+    override fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?, showInfo : Boolean) {
         marker.title = collectViewModel?.name
         marker.snippet = "Classificacão: " + collectViewModel?.classification
-        marker.showInfoWindow()
+
+        if (showInfo)
+            marker.showInfoWindow()
     }
 }

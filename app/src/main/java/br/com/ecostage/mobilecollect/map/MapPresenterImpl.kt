@@ -2,6 +2,7 @@ package br.com.ecostage.mobilecollect.map
 
 import android.graphics.Bitmap
 import br.com.ecostage.mobilecollect.collect.Collect
+import br.com.ecostage.mobilecollect.collect.CollectViewModel
 import java.io.ByteArrayOutputStream
 
 class MapPresenterImpl(val mapView: MapView,
@@ -42,7 +43,13 @@ class MapPresenterImpl(val mapView: MapView,
         // This was used to avoid smart cast impossible problem
         collect.latitude?.let { latitude ->
             collect.longitude?.let { longitude ->
-                mapView.showMarkerAt(latitude, longitude)
+                val marker = mapView.showMarkerAt(latitude, longitude)
+
+                val collectViewModel = CollectViewModel(collect.id,
+                        collect.name, collect.latitude, collect.longitude,
+                        collect.classification, collect.userId)
+
+                mapView.populateMarker(marker, collectViewModel, false)
             }
         }
     }
