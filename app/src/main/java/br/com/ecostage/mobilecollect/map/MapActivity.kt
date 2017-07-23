@@ -12,8 +12,8 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
-import br.com.ecostage.mobilecollect.collect.Collect
 import br.com.ecostage.mobilecollect.collect.CollectActivity
+import br.com.ecostage.mobilecollect.collect.CollectViewModel
 import br.com.ecostage.mobilecollect.login.LoginActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
@@ -97,9 +97,9 @@ class MapActivity : BottomNavigationActivity(),
                     mapPresenter.removeLastMarker()
                 } else if (resultCode == Activity.RESULT_OK) {
                     // Populate marker
-                    val collect : Collect? = data?.getParcelableExtra<Collect>(COLLECT_DATA_RESULT)
+                    val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(COLLECT_DATA_RESULT)
 
-                    this.populateMarker(markers.last(), collect)
+                    this.populateMarker(markers.last(), collectViewModel)
                 }
             }
         }
@@ -245,9 +245,9 @@ class MapActivity : BottomNavigationActivity(),
         longToast(message)
     }
 
-    private fun populateMarker(marker: Marker, collect: Collect?) {
-        marker.title = collect?.name
-        marker.snippet = "Classificacão: " + collect?.classification
+    private fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?) {
+        marker.title = collectViewModel?.name
+        marker.snippet = "Classificacão: " + collectViewModel?.classification
         marker.showInfoWindow()
     }
 }

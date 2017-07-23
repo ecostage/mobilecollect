@@ -135,9 +135,9 @@ class CollectActivity : AppCompatActivity(), CollectView {
         this.showMessageAsLongToast(R.string.collect_save_error_no_user_auth.toString())
     }
 
-    override fun returnToMap(collect: Collect?) {
-        if (collect != null) // This should be parcelable
-            setResult(Activity.RESULT_OK, intentFor<MapActivity>(MapActivity.COLLECT_DATA_RESULT to collect))
+    override fun returnToMap(collectViewModel: CollectViewModel?) {
+        if (collectViewModel != null) // This should be parcelable
+            setResult(Activity.RESULT_OK, intentFor<MapActivity>(MapActivity.COLLECT_DATA_RESULT to collectViewModel))
 
         finishAfterTransition()
     }

@@ -39,11 +39,16 @@ class MapPresenterImpl(val mapView: MapView,
     }
 
     override fun onCollectLoaded(collect: Collect) {
-        // mark the map with the new collect
+        // This was used to avoid smart cast impossible problem
+        collect.latitude?.let { latitude ->
+            collect.longitude?.let { longitude ->
+                mapView.showMarkerAt(latitude, longitude)
+            }
+        }
     }
 
     override fun onCollectLoadedError() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // no-op
     }
 
 }

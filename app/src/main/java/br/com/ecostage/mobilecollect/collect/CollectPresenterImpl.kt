@@ -2,14 +2,13 @@ package br.com.ecostage.mobilecollect.collect
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.google.firebase.auth.FirebaseAuth
 
 /**
  * Created by cmaia on 7/20/17.
  */
-class CollectPresenterImpl(val collectView: CollectView) : CollectPresenter {
-
-    private val collectInteractor : CollectInteractor = CollectInteractorImpl()
+class CollectPresenterImpl(val collectView: CollectView)
+    : CollectPresenter, CollectInteractor.OnSaveCollectListener {
+    private val collectInteractor : CollectInteractor = CollectInteractorImpl(this)
 
     override fun decompressMapSnapshot(compressSnapshot: ByteArray): Bitmap =
             BitmapFactory.decodeByteArray(compressSnapshot, 0, compressSnapshot.size)
@@ -23,21 +22,23 @@ class CollectPresenterImpl(val collectView: CollectView) : CollectPresenter {
     override fun save(name: String, latitude: Double, longitude: Double) {
         collectView.showProgress()
 
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val collect = Collect()
+        collect.name = name
+        collect.latitude = latitude
+        collect.longitude = longitude
+        collect.classification = "Floresta Densa"
 
-        if (userId != null) {
-            val collect = collectInteractor.save(Collect(name = name,
-                    latitude = latitude,
-                    longitude = longitude,
-                    classification = "Floresta Densa",
-                    userId = userId))
+        collectInteractor.save(collect)
+    }
 
-            collectView.hideProgress()
-            collectView.showCollectRequestSuccess()
-            collectView.returnToMap(collect)
-        } else {
+    override fun onSaveCollect(collect: Collect) {
+        collectView.hideProgress()
+        collectView.showCollectRequestSuccess()
+        collectView.returnToMap(CollectViewModel(collect.id, collect.name, collect.latitude, collect.longitude, collect.classification, collect.userId))
+    }
+
+    override fun onSaveCollectError() {
             collectView.hideProgress()
             collectView.showNoUserError()
-        }
     }
 }

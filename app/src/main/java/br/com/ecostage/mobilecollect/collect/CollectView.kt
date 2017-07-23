@@ -11,6 +11,6 @@ interface CollectView {
     fun showProgress()
     fun hideProgress()
     fun showCollectRequestSuccess()
-    fun returnToMap(collect: Collect?)
+    fun returnToMap(collectViewModel: CollectViewModel?)
     fun showNoUserError()
 }
