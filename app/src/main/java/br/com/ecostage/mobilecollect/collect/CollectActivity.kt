@@ -16,11 +16,11 @@ import android.view.MenuItem
 import android.view.View
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.category.selection.ClassificationActivity
+import br.com.ecostage.mobilecollect.category.selection.ClassificationViewModel
 import br.com.ecostage.mobilecollect.map.MapActivity
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.startActivity
 import java.io.File
 import java.text.DecimalFormat
 
@@ -34,11 +34,13 @@ class CollectActivity : AppCompatActivity(), CollectView {
         val CAMERA_REQUEST = 1888
         val CAMERA_PERMISSION_REQUEST_CODE = 2
         val LAST_COLLECT_PHOTO_FILE_NAME = "LAST_COLLECT.jpg"
+        val CLASSIFICATION_REQUEST = 3
     }
 
     private val collectPresenter: CollectPresenter = CollectPresenterImpl(this)
 
     private var collectLastImage: Uri? = null
+    private var collectSelectedClassification : ClassificationViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +61,7 @@ class CollectActivity : AppCompatActivity(), CollectView {
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         collectClassification.setOnClickListener {
-            startActivity<ClassificationActivity>()
+            startActivityForResult(intentFor<ClassificationActivity>(), CLASSIFICATION_REQUEST)
         }
 
         collectTakePhotoBtn.setOnClickListener {
@@ -106,6 +108,10 @@ class CollectActivity : AppCompatActivity(), CollectView {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             CAMERA_REQUEST -> if (resultCode == Activity.RESULT_OK) collectImage.setImageURI(collectLastImage)
+            CLASSIFICATION_REQUEST ->  {
+                if (resultCode == Activity.RESULT_OK)
+                    collectSelectedClassification = data?.getParcelableExtra<ClassificationViewModel>("")
+            }
         }
     }
 
