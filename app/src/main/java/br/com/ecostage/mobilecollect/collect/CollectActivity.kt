@@ -4,8 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment.getExternalStorageDirectory
@@ -13,8 +11,9 @@ import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.view.Window
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.category.selection.CategorySelectionActivity
 import br.com.ecostage.mobilecollect.map.MapActivity
@@ -24,6 +23,7 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
 import java.io.File
+import java.text.DecimalFormat
 
 
 class CollectActivity : AppCompatActivity(), CollectView {
@@ -44,8 +44,6 @@ class CollectActivity : AppCompatActivity(), CollectView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
-
         setContentView(R.layout.activity_collect)
 
         setupView()
@@ -53,11 +51,9 @@ class CollectActivity : AppCompatActivity(), CollectView {
 
     private fun setupView() {
         val collectId = intent.getStringExtra(COLLECT_ID)
-        val latitude = intent.getStringExtra(MARKER_LATITUDE)
-        val longitude = intent.getStringExtra(MARKER_LONGITUDE)
         val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
 
-        collectLatLng.setText(resources.getString(R.string.collect_lat_lng_text, latitude, longitude))
+        collectLatLng.text = resources.getString(R.string.collect_lat_lng_text, latitude(), longitude())
         collectMapImg.setImageBitmap(collectPresenter.decompressMapSnapshot(compressedMapSnapshot))
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -71,17 +67,43 @@ class CollectActivity : AppCompatActivity(), CollectView {
             collectPresenter.takePhoto()
         }
 
-        collectSaveBtn.setOnClickListener {
-            collectPresenter.save(Collect(name = collectName.text.toString(),
-                    latitude = latitude.toDouble(),
-                    longitude = longitude.toDouble(),
-                    classification = "Floresta Densa",
-                    userId = FirebaseAuth.getInstance().currentUser?.uid))
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_collect, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+
+        when(item?.itemId) {
+            R.id.action_save_collect -> {
+                collectPresenter.save(Collect(name = collectName.text.toString(),
+                        latitude = latitude().toDouble(),
+                        longitude = longitude().toDouble(),
+                        classification = "Floresta Densa",
+                        userId = FirebaseAuth.getInstance().currentUser?.uid))
+
+                return true
+            }
         }
 
+        return super.onOptionsItemSelected(item)
+    }
 
-        supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#00000000")))
+    private fun longitude(): String {
+        return doubleFormatted(MARKER_LONGITUDE)
+    }
 
+
+    private fun latitude(): String {
+        return doubleFormatted(MARKER_LATITUDE)
+    }
+
+    private fun doubleFormatted(id: String): String {
+        val value = intent.getStringExtra(id)
+        return DecimalFormat("#.0000000").format(value.toDouble())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

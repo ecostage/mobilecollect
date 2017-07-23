@@ -51,5 +51,7 @@
     <string name="collect_save_success">Ponto coletado!</string>
     <string name="collect_save_error_no_user_auth">Não há usuário autenticado para coleta</string>
     <string name="collect_map_snapshot_description">Snapshot do coletado do map para descrever uma coleta</string>
+    <string name="collect_point_name_description">Point collected name</string>
+    <string name="collected_point_photo">Collected point photo</string>
 
 </resources>
