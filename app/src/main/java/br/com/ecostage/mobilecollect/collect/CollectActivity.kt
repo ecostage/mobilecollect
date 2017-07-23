@@ -13,7 +13,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import br.com.ecostage.mobilecollect.R
-import br.com.ecostage.mobilecollect.category.selection.CategorySelectionActivity
+import br.com.ecostage.mobilecollect.category.selection.ClassificationActivity
 import br.com.ecostage.mobilecollect.map.MapActivity
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.intentFor
@@ -56,7 +56,7 @@ class CollectActivity : AppCompatActivity(), CollectView {
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         collectClassification.setOnClickListener {
-            startActivity<CategorySelectionActivity>()
+            startActivity<ClassificationActivity>()
         }
 
         collectTakePhotoBtn.setOnClickListener {
