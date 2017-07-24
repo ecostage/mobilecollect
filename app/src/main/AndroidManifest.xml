@@ -57,15 +57,14 @@
         <activity
             android:name=".collect.CollectActivity"
             android:configChanges="orientation"
-            android:label="@string/collect_header_title"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustPan" />
 
-        <activity
-            android:name=".category.selection.CategorySelectionActivity"
+        <activity android:name=".category.selection.ClassificationActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
+            android:label="@string/classification_header_title"
             android:theme="@style/AppTheme" />
 
         <meta-data

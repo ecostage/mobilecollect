@@ -1,17 +1,23 @@
 package br.com.ecostage.mobilecollect.category.selection
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import br.com.ecostage.mobilecollect.R
+import kotlinx.android.synthetic.main.activity_classification.*
 
-class CategorySelectionActivity : AppCompatActivity() {
+
+class ClassificationActivity : AppCompatActivity(), ClassificationView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_category_selection)
+        setContentView(R.layout.activity_classification)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        val adapter = ClassificationListAdapter(this)
+        collectClassificationList.adapter = adapter
+        collectClassificationList.onItemClickListener = adapter
     }
 
     override fun onSupportNavigateUp(): Boolean {

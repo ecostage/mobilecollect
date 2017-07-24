@@ -45,13 +45,15 @@
     <string name="collect_team_hint">Time</string>
     <string name="collect_save_btn">Save</string>
     <string name="collect_lat_lng_text">%1$s / %2$s</string>
-    <string name="collect_header_title"></string>
     <string name="collect_take_photo_btn">Tirar foto</string>
     <string name="collect_permission_needed">É necessário permissão da câmera e dos arquivos para coleta de ponto</string>
     <string name="collect_save_success">Ponto coletado!</string>
     <string name="collect_save_error_no_user_auth">Não há usuário autenticado para coleta</string>
     <string name="collect_map_snapshot_description">Snapshot do coletado do map para descrever uma coleta</string>
     <string name="collect_point_name_description">Point collected name</string>
+    <string name="collect_classification_validation_error">A classificação é obrigatória!</string>
     <string name="collected_point_photo">Collected point photo</string>
+
+    <string name="classification_header_title">Classificação</string>
 
 </resources>
