@@ -5,18 +5,27 @@ import android.support.v7.app.AppCompatActivity
 import br.com.ecostage.mobilecollect.R
 import kotlinx.android.synthetic.main.activity_user_collect.*
 
-class UserCollectActivity : AppCompatActivity() {
+class UserCollectActivity : AppCompatActivity(), UserCollectView {
 
     private lateinit var adapter: CollectListAdapter
-    private lateinit var userCollectInteractor: UserCollectInteractor
+    private lateinit var userCollectPresenter: UserCollectPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_collect)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
         adapter = CollectListAdapter(this)
-        userCollectInteractor = UserCollectInteractorImpl(adapter)
+        userCollectPresenter = UserCollectPresenterImpl(this, adapter, this)
+
         userCollectList.adapter = adapter
-        userCollectInteractor.loadUserCollects()
+        userCollectPresenter.loadCollects()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }
