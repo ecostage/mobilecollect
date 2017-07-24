@@ -103,6 +103,7 @@
 
 
                 <RelativeLayout
+                    android:id="@+id/collectPhotoContainer"
                     style="@style/CollectLine"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -115,6 +116,7 @@
                         android:layout_height="180dp"
                         android:layout_centerInParent="true"
                         android:background="@color/clear_background"
+                        android:scaleType="centerCrop"
                         android:contentDescription="@string/collected_point_photo" />
 
                     <Button

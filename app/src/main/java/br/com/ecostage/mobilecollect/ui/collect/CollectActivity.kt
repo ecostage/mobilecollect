@@ -73,6 +73,7 @@ class CollectActivity : BaseActivity(), CollectView {
         if (collectId != null) {
             collectId?.let { collectId ->
                 collectMapSnapshotImageContainer.visibility = View.GONE
+                collectPhotoContainer.visibility = View.GONE
                 collectPresenter.loadCollect(collectId)
             }
         } else {
