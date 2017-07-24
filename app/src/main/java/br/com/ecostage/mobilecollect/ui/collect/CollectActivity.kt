@@ -22,6 +22,7 @@ import android.widget.TextView
 import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationActivity
+import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationColorSearch
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationViewModel
 import br.com.ecostage.mobilecollect.ui.map.MapActivity
 import kotlinx.android.synthetic.main.activity_collect.*
@@ -51,6 +52,8 @@ class CollectActivity : BaseActivity(), CollectView {
 
     private var collectLastImage: Uri? = null
     private var collectId: String? = null
+
+    private var model = Collect()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,20 +105,20 @@ class CollectActivity : BaseActivity(), CollectView {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_save_collect -> {
-                val classification = collectClassification.text.toString()
-                if (classification.isNullOrEmpty()) {
+                val classificationText = collectClassification.text.toString()
+                if (classificationText.isNullOrEmpty()) {
                     longToast(resources.getString(R.string.collect_classification_validation_error))
                     return false
                 }
 
-
                 val collectDate = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
 
-                collectPresenter.save(name = collectName.text.toString(),
-                        latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble(),
-                        longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble(),
-                        date = collectDate,
-                        classification = classification)
+                model.name = collectName.text.toString()
+                model.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
+                model.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
+                model.date = collectDate
+
+                collectPresenter.save(model)
 
                 return true
             }
@@ -146,16 +149,31 @@ class CollectActivity : BaseActivity(), CollectView {
             CLASSIFICATION_REQUEST -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val selectedClassification = data?.getParcelableExtra<ClassificationViewModel>(CLASSIFICATION_DATA_RESULT)
+                    val classificationText = selectedClassification?.name
+                    val classificationColor = selectedClassification?.colorHexadecimal
 
-                    collectClassification.text = selectedClassification?.name
+                    applyCategorySelected(classificationText, classificationColor)
 
-                    val drawable = ContextCompat.getDrawable(this, R.drawable.ic_circle_24dp)
-                    drawable.colorFilter = PorterDuffColorFilter(Color.parseColor(selectedClassification?.colorHexadecimal), PorterDuff.Mode.SRC_IN)
 
-                    collectClassification.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
                 }
             }
         }
+    }
+
+    private fun applyCategorySelected(classificationText: String?, classificationColor: String?) {
+        applyColorTextSelected(classificationText)
+        applyCategoryColorSelected(classificationColor)
+    }
+
+    private fun applyColorTextSelected(classificationText: String?) {
+        model.classification = classificationText
+        collectClassification.text = model.classification
+    }
+
+    private fun applyCategoryColorSelected(classificationColor: String?) {
+        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_circle_24dp)
+        drawable.colorFilter = PorterDuffColorFilter(Color.parseColor(classificationColor), PorterDuff.Mode.SRC_IN)
+        collectClassification.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -242,6 +260,7 @@ class CollectActivity : BaseActivity(), CollectView {
     override fun populateFields(collectViewModel: CollectViewModel) {
 
         collectClassification.text = collectViewModel.classification
+        applyCategoryColorSelected(ClassificationColorSearch().classificationColor(collectViewModel.classification))
 
         collectName.isFocusable = false
         collectName.isEnabled = false
