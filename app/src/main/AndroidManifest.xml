@@ -65,12 +65,22 @@
             android:label="@string/classification_header_title"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+        <activity android:name="br.com.ecostage.mobilecollect.ui.profile.collect.UserCollectActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDmU6CD4gea_JrZ3fFGcyMHEuoLYQsNvVk" />
 
-        <activity android:name="br.com.ecostage.mobilecollect.ui.profile.collect.UserCollectActivity"></activity>
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.br.com.ecostage.mobilecollect.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
     </application>
 
 </manifest>

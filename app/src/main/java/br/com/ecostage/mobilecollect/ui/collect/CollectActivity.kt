@@ -8,11 +8,13 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment.getExternalStorageDirectory
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -151,7 +153,15 @@ class CollectActivity : BaseActivity(), CollectView {
     override fun showCamera() {
         if (canAccessCamera()) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            collectLastImage = Uri.fromFile(File(getExternalStorageDirectory(), LAST_COLLECT_PHOTO_FILE_NAME))
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                collectLastImage = FileProvider.getUriForFile(this,
+                        this.applicationContext.packageName + ".br.com.ecostage.mobilecollect.provider",
+                        File(getExternalStorageDirectory(), LAST_COLLECT_PHOTO_FILE_NAME))
+            } else {
+                collectLastImage = Uri.fromFile(File(getExternalStorageDirectory(), LAST_COLLECT_PHOTO_FILE_NAME))
+            }
+
             intent.putExtra(MediaStore.EXTRA_OUTPUT, collectLastImage)
 
             startActivityForResult(intent, CAMERA_REQUEST)
