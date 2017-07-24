@@ -14,6 +14,7 @@ class MapPresenterImpl(val mapView: MapView,
     override fun onPermissionDenied(message: String) = mapView.showMessageAsLongToast(message)
 
     override fun mark(latitude: Double, longitude: Double) {
+        mapView.centralizeMapCameraAt(latitude, longitude)
         mapView.showMarkerAt(latitude, longitude)
         mapView.takeMapSnapshot()
     }

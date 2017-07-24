@@ -98,8 +98,9 @@ class MapActivity : BottomNavigationActivity(),
                 } else if (resultCode == Activity.RESULT_OK) {
                     // Populate marker
                     val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(COLLECT_DATA_RESULT)
-
-                    this.populateMarker(markers.last(), collectViewModel, showInfo = true)
+                    val marker = markers.last()
+                    this.populateMarker(marker, collectViewModel, showInfo = true)
+                    this.centralizeMapCameraAt(marker.position.latitude, marker.position.longitude)
                 }
             }
         }
@@ -176,8 +177,9 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     override fun onMapLongClick(latLng: LatLng?) {
-        if (latLng != null)
+        if (latLng != null) {
             mapPresenter.mark(latLng.latitude, latLng.longitude)
+        }
     }
 
     override fun onSnapshotReady(mapSnapshot: Bitmap?) {
@@ -253,5 +255,9 @@ class MapActivity : BottomNavigationActivity(),
 
         if (showInfo)
             marker.showInfoWindow()
+    }
+
+    override fun centralizeMapCameraAt(latitude: Double, longitude: Double) {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(latitude, longitude)))
     }
 }

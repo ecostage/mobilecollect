@@ -12,4 +12,5 @@ interface MapView {
     fun takeMapSnapshot()
     fun showMessageAsLongToast(message: String)
     fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?, showInfo: Boolean)
+    fun centralizeMapCameraAt(latitude: Double, longitude: Double)
 }
