@@ -42,6 +42,7 @@ class MapActivity : BottomNavigationActivity(),
         GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.SnapshotReadyCallback,
+        GoogleMap.OnMarkerClickListener,
         LocationListener,
         AnkoLogger,
         MapView {
@@ -112,6 +113,7 @@ class MapActivity : BottomNavigationActivity(),
         googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
 
         googleMap.setOnMapLongClickListener(this)
+        googleMap.setOnMarkerClickListener(this)
 
         setupUiSettings(googleMap)
 
@@ -191,6 +193,15 @@ class MapActivity : BottomNavigationActivity(),
         }
     }
 
+    override fun onMarkerClick(marker: Marker?): Boolean {
+        if (marker?.tag != null) {
+            startActivity<CollectActivity>(CollectActivity.COLLECT_ID to marker.tag as String)
+            return true
+        }
+
+        return false
+    }
+
     @Synchronized private fun buildGoogleApiClient() {
         googleApiClient = GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -250,6 +261,7 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     override fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?, showInfo : Boolean) {
+        marker.tag = collectViewModel?.id
         marker.title = collectViewModel?.name
         marker.snippet = "Classificacão: " + collectViewModel?.classification + " \n Data: " + collectViewModel?.date
 
