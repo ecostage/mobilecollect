@@ -1,19 +1,16 @@
-package br.com.ecostage.mobilecollect.map
+package br.com.ecostage.mobilecollect.profile.collect
 
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.collect.Collect
 import br.com.ecostage.mobilecollect.collect.CollectInteractorImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
 
 /**
- * Created by cmaia on 7/22/17.
+ * Created by cmaia on 7/23/17.
  */
-class MapInteractorImpl(val collectLoadedListener: OnCollectLoadedListener,
-                        val mapActivity: MapActivity)
-    : MapInteractor, AnkoLogger {
+class UserCollectInteractorImpl(val collectLoadedListener: OnCollectLoadedListener)
+    : UserCollectInteractor {
 
     val firebaseDatabase : DatabaseReference = FirebaseDatabase.getInstance().reference
 

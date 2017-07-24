@@ -1,13 +1,14 @@
 package br.com.ecostage.mobilecollect.map
 
 import android.graphics.Bitmap
+import br.com.ecostage.mobilecollect.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.collect.Collect
 import br.com.ecostage.mobilecollect.collect.CollectViewModel
 import java.io.ByteArrayOutputStream
 
 class MapPresenterImpl(val mapView: MapView,
                        val activity: MapActivity)
-    : MapPresenter, MapInteractor.OnCollectLoadedListener {
+    : MapPresenter, OnCollectLoadedListener {
 
     private val mapInteractor : MapInteractor = MapInteractorImpl(this, activity)
 

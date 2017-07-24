@@ -88,12 +88,12 @@ class ClassificationListAdapter(val context: Context) : BaseAdapter(), AdapterVi
         return items.size
     }
 
-    private class ListRowHolder(row: View?) {
-        val label: TextView = row?.findViewById(R.id.collectRowClassification) as TextView
-    }
-
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         (context as Activity).setResult(Activity.RESULT_OK, context.intentFor<CollectActivity>(CollectActivity.CLASSIFICATION_DATA_RESULT to items[position]))
         context.finishAfterTransition()
+    }
+
+    private class ListRowHolder(row: View?) {
+        val label: TextView = row?.findViewById(R.id.collectRowClassification) as TextView
     }
 }

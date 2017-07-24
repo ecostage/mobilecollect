@@ -39,7 +39,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
-
         <activity
             android:name=".map.MapActivity"
             android:configChanges="orientation"
@@ -60,16 +59,18 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustPan" />
-
-        <activity android:name=".category.selection.ClassificationActivity"
+        <activity
+            android:name=".category.selection.ClassificationActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"
             android:label="@string/classification_header_title"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDmU6CD4gea_JrZ3fFGcyMHEuoLYQsNvVk" />
+
+        <activity android:name=".profile.collect.UserCollectActivity"></activity>
     </application>
 
 </manifest>
