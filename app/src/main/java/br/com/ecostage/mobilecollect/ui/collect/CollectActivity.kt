@@ -67,14 +67,14 @@ class CollectActivity : BaseActivity(), CollectView {
 
         if (collectId != null) {
             collectId?.let { collectId ->
-                collectMapImg.visibility = View.GONE
+                collectMapSnapshotImageContainer.visibility = View.GONE
                 collectPresenter.loadCollect(collectId)
             }
         } else {
             val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
 
             collectLatLng.text = resources.getString(R.string.collect_lat_lng_text, latitude(), longitude())
-            collectMapImg.setImageBitmap(collectPresenter.decompressMapSnapshot(compressedMapSnapshot))
+            collectMapSnapshotImage.setImageBitmap(collectPresenter.decompressMapSnapshot(compressedMapSnapshot))
 
             collectClassification.setOnClickListener {
                 startActivityForResult(intentFor<ClassificationActivity>(), CLASSIFICATION_REQUEST)
