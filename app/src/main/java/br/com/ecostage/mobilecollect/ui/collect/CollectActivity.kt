@@ -29,6 +29,8 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import java.io.File
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class CollectActivity : BaseActivity(), CollectView {
@@ -74,6 +76,8 @@ class CollectActivity : BaseActivity(), CollectView {
             val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
 
             collectLatLng.text = resources.getString(R.string.collect_lat_lng_text, latitude(), longitude())
+            val now = Calendar.getInstance().time
+            collectDate.text = dateFormatted(now)
             collectMapSnapshotImage.setImageBitmap(collectPresenter.decompressMapSnapshot(compressedMapSnapshot))
 
             collectClassification.setOnClickListener {
@@ -85,6 +89,8 @@ class CollectActivity : BaseActivity(), CollectView {
             }
         }
     }
+
+    private fun dateFormatted(now: Date?): String = SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(now)
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_collect, menu)
@@ -234,6 +240,8 @@ class CollectActivity : BaseActivity(), CollectView {
         collectName.isFocusable = false
         collectName.isEnabled = false
         collectName.setText(collectViewModel.name, TextView.BufferType.EDITABLE)
+
+        collectDate.text = dateFormatted(collectViewModel.date)
 
         collectLatLng.text = resources.getString(R.string.collect_lat_lng_text,
                 doubleFormatted(collectViewModel.latitude), doubleFormatted(collectViewModel.longitude))

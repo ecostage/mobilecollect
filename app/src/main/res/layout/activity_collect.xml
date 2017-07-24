@@ -67,6 +67,16 @@
                 <View style="@style/Divider" />
 
                 <TextView
+                    android:id="@+id/collectDate"
+                    style="@style/CollectLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_today_color_accent_24dp"
+                    android:hint="@string/collect_lat_lng_hint" />
+
+                <View style="@style/Divider" />
+
+                <TextView
                     android:id="@+id/collectClassification"
                     style="@style/CollectLine"
                     android:layout_width="match_parent"
