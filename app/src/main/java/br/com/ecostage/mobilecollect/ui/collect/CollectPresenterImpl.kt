@@ -2,13 +2,32 @@ package br.com.ecostage.mobilecollect.ui.collect
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import br.com.ecostage.mobilecollect.OnCollectLoadedListener
 
 /**
  * Created by cmaia on 7/20/17.
  */
 class CollectPresenterImpl(val collectView: CollectView)
-    : CollectPresenter, CollectInteractor.OnSaveCollectListener {
-    private val collectInteractor : CollectInteractor = CollectInteractorImpl(this)
+    : CollectPresenter, CollectInteractor.OnSaveCollectListener, OnCollectLoadedListener {
+    private val collectInteractor : CollectInteractor = CollectInteractorImpl(this, this)
+
+    override fun loadCollect(collectId: String) {
+        collectInteractor.loadCollect(collectId)
+    }
+
+    override fun onCollectLoaded(collect: Collect) {
+        collectView.populateFields(CollectViewModel(collect.id,
+                collect.name,
+                collect.latitude,
+                collect.longitude,
+                collect.classification,
+                collect.userId,
+                collect.date))
+    }
+
+    override fun onCollectLoadedError() {
+        collectView.showMessageAsLongToast("Failed to show collect.")
+    }
 
     override fun decompressMapSnapshot(compressSnapshot: ByteArray): Bitmap =
             BitmapFactory.decodeByteArray(compressSnapshot, 0, compressSnapshot.size)

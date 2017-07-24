@@ -11,4 +11,5 @@ interface CollectInteractor {
     }
 
     fun save(collect: Collect)
+    fun loadCollect(collectId: String)
 }

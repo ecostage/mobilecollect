@@ -11,4 +11,5 @@ interface CollectPresenter {
     fun onPermissionsNeeded()
     fun onPermissionDenied(message: String)
     fun save(name: String, latitude: Double, longitude: Double, classification: String)
+    fun loadCollect(collectId: String)
 }

@@ -13,4 +13,5 @@ interface CollectView {
     fun showCollectRequestSuccess()
     fun returnToMap(collectViewModel: CollectViewModel?)
     fun showNoUserError()
+    fun populateFields(collectViewModel: CollectViewModel)
 }

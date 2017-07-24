@@ -39,6 +39,7 @@
     <string name="action_label_ranking">Ranking</string>
     <string name="action_label_map">Map</string>
 
+    <string name="collect_header_title">Coleta</string>
     <string name="collect_name_hint">Apelido</string>
     <string name="collect_lat_lng_hint">Latitude / Longitude</string>
     <string name="collect_classification_hint">Classificação</string>

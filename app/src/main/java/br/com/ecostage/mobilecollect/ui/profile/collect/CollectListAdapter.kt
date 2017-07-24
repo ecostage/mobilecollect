@@ -10,7 +10,9 @@ import android.widget.TextView
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.collect.Collect
+import br.com.ecostage.mobilecollect.ui.collect.CollectActivity
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
+import org.jetbrains.anko.startActivity
 
 /**
  * Created by cmaia on 7/23/17.
@@ -51,8 +53,10 @@ class CollectListAdapter(val context: Context)
         return items.size
     }
 
-    override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        // no-op
+    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        val collectId = items[position].id
+        if (collectId != null)
+            context.startActivity<CollectActivity>(CollectActivity.COLLECT_ID to collectId)
     }
 
     override fun onCollectLoaded(collect: Collect) {

@@ -21,6 +21,8 @@ class UserCollectActivity : AppCompatActivity(), UserCollectView {
         userCollectPresenter = UserCollectPresenterImpl(this, adapter, this)
 
         userCollectList.adapter = adapter
+        userCollectList.onItemClickListener = adapter
+
         userCollectPresenter.loadCollects()
     }
 

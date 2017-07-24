@@ -18,6 +18,7 @@ import android.support.v4.content.FileProvider
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationActivity
@@ -31,6 +32,7 @@ import java.text.DecimalFormat
 
 
 class CollectActivity : BaseActivity(), CollectView {
+
     companion object {
         val COLLECT_ID = "CollectActivity:collectId"
         val MARKER_LATITUDE = "CollectActivity:markerLatitude"
@@ -46,6 +48,7 @@ class CollectActivity : BaseActivity(), CollectView {
     private val collectPresenter: CollectPresenter = CollectPresenterImpl(this)
 
     private var collectLastImage: Uri? = null
+    private var collectId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,23 +60,30 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     private fun setupView() {
-        val collectId = intent.getStringExtra(COLLECT_ID)
-        val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
-
-        collectLatLng.text = resources.getString(R.string.collect_lat_lng_text, latitude(), longitude())
-        collectMapImg.setImageBitmap(collectPresenter.decompressMapSnapshot(compressedMapSnapshot))
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        collectClassification.setOnClickListener {
-            startActivityForResult(intentFor<ClassificationActivity>(), CLASSIFICATION_REQUEST)
-        }
+        collectId = intent.getStringExtra(COLLECT_ID)
 
-        collectTakePhotoBtn.setOnClickListener {
-            collectPresenter.takePhoto()
-        }
+        if (collectId != null) {
+            collectId?.let { collectId ->
+                collectMapImg.visibility = View.GONE
+                collectPresenter.loadCollect(collectId)
+            }
+        } else {
+            val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
 
+            collectLatLng.text = resources.getString(R.string.collect_lat_lng_text, latitude(), longitude())
+            collectMapImg.setImageBitmap(collectPresenter.decompressMapSnapshot(compressedMapSnapshot))
+
+            collectClassification.setOnClickListener {
+                startActivityForResult(intentFor<ClassificationActivity>(), CLASSIFICATION_REQUEST)
+            }
+
+            collectTakePhotoBtn.setOnClickListener {
+                collectPresenter.takePhoto()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -103,17 +113,19 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     private fun longitude(): String {
-        return doubleFormatted(MARKER_LONGITUDE)
+        return doubleFormatted(intent.getStringExtra(MARKER_LONGITUDE).toDouble())
     }
 
 
     private fun latitude(): String {
-        return doubleFormatted(MARKER_LATITUDE)
+        return doubleFormatted(intent.getStringExtra(MARKER_LATITUDE).toDouble())
     }
 
-    private fun doubleFormatted(id: String): String {
-        val value = intent.getStringExtra(id)
-        return DecimalFormat("#.0000000").format(value.toDouble())
+    private fun doubleFormatted(value: Double?): String {
+        if (value != null)
+            return DecimalFormat("#.0000000").format(value)
+
+        return ""
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -148,6 +160,13 @@ class CollectActivity : BaseActivity(), CollectView {
                     collectPresenter.takePhoto()
                 }
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        if (collectId != null) {
+            menu.getItem(0).isEnabled = false
+        }
+        return true
     }
 
     override fun showCamera() {
@@ -206,5 +225,20 @@ class CollectActivity : BaseActivity(), CollectView {
             setResult(Activity.RESULT_OK, intentFor<MapActivity>(MapActivity.COLLECT_DATA_RESULT to collectViewModel))
 
         finishAfterTransition()
+    }
+
+    override fun populateFields(collectViewModel: CollectViewModel) {
+
+        collectClassification.text = collectViewModel.classification
+
+        collectName.isFocusable = false
+        collectName.isEnabled = false
+        collectName.setText(collectViewModel.name, TextView.BufferType.EDITABLE)
+
+        collectLatLng.text = resources.getString(R.string.collect_lat_lng_text,
+                doubleFormatted(collectViewModel.latitude), doubleFormatted(collectViewModel.longitude))
+
+        collectTeam.isFocusable = false
+        collectTeam.isEnabled = false
     }
 }
