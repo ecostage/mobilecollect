@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import br.com.ecostage.mobilecollect.map.MapActivity
-import br.com.ecostage.mobilecollect.profile.ProfileActivity
-import br.com.ecostage.mobilecollect.ranking.RankingActivity
+import br.com.ecostage.mobilecollect.ui.map.MapActivity
+import br.com.ecostage.mobilecollect.ui.profile.ProfileActivity
+import br.com.ecostage.mobilecollect.ui.ranking.RankingActivity
 
 
 /**

@@ -3,7 +3,7 @@ package br.com.ecostage.mobilecollect
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import br.com.ecostage.mobilecollect.login.LoginActivity
+import br.com.ecostage.mobilecollect.ui.login.LoginActivity
 
 /**
  * Created by andremaia on 7/15/17.

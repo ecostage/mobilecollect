@@ -5,7 +5,7 @@
     android:id="@+id/activity_collect"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.com.ecostage.mobilecollect.collect.CollectActivity">
+    tools:context=".ui.collect.CollectActivity">
 
     <ProgressBar
         android:id="@+id/collectProgress"
