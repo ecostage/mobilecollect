@@ -90,7 +90,9 @@ class CollectActivity : BaseActivity(), CollectView {
         }
     }
 
-    private fun dateFormatted(now: Date?): String = SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(now)
+    private fun dateFormatted(now: Date?): String = SimpleDateFormat(dateFormat()).format(now)
+
+    private fun dateFormat() = "dd/MM/yyyy HH:mm:ss"
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_collect, menu)
@@ -98,7 +100,7 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
+        when (item?.itemId) {
             R.id.action_save_collect -> {
                 val classification = collectClassification.text.toString()
                 if (classification.isNullOrEmpty()) {
@@ -106,10 +108,14 @@ class CollectActivity : BaseActivity(), CollectView {
                     return false
                 }
 
+
+                val collectDate = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
+
                 collectPresenter.save(name = collectName.text.toString(),
-                    latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble(),
-                    longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble(),
-                    classification = classification)
+                        latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble(),
+                        longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble(),
+                        date = collectDate,
+                        classification = classification)
 
                 return true
             }
@@ -137,7 +143,7 @@ class CollectActivity : BaseActivity(), CollectView {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             CAMERA_REQUEST -> if (resultCode == Activity.RESULT_OK) collectImage.setImageURI(collectLastImage)
-            CLASSIFICATION_REQUEST ->  {
+            CLASSIFICATION_REQUEST -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val selectedClassification = data?.getParcelableExtra<ClassificationViewModel>(CLASSIFICATION_DATA_RESULT)
 

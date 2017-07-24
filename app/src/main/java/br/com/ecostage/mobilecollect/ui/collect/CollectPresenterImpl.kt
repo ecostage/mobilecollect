@@ -3,6 +3,7 @@ package br.com.ecostage.mobilecollect.ui.collect
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
+import java.util.*
 
 /**
  * Created by cmaia on 7/20/17.
@@ -38,7 +39,7 @@ class CollectPresenterImpl(val collectView: CollectView)
 
     override fun onPermissionDenied(message: String) = collectView.showMessageAsLongToast(message)
 
-    override fun save(name: String, latitude: Double, longitude: Double, classification: String) {
+    override fun save(name: String, latitude: Double, longitude: Double, classification: String, date: Date) {
         collectView.showProgress()
 
         val collect = Collect()
@@ -46,6 +47,7 @@ class CollectPresenterImpl(val collectView: CollectView)
         collect.latitude = latitude
         collect.longitude = longitude
         collect.classification = classification
+        collect.date = date
 
         collectInteractor.save(collect)
     }
@@ -53,7 +55,7 @@ class CollectPresenterImpl(val collectView: CollectView)
     override fun onSaveCollect(collect: Collect) {
         collectView.hideProgress()
         collectView.showCollectRequestSuccess()
-        collectView.returnToMap(CollectViewModel(collect.id, collect.name, collect.latitude, collect.longitude, collect.classification, collect.userId))
+        collectView.returnToMap(CollectViewModel(collect.id, collect.name, collect.latitude, collect.longitude, collect.classification, collect.userId, collect.date))
     }
 
     override fun onSaveCollectError() {

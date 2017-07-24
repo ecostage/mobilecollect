@@ -60,6 +60,7 @@ class CollectRepositoryImpl : CollectRepository {
         savedCollect.longitude = collect.longitude
         savedCollect.classification = collect.classification
         savedCollect.userId = collect.userId
+        savedCollect.date = collect.date
 
         onCollectSaveListener.onSaveCollect(savedCollect)
     }
