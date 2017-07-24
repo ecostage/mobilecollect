@@ -16,6 +16,5 @@
         app:itemIconTint="@drawable/nav_item_color_state"
         app:itemTextColor="@drawable/nav_item_color_state"
         app:menu="@menu/menu_navigation"
-
         />
 </RelativeLayout>

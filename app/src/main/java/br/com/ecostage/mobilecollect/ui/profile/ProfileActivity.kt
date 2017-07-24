@@ -16,7 +16,6 @@ class ProfileActivity : BottomNavigationActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
 
         profileMyCollects.setOnClickListener {
             startActivity<UserCollectActivity>()
