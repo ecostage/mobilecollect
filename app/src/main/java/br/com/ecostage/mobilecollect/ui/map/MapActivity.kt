@@ -251,7 +251,7 @@ class MapActivity : BottomNavigationActivity(),
 
     override fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?, showInfo : Boolean) {
         marker.title = collectViewModel?.name
-        marker.snippet = "Classificacão: " + collectViewModel?.classification
+        marker.snippet = "Classificacão: " + collectViewModel?.classification + " \n Data: " + collectViewModel?.date
 
         if (showInfo)
             marker.showInfoWindow()
