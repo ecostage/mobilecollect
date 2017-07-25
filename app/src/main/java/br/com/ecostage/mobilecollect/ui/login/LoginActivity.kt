@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect.login
+package br.com.ecostage.mobilecollect.ui.login
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -13,7 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
-import br.com.ecostage.mobilecollect.map.MapActivity
+import br.com.ecostage.mobilecollect.ui.map.MapActivity
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.SignInButton

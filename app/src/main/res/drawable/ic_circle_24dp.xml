@@ -1,0 +1,12 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- The default size should 26dp, but the stroke is increments the size, then 22+4=26dp -->
+    <size
+        android:width="22dp"
+        android:height="22dp"/>
+    <stroke
+        android:width="2dp"
+        android:color="#666666"/>
+
+</shape>

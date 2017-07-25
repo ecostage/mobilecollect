@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect.login
+package br.com.ecostage.mobilecollect.ui.login
 
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions

@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect.login
+package br.com.ecostage.mobilecollect.ui.login
 
 import com.google.firebase.auth.AuthCredential
 
