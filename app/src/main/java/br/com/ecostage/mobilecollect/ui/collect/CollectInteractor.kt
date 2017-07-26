@@ -10,6 +10,6 @@ interface CollectInteractor {
         fun onSaveCollectError()
     }
 
-    fun save(collect: Collect)
+    fun save(collect: Collect, photoBytes: ByteArray)
     fun loadCollect(collectId: String)
 }

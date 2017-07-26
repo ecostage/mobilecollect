@@ -112,15 +112,22 @@ class CollectActivity : BaseActivity(), CollectView {
                     return false
                 }
 
-                val collectDate = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
+                collectLastImage.let { image ->
+                    if (image == null) {
+                        longToast(getString(R.string.collect_photo_validation_error))
+                        return false
+                    }
 
-                model.name = collectName.text.toString()
-                model.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
-                model.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
-                model.date = collectDate
+                    val collectDate = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
 
-                collectPresenter.save(model)
+                    model.name = collectName.text.toString()
+                    model.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
+                    model.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
+                    model.date = collectDate
+                    model.photo = image
 
+                    collectPresenter.save(model)
+                }
                 return true
             }
         }

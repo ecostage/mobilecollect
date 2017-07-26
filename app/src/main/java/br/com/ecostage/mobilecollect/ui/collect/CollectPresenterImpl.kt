@@ -40,7 +40,10 @@ class CollectPresenterImpl(val collectView: CollectView)
 
     override fun save(collect: Collect) {
         collectView.showProgress()
-        collectInteractor.save(collect)
+        // Transform photo to bytearray
+        val photoInBytes = ByteArray(10)
+
+        collectInteractor.save(collect, photoInBytes)
     }
 
     override fun onSaveCollect(collect: Collect) {
