@@ -45,7 +45,7 @@ class CollectPresenterImpl(val collectView: CollectView,
     override fun save(collect: Collect) {
         collectView.showProgress()
         // Transform photo to bytearray
-        val inputStream = collectActivity.contentResolver.openInputStream(photo)
+        val inputStream = collectActivity.contentResolver.openInputStream(collect.photo)
 
         collectInteractor.save(collect, toBytes(inputStream))
     }
