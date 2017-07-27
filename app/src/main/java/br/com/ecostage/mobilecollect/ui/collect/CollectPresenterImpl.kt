@@ -3,11 +3,14 @@ package br.com.ecostage.mobilecollect.ui.collect
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 
 /**
  * Created by cmaia on 7/20/17.
  */
-class CollectPresenterImpl(val collectView: CollectView)
+class CollectPresenterImpl(val collectView: CollectView,
+                           val collectActivity: CollectActivity)
     : CollectPresenter, CollectInteractor.OnSaveCollectListener, OnCollectLoadedListener {
     private val collectInteractor : CollectInteractor = CollectInteractorImpl(this, this)
 
@@ -41,9 +44,21 @@ class CollectPresenterImpl(val collectView: CollectView)
     override fun save(collect: Collect) {
         collectView.showProgress()
         // Transform photo to bytearray
-        val photoInBytes = ByteArray(10)
+        val inputStream = collectActivity.contentResolver.openInputStream(photo)
 
-        collectInteractor.save(collect, photoInBytes)
+        collectInteractor.save(collect, toBytes(inputStream))
+    }
+
+    private fun toBytes(inputStream: InputStream) : ByteArray {
+        val bufferStream = ByteArrayOutputStream()
+
+        inputStream.use { input ->
+            bufferStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return bufferStream.toByteArray()
     }
 
     override fun onSaveCollect(collect: Collect) {
