@@ -48,7 +48,7 @@ class CollectActivity : BaseActivity(), CollectView {
         val CLASSIFICATION_DATA_RESULT = "CollectActivity:classification"
     }
 
-    private val collectPresenter: CollectPresenter = CollectPresenterImpl(this)
+    private val collectPresenter: CollectPresenter = CollectPresenterImpl(this, this)
 
     private var collectLastImage: Uri? = null
     private var collectId: String? = null
@@ -281,5 +281,7 @@ class CollectActivity : BaseActivity(), CollectView {
 
         collectTeam.isFocusable = false
         collectTeam.isEnabled = false
+
+        collectImage.setImageURI(Uri.parse(collectViewModel.photo))
     }
 }

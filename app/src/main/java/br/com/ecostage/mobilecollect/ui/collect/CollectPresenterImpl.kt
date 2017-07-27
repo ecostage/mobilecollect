@@ -25,7 +25,8 @@ class CollectPresenterImpl(val collectView: CollectView,
                 collect.longitude,
                 collect.classification,
                 collect.userId,
-                collect.date))
+                collect.date,
+                collect.photo.toString()))
     }
 
     override fun onCollectLoadedError() {
@@ -64,7 +65,9 @@ class CollectPresenterImpl(val collectView: CollectView,
     override fun onSaveCollect(collect: Collect) {
         collectView.hideProgress()
         collectView.showCollectRequestSuccess()
-        collectView.returnToMap(CollectViewModel(collect.id, collect.name, collect.latitude, collect.longitude, collect.classification, collect.userId, collect.date))
+        collectView.returnToMap(CollectViewModel(collect.id, collect.name, collect.latitude,
+                collect.longitude, collect.classification, collect.userId, collect.date,
+                photo = collect.photo.toString()))
     }
 
     override fun onSaveCollectError() {

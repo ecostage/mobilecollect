@@ -96,8 +96,19 @@ class CollectRepositoryImpl : CollectRepository {
                         val collect = dataSnapshot?.getValue(Collect::class.java)
                         collect?.id =  dataSnapshot?.key
 
-                        if (collect != null)
-                            onCollectLoadedListener.onCollectLoaded(collect)
+                        if (collect != null) {
+                            val storageReference = firebaseStorage.child(collect?.id + ".jpg")
+                            val downloadTask = storageReference.downloadUrl
+
+                            downloadTask.addOnSuccessListener {
+                                collect.photo = it
+                                onCollectLoadedListener.onCollectLoaded(collect)
+                            }
+
+                            downloadTask.addOnFailureListener {
+                                onCollectLoadedListener.onCollectLoadedError()
+                            }
+                        }
                     }
 
                     override fun onCancelled(databaseError: DatabaseError?) {
