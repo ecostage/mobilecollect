@@ -1,10 +1,6 @@
 package br.com.ecostage.mobilecollect.ui.login
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.annotation.TargetApi
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
 import br.com.ecostage.mobilecollect.ui.map.MapActivity
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -107,11 +104,11 @@ class LoginActivity : BaseActivity(), LoginView {
 
     override fun showProgress() {
         hideSoftKeyboard(this)
-        showProgress(true)
+        ProgressBarHandler().showProgress(true, login_form, login_progress)
     }
 
     override fun hideProgress() {
-        showProgress(false)
+        ProgressBarHandler().showProgress(false, login_form, login_progress)
     }
 
     override fun navigateToHome() {
@@ -165,43 +162,5 @@ class LoginActivity : BaseActivity(), LoginView {
      */
     private fun attemptSignInWithEmail() {
         presenter?.validateCredentials(email_text.text.toString(), password_text.text.toString())
-    }
-
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private fun showProgress(show: Boolean) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
-
-            login_form.visibility = if (show) View.GONE else View.VISIBLE
-            login_form.animate()
-                    .setDuration(shortAnimTime)
-                    .alpha((if (show) 0 else 1).toFloat())
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator) {
-                            login_form.visibility = if (show) View.GONE else View.VISIBLE
-                        }
-                    })
-
-            login_progress.visibility = if (show) View.VISIBLE else View.GONE
-            login_progress.animate()
-                    .setDuration(shortAnimTime)
-                    .alpha((if (show) 1 else 0).toFloat())
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator) {
-                            login_progress.visibility = if (show) View.VISIBLE else View.GONE
-                        }
-                    })
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            login_progress.visibility = if (show) View.VISIBLE else View.GONE
-            login_form.visibility = if (show) View.GONE else View.VISIBLE
-        }
     }
 }

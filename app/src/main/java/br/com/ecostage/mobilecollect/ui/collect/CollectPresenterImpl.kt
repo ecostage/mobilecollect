@@ -8,8 +8,15 @@ import br.com.ecostage.mobilecollect.OnCollectLoadedListener
  * Created by cmaia on 7/20/17.
  */
 class CollectPresenterImpl(val collectView: CollectView)
-    : CollectPresenter, CollectInteractor.OnSaveCollectListener, OnCollectLoadedListener {
-    private val collectInteractor : CollectInteractor = CollectInteractorImpl(this, this)
+    : CollectPresenter,
+        CollectInteractor.OnSaveCollectListener,
+        OnCollectLoadedListener,
+        CollectInteractor.OnTeamListListener {
+
+    private val collectInteractor: CollectInteractor = CollectInteractorImpl(
+            this,
+            this,
+            this)
 
     override fun loadCollect(collectId: String) {
         collectInteractor.loadCollect(collectId)
@@ -50,7 +57,26 @@ class CollectPresenterImpl(val collectView: CollectView)
     }
 
     override fun onSaveCollectError() {
-            collectView.hideProgress()
-            collectView.showNoUserError()
+        collectView.hideProgress()
+        collectView.showNoUserError()
+    }
+
+    override fun selectTeam(model: Collect) {
+        collectView.showProgressBarForTeams()
+        collectInteractor.loadTeamsListForCurrentUser()
+    }
+
+    override fun onTeamListReady(teams: Array<CharSequence>) {
+        collectView.showTeamList(teams)
+        collectView.hideProgressBarForTeams()
+    }
+
+    override fun onTeamListError() {
+        collectView.hideProgress()
+        collectView.showNoUserError()
+    }
+
+    override fun remoteTeamSelected(model: Collect) {
+        collectView.remoteTeamSelected()
     }
 }

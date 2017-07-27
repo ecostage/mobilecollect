@@ -12,4 +12,6 @@ interface CollectPresenter {
     fun onPermissionDenied(message: String)
     fun save(collect: Collect)
     fun loadCollect(collectId: String)
+    fun selectTeam(model: Collect)
+    fun remoteTeamSelected(model: Collect)
 }

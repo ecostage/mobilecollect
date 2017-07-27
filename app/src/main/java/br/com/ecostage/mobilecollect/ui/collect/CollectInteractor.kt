@@ -10,6 +10,12 @@ interface CollectInteractor {
         fun onSaveCollectError()
     }
 
+    interface OnTeamListListener {
+        fun onTeamListReady(teams: Array<CharSequence>)
+        fun onTeamListError()
+    }
+
     fun save(collect: Collect)
     fun loadCollect(collectId: String)
+    fun loadTeamsListForCurrentUser()
 }

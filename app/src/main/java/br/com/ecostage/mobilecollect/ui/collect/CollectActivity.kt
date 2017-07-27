@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -24,6 +25,7 @@ import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationActivity
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationColorSearch
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationViewModel
+import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
 import br.com.ecostage.mobilecollect.ui.map.MapActivity
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.intentFor
@@ -84,14 +86,25 @@ class CollectActivity : BaseActivity(), CollectView {
             collectDate.text = dateFormatted(now)
             collectMapSnapshotImage.setImageBitmap(collectPresenter.decompressMapSnapshot(compressedMapSnapshot))
 
-            collectClassification.setOnClickListener {
-                startActivityForResult(intentFor<ClassificationActivity>(), CLASSIFICATION_REQUEST)
-            }
-
-            collectTakePhotoBtn.setOnClickListener {
-                collectPresenter.takePhoto()
-            }
+            setupClassificationControllers()
+            setupTeamControllers()
+            setupPhotoControllers()
         }
+    }
+
+    private fun setupClassificationControllers() {
+        collectClassification.setOnClickListener {
+            startActivityForResult(intentFor<ClassificationActivity>(), CLASSIFICATION_REQUEST)
+        }
+    }
+
+    private fun setupPhotoControllers() {
+        collectTakePhotoBtn.setOnClickListener { collectPresenter.takePhoto() }
+    }
+
+    private fun setupTeamControllers() {
+        collectTeamTextView.setOnClickListener { collectPresenter.selectTeam(model) }
+        collectTeamRemoveButton.setOnClickListener { collectPresenter.remoteTeamSelected(model) }
     }
 
     private fun dateFormatted(now: Date?): String = SimpleDateFormat(dateFormat()).format(now)
@@ -236,11 +249,21 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     override fun showProgress() {
-        collectProgress.visibility = View.VISIBLE
+        ProgressBarHandler().showProgress(true, scrollViewActivity, collectProgress)
+    }
+
+    override fun showProgressBarForTeams() {
+        collectTeamProgressBar.visibility = View.VISIBLE
+        collectTeamRemoveButton.visibility = View.GONE
     }
 
     override fun hideProgress() {
-        collectProgress.visibility = View.GONE
+        ProgressBarHandler().showProgress(false, scrollViewActivity, collectProgress)
+    }
+
+    override fun hideProgressBarForTeams() {
+        collectTeamProgressBar.visibility = View.GONE
+        collectTeamRemoveButton.visibility = View.VISIBLE
     }
 
     override fun showCollectRequestSuccess() {
@@ -272,7 +295,34 @@ class CollectActivity : BaseActivity(), CollectView {
         collectLatLng.text = resources.getString(R.string.collect_lat_lng_text,
                 doubleFormatted(collectViewModel.latitude), doubleFormatted(collectViewModel.longitude))
 
-        collectTeam.isFocusable = false
-        collectTeam.isEnabled = false
+        collectTeamTextView.isFocusable = false
+        collectTeamTextView.isEnabled = false
+    }
+
+
+    override fun showTeamList(teamsList: Array<CharSequence>) {
+
+        val builder = android.app.AlertDialog.Builder(this)
+
+        builder.setTitle("Selecione um time")
+                .setSingleChoiceItems(teamsList, 3) { dialog, i ->
+                    setTeamTextView(teamsList, i)
+                    dialog.dismiss()
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                .create()
+                .show()
+    }
+
+    private fun setTeamTextView(teamsList: Array<CharSequence>, i: Int) {
+        collectTeamTextView.text = teamsList[i]
+        collectTeamTextView.typeface = Typeface.DEFAULT
+        collectTeamRemoveButton.visibility = View.VISIBLE
+    }
+
+    override fun remoteTeamSelected() {
+        collectTeamTextView.text = getString(R.string.collect_team_hint)
+        collectTeamTextView.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
+        collectTeamRemoveButton.visibility = View.GONE
     }
 }
