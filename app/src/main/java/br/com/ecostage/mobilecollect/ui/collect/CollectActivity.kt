@@ -105,23 +105,28 @@ class CollectActivity : BaseActivity(), CollectView {
         return true
     }
 
-    private fun validateForm() {
+    private fun validateForm() : Boolean {
         val classificationText = collectClassification.text.toString().trim()
         if (classificationText.isNullOrEmpty()) {
+            hideProgress()
             longToast(resources.getString(R.string.collect_classification_validation_error))
-            return
+            return false
         }
 
         if (collectLastImage == null) {
+            hideProgress()
             longToast(getString(R.string.collect_photo_validation_error))
-            return
+            return false
         }
+
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_save_collect -> {
-                this.validateForm()
+                if (!this.validateForm())
+                    return false
 
                 viewModel.name = collectName.text.toString()
                 viewModel.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
