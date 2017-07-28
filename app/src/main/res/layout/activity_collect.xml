@@ -6,14 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.collect.CollectActivity">
 
-    <ProgressBar
-        android:id="@+id/collectProgress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
-
     <ScrollView
         android:id="@+id/scrollViewActivity"
         android:layout_width="match_parent"
@@ -37,6 +29,15 @@
                     android:contentDescription="@string/collect_map_snapshot_description"
                     android:scaleType="centerCrop" />
             </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/collectProgress"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
+                android:layout_gravity="center" />
 
             <LinearLayout
                 android:layout_width="match_parent"
