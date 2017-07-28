@@ -40,8 +40,8 @@ class CollectRepositoryImpl : CollectRepository {
                     }
 
                     override fun onCancelled(databaseError: DatabaseError?) {
-                        error { "Error when loading collect data" }
                         onCollectLoadedListener.onCollectLoadedError()
+                        error { "Error when loading collect data" }
                     }
                 })
     }
@@ -50,6 +50,9 @@ class CollectRepositoryImpl : CollectRepository {
         collect.userId = userId
 
         val uid : String? = firebaseDatabase.child(COLLECT_DB_TYPE).push().key
+
+        // Clean the photo because we don't want to save it to firebase -- Check another way to do this
+        collect.photo = null
 
         // Save in the right db
         firebaseDatabase.child(COLLECT_DB_TYPE).child(uid).setValue(collect)
@@ -72,7 +75,8 @@ class CollectRepositoryImpl : CollectRepository {
         savedCollect.date = collect.date
 
         uploadTask.addOnSuccessListener {
-            savedCollect.photo = it.downloadUrl
+//            savedCollect.photo = it.downloadUrl
+
             onCollectSaveListener.onSaveCollect(savedCollect)
         }
 
@@ -97,8 +101,8 @@ class CollectRepositoryImpl : CollectRepository {
                         collect?.id =  dataSnapshot?.key
 
                         if (collect != null) {
-                            val storageReference = firebaseStorage.child(collect?.id + ".jpg")
-                            val downloadTask = storageReference.downloadUrl
+                            val storageReference = firebaseStorage.child(collect.id + ".jpg")
+                            val downloadTask = storageReference.getBytes(1024*1024)
 
                             downloadTask.addOnSuccessListener {
                                 collect.photo = it
@@ -112,8 +116,8 @@ class CollectRepositoryImpl : CollectRepository {
                     }
 
                     override fun onCancelled(databaseError: DatabaseError?) {
-                        error { "Error when loading collect data" }
                         onCollectLoadedListener.onCollectLoadedError()
+                        error { "Error when loading collect data" }
                     }
                 })
     }

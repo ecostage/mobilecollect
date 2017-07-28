@@ -60,8 +60,18 @@ class CollectListAdapter(val context: Context)
     }
 
     override fun onCollectLoaded(collect: Collect) {
-        items.add(CollectViewModel(collect.id, collect.name, collect.latitude,
-                collect.longitude, collect.classification, collect.userId, collect.date))
+        val collectViewModel = CollectViewModel()
+
+        collectViewModel.id = collect.id
+        collectViewModel.name = collect.name
+        collectViewModel.latitude = collect.latitude
+        collectViewModel.longitude = collect.longitude
+        collectViewModel.classification = collect.classification
+        collectViewModel.userId = collect.userId
+        collectViewModel.date = collect.date
+        collectViewModel.photo = collect.photo
+
+        items.add(collectViewModel)
 
         this.notifyDataSetChanged()
     }

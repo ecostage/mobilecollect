@@ -3,6 +3,7 @@ package br.com.ecostage.mobilecollect.ui.map
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -185,7 +186,7 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     override fun onSnapshotReady(mapSnapshot: Bitmap?) {
-        if (!markers.isEmpty()) {
+        if (!markers.isEmpty() && mapSnapshot != null) {
             val compressedSnapshot = mapPresenter.compressMapSnapshot(mapSnapshot)
             val lastMarkerPosition = markers.last().position
 
@@ -195,7 +196,9 @@ class MapActivity : BottomNavigationActivity(),
 
     override fun onMarkerClick(marker: Marker?): Boolean {
         if (marker?.tag != null) {
-            startActivity<CollectActivity>(CollectActivity.COLLECT_ID to marker.tag as String)
+            val options = ActivityOptions.makeCustomAnimation(applicationContext, R.anim.abc_fade_in, R.anim.abc_fade_out)
+            startActivity(intentFor<CollectActivity>(CollectActivity.COLLECT_ID to marker.tag as String),
+                    options.toBundle())
             return true
         }
 

@@ -1,10 +1,8 @@
 package br.com.ecostage.mobilecollect.ui.collect
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
+import br.com.ecostage.mobilecollect.util.ImageUtil
 
 /**
  * Created by cmaia on 7/20/17.
@@ -12,29 +10,41 @@ import java.io.InputStream
 class CollectPresenterImpl(val collectView: CollectView,
                            val collectActivity: CollectActivity)
     : CollectPresenter, CollectInteractor.OnSaveCollectListener, OnCollectLoadedListener {
+
+    override fun setupCollectMode(mode: CollectView.CollectMode) {
+        when(mode) {
+            CollectView.CollectMode.VISUALIZING -> collectView.hideImageContainers()
+            CollectView.CollectMode.COLLECTING -> collectActivity.showImageContainers()
+        }
+    }
+
     private val collectInteractor : CollectInteractor = CollectInteractorImpl(this, this)
 
     override fun loadCollect(collectId: String) {
+        collectView.showProgress()
         collectInteractor.loadCollect(collectId)
     }
 
     override fun onCollectLoaded(collect: Collect) {
-        collectView.populateFields(CollectViewModel(collect.id,
-                collect.name,
-                collect.latitude,
-                collect.longitude,
-                collect.classification,
-                collect.userId,
-                collect.date,
-                collect.photo.toString()))
+        val viewModel = CollectViewModel()
+        viewModel.id = collect.id
+        viewModel.name = collect.name
+        viewModel.latitude = collect.latitude
+        viewModel.longitude = collect.longitude
+        viewModel.classification = collect.classification
+        viewModel.userId = collect.userId
+        viewModel.date = collect.date
+        viewModel.photo = collect.photo
+
+        collectView.populateFields(viewModel)
+        collectView.hideProgress()
     }
 
     override fun onCollectLoadedError() {
         collectView.showMessageAsLongToast("Failed to show collect.")
     }
 
-    override fun decompressMapSnapshot(compressSnapshot: ByteArray): Bitmap =
-            BitmapFactory.decodeByteArray(compressSnapshot, 0, compressSnapshot.size)
+    override fun decompressMapSnapshot(compressSnapshot: ByteArray): Bitmap = ImageUtil.decompress(compressSnapshot)
 
     override fun takePhoto() = collectView.showCamera()
 
@@ -42,36 +52,47 @@ class CollectPresenterImpl(val collectView: CollectView,
 
     override fun onPermissionDenied(message: String) = collectView.showMessageAsLongToast(message)
 
-    override fun save(collect: Collect) {
+    override fun save(viewModel: CollectViewModel) {
         collectView.showProgress()
-        // Transform photo to bytearray
-        val inputStream = collectActivity.contentResolver.openInputStream(collect.photo)
 
-        collectInteractor.save(collect, toBytes(inputStream))
-    }
+        val collect = Collect()
 
-    private fun toBytes(inputStream: InputStream) : ByteArray {
-        val bufferStream = ByteArrayOutputStream()
+        collect.classification = viewModel.classification
+        collect.date = viewModel.date
+        collect.latitude = viewModel.latitude
+        collect.longitude = viewModel.longitude
+        collect.name = viewModel.name
 
-        inputStream.use { input ->
-            bufferStream.use { output ->
-                input.copyTo(output)
-            }
+        viewModel.photo.let { img ->
+            if (img != null)
+                collectInteractor.save(collect, img)
         }
-
-        return bufferStream.toByteArray()
     }
 
     override fun onSaveCollect(collect: Collect) {
         collectView.hideProgress()
         collectView.showCollectRequestSuccess()
-        collectView.returnToMap(CollectViewModel(collect.id, collect.name, collect.latitude,
-                collect.longitude, collect.classification, collect.userId, collect.date,
-                photo = collect.photo.toString()))
+
+        val viewModel = CollectViewModel()
+        viewModel.id = collect.id
+        viewModel.name = collect.name
+        viewModel.latitude = collect.latitude
+        viewModel.longitude = collect.longitude
+        viewModel.classification = collect.classification
+        viewModel.userId = collect.userId
+        viewModel.date = collect.date
+        viewModel.photo = collect.photo
+
+        collectView.returnToMap(viewModel)
     }
 
     override fun onSaveCollectError() {
             collectView.hideProgress()
             collectView.showNoUserError()
     }
+
+    override fun compressCollectPhoto(filePath: String, format: Bitmap.CompressFormat, qualityLevel: Int): ByteArray =
+            ImageUtil.compress(filePath, format, qualityLevel)
+
+    override fun convertCollectPhoto(img: ByteArray): Bitmap = ImageUtil.convertToBitmap(img)
 }

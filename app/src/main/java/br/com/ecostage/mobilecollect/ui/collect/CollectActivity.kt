@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -33,7 +34,6 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class CollectActivity : BaseActivity(), CollectView {
 
     companion object {
@@ -53,7 +53,7 @@ class CollectActivity : BaseActivity(), CollectView {
     private var collectLastImage: Uri? = null
     private var collectId: String? = null
 
-    private var model = Collect()
+    private var viewModel = CollectViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,12 +71,14 @@ class CollectActivity : BaseActivity(), CollectView {
         collectId = intent.getStringExtra(COLLECT_ID)
 
         if (collectId != null) {
+            collectPresenter.setupCollectMode(CollectView.CollectMode.VISUALIZING)
+
             collectId?.let { collectId ->
-                collectMapSnapshotImageContainer.visibility = View.GONE
-                collectPhotoContainer.visibility = View.GONE
                 collectPresenter.loadCollect(collectId)
             }
         } else {
+            collectPresenter.setupCollectMode(CollectView.CollectMode.COLLECTING)
+
             val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
 
             collectLatLng.text = resources.getString(R.string.collect_lat_lng_text, latitude(), longitude())
@@ -103,31 +105,38 @@ class CollectActivity : BaseActivity(), CollectView {
         return true
     }
 
+    private fun validateForm() {
+        val classificationText = collectClassification.text.toString().trim()
+        if (classificationText.isNullOrEmpty()) {
+            longToast(resources.getString(R.string.collect_classification_validation_error))
+            return
+        }
+
+        if (collectLastImage == null) {
+            longToast(getString(R.string.collect_photo_validation_error))
+            return
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_save_collect -> {
-                val classificationText = collectClassification.text.toString()
-                if (classificationText.isNullOrEmpty()) {
-                    longToast(resources.getString(R.string.collect_classification_validation_error))
-                    return false
-                }
+                this.validateForm()
+
+                viewModel.name = collectName.text.toString()
+                viewModel.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
+                viewModel.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
+                viewModel.date = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
 
                 collectLastImage.let { image ->
-                    if (image == null) {
-                        longToast(getString(R.string.collect_photo_validation_error))
-                        return false
+                    if (image != null) {
+                        viewModel.photo = collectPresenter.compressCollectPhoto(image.encodedPath,
+                                Bitmap.CompressFormat.JPEG, 30)
                     }
-
-                    val collectDate = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
-
-                    model.name = collectName.text.toString()
-                    model.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
-                    model.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
-                    model.date = collectDate
-                    model.photo = image
-
-                    collectPresenter.save(model)
                 }
+
+                collectPresenter.save(viewModel)
+
                 return true
             }
         }
@@ -174,8 +183,8 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     private fun applyColorTextSelected(classificationText: String?) {
-        model.classification = classificationText
-        collectClassification.text = model.classification
+        viewModel.classification = classificationText
+        collectClassification.text = viewModel.classification
     }
 
     private fun applyCategoryColorSelected(classificationColor: String?) {
@@ -282,6 +291,22 @@ class CollectActivity : BaseActivity(), CollectView {
         collectTeam.isFocusable = false
         collectTeam.isEnabled = false
 
-        collectImage.setImageURI(Uri.parse(collectViewModel.photo))
+        collectViewModel.photo.let { img ->
+            if (img != null) {
+                collectImage.setImageBitmap(collectPresenter.convertCollectPhoto(img))
+            }
+        }
+    }
+
+    override fun hideImageContainers() {
+        collectMapSnapshotImageContainer.visibility = View.GONE
+        collectTakePhotoBtn.visibility = View.GONE
+//        collectPhotoContainer.visibility = View.GONE
+    }
+
+    override fun showImageContainers() {
+        collectMapSnapshotImageContainer.visibility = View.VISIBLE
+        collectTakePhotoBtn.visibility = View.VISIBLE
+//        collectPhotoContainer.visibility = View.VISIBLE
     }
 }
