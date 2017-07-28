@@ -2,6 +2,7 @@ package br.com.ecostage.mobilecollect.ui.collect
 
 import android.graphics.Bitmap
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
+import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.util.ImageUtil
 
 /**

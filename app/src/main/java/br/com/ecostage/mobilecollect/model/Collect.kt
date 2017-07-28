@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect.ui.collect
+package br.com.ecostage.mobilecollect.model
 
 import java.util.*
 

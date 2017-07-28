@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect.ui.category.selection
+package br.com.ecostage.mobilecollect.model
 
 /**
  * Created by cmaia on 7/23/17.

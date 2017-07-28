@@ -1,8 +1,8 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
+import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.repository.CollectRepository
-import br.com.ecostage.mobilecollect.ui.collect.Collect
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
