@@ -235,14 +235,17 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     override fun navigateToCollectActivity(collectId: Int) {
-        startActivity<CollectActivity>(CollectActivity.COLLECT_ID to collectId.toString())
+        val options = ActivityOptions.makeCustomAnimation(applicationContext, R.anim.fade_in, R.anim.fade_out)
+        startActivity(intentFor<CollectActivity>(CollectActivity.COLLECT_ID to collectId.toString()), options.toBundle())
     }
 
     override fun navigateToCollectActivity(latitude: Double, longitude: Double, compressedMapSnapshot: ByteArray) {
+        val options = ActivityOptions.makeCustomAnimation(applicationContext, R.anim.fade_in, R.anim.fade_out)
         startActivityForResult(intentFor<CollectActivity>(CollectActivity.MARKER_LATITUDE to latitude.toString(),
                 CollectActivity.MARKER_LONGITUDE to longitude.toString(),
                 CollectActivity.COMPRESSED_MAP_SNAPSHOT to compressedMapSnapshot),
-                COLLECT_REQUEST)
+                COLLECT_REQUEST,
+                options.toBundle())
     }
 
     override fun removeLastMarkerFromMap() {
