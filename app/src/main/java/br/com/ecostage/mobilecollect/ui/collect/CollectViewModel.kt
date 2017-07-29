@@ -7,7 +7,7 @@ import java.util.*
 /**
  * Created by cmaia on 7/22/17.
  */
-data class CollectViewModel(var id: String? = null, var name: String?, var latitude: Double?, var longitude: Double?, var classification: String?, var userId: String? = null, var date: Date? = null) : Parcelable {
+data class CollectViewModel(var id: String? = null, var name: String?, var latitude: Double?, var longitude: Double?, var classification: String?, var userId: String? = null, var date: Date? = null, var teamName: String? = null) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
@@ -15,7 +15,8 @@ data class CollectViewModel(var id: String? = null, var name: String?, var latit
             parcel.readValue(Double::class.java.classLoader) as? Double,
             parcel.readString(),
             parcel.readString(),
-            Date(parcel.readLong()))
+            Date(parcel.readLong()),
+            parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
@@ -29,6 +30,8 @@ data class CollectViewModel(var id: String? = null, var name: String?, var latit
 
         if (time != null)
             parcel.writeLong(time)
+
+        parcel.writeString(teamName)
     }
 
     override fun describeContents(): Int {

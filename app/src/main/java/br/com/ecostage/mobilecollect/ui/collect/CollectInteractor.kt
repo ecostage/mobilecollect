@@ -1,5 +1,7 @@
 package br.com.ecostage.mobilecollect.ui.collect
 
+import br.com.ecostage.mobilecollect.ui.model.Team
+
 /**
  * Created by cmaia on 7/20/17.
  */
@@ -11,7 +13,7 @@ interface CollectInteractor {
     }
 
     interface OnTeamListListener {
-        fun onTeamListReady(teams: Array<CharSequence>)
+        fun onTeamListReady(teams: Array<Team>)
         fun onTeamHasNoTeams()
         fun onTeamListError()
     }

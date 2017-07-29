@@ -3,6 +3,7 @@ package br.com.ecostage.mobilecollect.ui.collect
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
+import br.com.ecostage.mobilecollect.ui.model.Team
 
 /**
  * Created by cmaia on 7/20/17.
@@ -29,7 +30,8 @@ class CollectPresenterImpl(val collectView: CollectView)
                 collect.longitude,
                 collect.classification,
                 collect.userId,
-                collect.date))
+                collect.date,
+                collect.team?.name))
     }
 
     override fun onCollectLoadedError() {
@@ -66,7 +68,7 @@ class CollectPresenterImpl(val collectView: CollectView)
         collectInteractor.loadTeamsListForCurrentUser()
     }
 
-    override fun onTeamListReady(teams: Array<CharSequence>) {
+    override fun onTeamListReady(teams: Array<Team>) {
         collectView.showTeamList(teams)
         collectView.hideProgressBarForTeams()
     }

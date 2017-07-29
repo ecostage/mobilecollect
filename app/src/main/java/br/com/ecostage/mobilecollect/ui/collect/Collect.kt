@@ -1,5 +1,6 @@
 package br.com.ecostage.mobilecollect.ui.collect
 
+import br.com.ecostage.mobilecollect.ui.model.Team
 import java.util.*
 
 // This should be a data class (check the firebase deserialization to change this)
@@ -11,4 +12,5 @@ class Collect {
     var classification: String? = null
     var userId: String? = null
     var date: Date = Date()
+    var team: Team? = null
 }

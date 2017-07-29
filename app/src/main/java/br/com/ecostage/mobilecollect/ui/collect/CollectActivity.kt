@@ -20,6 +20,7 @@ import android.support.v4.content.FileProvider
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
@@ -28,6 +29,7 @@ import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationColorSe
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationViewModel
 import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
 import br.com.ecostage.mobilecollect.ui.map.MapActivity
+import br.com.ecostage.mobilecollect.ui.model.Team
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
@@ -270,7 +272,7 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     override fun showNoUserError() {
-        this.showMessageAsLongToast(R.string.collect_save_error_no_user_auth.toString())
+        this.showMessageAsLongToast(getString(R.string.collect_save_error_no_user_auth))
     }
 
     override fun returnToMap(collectViewModel: CollectViewModel?) {
@@ -283,38 +285,55 @@ class CollectActivity : BaseActivity(), CollectView {
     override fun populateFields(collectViewModel: CollectViewModel) {
 
         collectClassification.text = collectViewModel.classification
+        collectClassification.typeface = Typeface.DEFAULT
         applyCategoryColorSelected(ClassificationColorSearch().classificationColor(collectViewModel.classification))
 
         collectName.isFocusable = false
         collectName.isEnabled = false
-        collectName.setText(collectViewModel.name, TextView.BufferType.EDITABLE)
+        collectName.setText(collectViewModel.name, TextView.BufferType.NORMAL)
 
         collectDate.text = dateFormatted(collectViewModel.date)
 
         collectLatLng.text = resources.getString(R.string.collect_lat_lng_text,
                 doubleFormatted(collectViewModel.latitude), doubleFormatted(collectViewModel.longitude))
 
-        collectTeamTextView.isFocusable = false
-        collectTeamTextView.isEnabled = false
+
+        collectTeamTextView.isFocusable = true
+        if (collectViewModel.teamName == null) {
+            collectTeamTextView.text = getString(R.string.message_time_no_informed)
+            collectTeamTextView.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
+            collectTeamTextView.isEnabled = false
+        } else {
+            collectTeamTextView.text = collectViewModel.teamName
+            collectTeamTextView.typeface = Typeface.DEFAULT
+        }
+
     }
 
 
-    override fun showTeamList(teamsList: Array<CharSequence>) {
+    override fun showTeamList(teamsList: Array<Team>) {
 
         val builder = android.app.AlertDialog.Builder(this)
 
-        builder.setTitle("Selecione um time")
-                .setSingleChoiceItems(teamsList, 3) { dialog, i ->
+        val arrayAdapter = ArrayAdapter<Team>(this, android.R.layout.select_dialog_singlechoice, teamsList)
+
+        val dialog = builder.setTitle(getString(R.string.title_select_a_team))
+                .setSingleChoiceItems(arrayAdapter, -1) { dialog, i ->
                     setTeamTextView(teamsList, i)
                     dialog.dismiss()
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }
                 .create()
-                .show()
+
+        if (!dialog.isShowing) {
+            dialog.show()
+        }
     }
 
-    private fun setTeamTextView(teamsList: Array<CharSequence>, i: Int) {
-        collectTeamTextView.text = teamsList[i]
+    private fun setTeamTextView(teamsList: Array<Team>, i: Int) {
+        val teamSelected = teamsList[i]
+        model.team = teamSelected
+        collectTeamTextView.text = teamSelected.name
         collectTeamTextView.typeface = Typeface.DEFAULT
         collectTeamRemoveButton.visibility = View.VISIBLE
     }

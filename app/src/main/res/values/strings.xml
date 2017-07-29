@@ -59,5 +59,7 @@
 
     <string name="profile_my_collects">Minhas Coletas</string>
     <string name="message_snackbar_no_teams_available">There are no teams available.</string>
+    <string name="title_select_a_team">Selecione um time</string>
+    <string name="message_time_no_informed">Team not informed</string>
 
 </resources>

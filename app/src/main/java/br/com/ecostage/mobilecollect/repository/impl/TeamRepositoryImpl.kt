@@ -17,7 +17,7 @@ class TeamRepositoryImpl : TeamRepository {
         firebaseDatabase
                 .child(USER_TEAMS_COLLECTION)
                 .child(userId)
-                .addValueEventListener(object : ValueEventListener {
+                .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot?) {
 
                         if (dataSnapshot == null) {
@@ -30,13 +30,13 @@ class TeamRepositoryImpl : TeamRepository {
                             return
                         }
 
-                        val arr = ArrayList<CharSequence>()
+                        val arr = ArrayList<Team>()
                         val children = dataSnapshot.children
 
                         for (teamSnapshot in children) {
                             val team = teamSnapshot.getValue(Team::class.java)
                             team?.id = teamSnapshot?.key
-                            arr.add(team?.name.toString())
+                            arr.add(team!!)
                         }
 
 

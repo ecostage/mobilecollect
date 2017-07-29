@@ -6,4 +6,8 @@ package br.com.ecostage.mobilecollect.ui.model
 class Team {
     var id: String? = null
     var name: String? = null
+
+    override fun toString(): String {
+        return name ?: ""
+    }
 }
