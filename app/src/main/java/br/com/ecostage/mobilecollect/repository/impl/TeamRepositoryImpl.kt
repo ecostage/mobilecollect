@@ -2,22 +2,53 @@ package br.com.ecostage.mobilecollect.repository.impl
 
 import br.com.ecostage.mobilecollect.repository.TeamRepository
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+import br.com.ecostage.mobilecollect.ui.model.Team
+import com.google.firebase.database.*
+
 
 class TeamRepositoryImpl : TeamRepository {
 
+    private val USER_TEAMS_COLLECTION = "team_by_user"
+
+    val firebaseDatabase: DatabaseReference = FirebaseDatabase.getInstance().reference
+
     override fun loadTeamsFor(userId: String, onTeamListListener: CollectInteractor.OnTeamListListener) {
 
-        doAsync {
-            val result = arrayOf<CharSequence>("Red", "Green", "Blue", "Red", "Green", "Blue", "Red", "Green", "Blue", "Red", "Green", "Blue", "Red", "Green", "Blue", "Red", "Green", "Blue")
-            Thread.sleep(5000)
+        firebaseDatabase
+                .child(USER_TEAMS_COLLECTION)
+                .child(userId)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
 
-            uiThread {
-                onTeamListListener.onTeamListReady(result)
-            }
-        }
+                        if (dataSnapshot == null) {
+                            onTeamListListener.onTeamListError()
+                            return
+                        }
+
+                        if (dataSnapshot.childrenCount <= 0 ){
+                            onTeamListListener.onTeamHasNoTeams()
+                            return
+                        }
+
+                        val arr = ArrayList<CharSequence>()
+                        val children = dataSnapshot.children
+
+                        for (teamSnapshot in children) {
+                            val team = teamSnapshot.getValue(Team::class.java)
+                            team?.id = teamSnapshot?.key
+                            arr.add(team?.name.toString())
+                        }
+
+
+                        onTeamListListener.onTeamListReady(arr.toTypedArray())
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError?) {
+                        onTeamListListener.onTeamListError()
+                        error { "Error when loading team data" }
+
+                    }
+                })
+
     }
-
-
 }

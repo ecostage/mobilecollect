@@ -71,6 +71,11 @@ class CollectPresenterImpl(val collectView: CollectView)
         collectView.hideProgressBarForTeams()
     }
 
+    override fun onTeamHasNoTeams() {
+        collectView.hideProgressBarForTeams()
+        collectView.showUserHasNoTeamsMessage()
+    }
+
     override fun onTeamListError() {
         collectView.hideProgress()
         collectView.showNoUserError()

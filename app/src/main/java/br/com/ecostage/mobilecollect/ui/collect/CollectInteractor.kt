@@ -12,6 +12,7 @@ interface CollectInteractor {
 
     interface OnTeamListListener {
         fun onTeamListReady(teams: Array<CharSequence>)
+        fun onTeamHasNoTeams()
         fun onTeamListError()
     }
 

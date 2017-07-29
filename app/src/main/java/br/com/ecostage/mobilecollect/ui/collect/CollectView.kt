@@ -18,4 +18,5 @@ interface CollectView {
     fun populateFields(collectViewModel: CollectViewModel)
     fun showTeamList(teamsList: Array<CharSequence>)
     fun removeTeamSelected()
+    fun showUserHasNoTeamsMessage()
 }

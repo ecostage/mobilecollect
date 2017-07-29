@@ -58,5 +58,6 @@
     <string name="classification_header_title">Classificação</string>
 
     <string name="profile_my_collects">Minhas Coletas</string>
+    <string name="message_snackbar_no_teams_available">There are no teams available.</string>
 
 </resources>

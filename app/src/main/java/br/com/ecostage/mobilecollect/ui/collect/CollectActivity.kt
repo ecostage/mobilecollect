@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment.getExternalStorageDirectory
 import android.provider.MediaStore
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
@@ -322,5 +323,10 @@ class CollectActivity : BaseActivity(), CollectView {
         collectTeamTextView.text = ""
         collectTeamTextView.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
         collectTeamRemoveButton.visibility = View.GONE
+    }
+
+    override fun showUserHasNoTeamsMessage() {
+        Snackbar.make(linearLayoutViewContainer, R.string.message_snackbar_no_teams_available, Snackbar.LENGTH_SHORT)
+                .show()
     }
 }

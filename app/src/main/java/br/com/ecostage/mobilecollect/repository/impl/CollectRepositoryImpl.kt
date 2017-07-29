@@ -35,8 +35,8 @@ class CollectRepositoryImpl : CollectRepository {
                     }
 
                     override fun onCancelled(databaseError: DatabaseError?) {
-                        error { "Error when loading collect data" }
                         onCollectLoadedListener.onCollectLoadedError()
+                        error { "Error when loading collect data" }
                     }
                 })
     }
@@ -80,8 +80,8 @@ class CollectRepositoryImpl : CollectRepository {
                     }
 
                     override fun onCancelled(databaseError: DatabaseError?) {
-                        error { "Error when loading collect data" }
                         onCollectLoadedListener.onCollectLoadedError()
+                        error { "Error when loading collect data" }
                     }
                 })
     }
