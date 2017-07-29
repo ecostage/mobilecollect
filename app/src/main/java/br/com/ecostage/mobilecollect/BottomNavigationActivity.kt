@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import br.com.ecostage.mobilecollect.ui.map.MapActivity
 import br.com.ecostage.mobilecollect.ui.profile.ProfileActivity
-import br.com.ecostage.mobilecollect.ui.ranking.RankingActivity
+import br.com.ecostage.mobilecollect.ui.ranking.base.RankingActivity
 
 
 /**
