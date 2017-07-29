@@ -17,5 +17,5 @@ interface CollectView {
     fun showNoUserError()
     fun populateFields(collectViewModel: CollectViewModel)
     fun showTeamList(teamsList: Array<CharSequence>)
-    fun remoteTeamSelected()
+    fun removeTeamSelected()
 }

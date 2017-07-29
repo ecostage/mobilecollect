@@ -104,7 +104,7 @@ class CollectActivity : BaseActivity(), CollectView {
 
     private fun setupTeamControllers() {
         collectTeamTextView.setOnClickListener { collectPresenter.selectTeam(model) }
-        collectTeamRemoveButton.setOnClickListener { collectPresenter.remoteTeamSelected(model) }
+        collectTeamRemoveButton.setOnClickListener { collectPresenter.removeTeamSelected(model) }
     }
 
     private fun dateFormatted(now: Date?): String = SimpleDateFormat(dateFormat()).format(now)
@@ -254,7 +254,6 @@ class CollectActivity : BaseActivity(), CollectView {
 
     override fun showProgressBarForTeams() {
         collectTeamProgressBar.visibility = View.VISIBLE
-        collectTeamRemoveButton.visibility = View.GONE
     }
 
     override fun hideProgress() {
@@ -263,7 +262,6 @@ class CollectActivity : BaseActivity(), CollectView {
 
     override fun hideProgressBarForTeams() {
         collectTeamProgressBar.visibility = View.GONE
-        collectTeamRemoveButton.visibility = View.VISIBLE
     }
 
     override fun showCollectRequestSuccess() {
@@ -320,8 +318,8 @@ class CollectActivity : BaseActivity(), CollectView {
         collectTeamRemoveButton.visibility = View.VISIBLE
     }
 
-    override fun remoteTeamSelected() {
-        collectTeamTextView.text = getString(R.string.collect_team_hint)
+    override fun removeTeamSelected() {
+        collectTeamTextView.text = ""
         collectTeamTextView.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
         collectTeamRemoveButton.visibility = View.GONE
     }

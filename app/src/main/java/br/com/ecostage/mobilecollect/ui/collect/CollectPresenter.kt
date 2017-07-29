@@ -13,5 +13,5 @@ interface CollectPresenter {
     fun save(collect: Collect)
     fun loadCollect(collectId: String)
     fun selectTeam(model: Collect)
-    fun remoteTeamSelected(model: Collect)
+    fun removeTeamSelected(model: Collect)
 }

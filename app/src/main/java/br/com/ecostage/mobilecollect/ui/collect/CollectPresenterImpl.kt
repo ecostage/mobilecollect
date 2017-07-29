@@ -76,7 +76,7 @@ class CollectPresenterImpl(val collectView: CollectView)
         collectView.showNoUserError()
     }
 
-    override fun remoteTeamSelected(model: Collect) {
-        collectView.remoteTeamSelected()
+    override fun removeTeamSelected(model: Collect) {
+        collectView.removeTeamSelected()
     }
 }
