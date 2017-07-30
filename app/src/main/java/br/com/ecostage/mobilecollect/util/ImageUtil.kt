@@ -16,7 +16,10 @@ class ImageUtil {
         }
 
         fun compress(imagePath: String, format: Bitmap.CompressFormat, qualityLevel: Int) : ByteArray {
-            val bitmap = BitmapFactory.decodeFile(imagePath)
+            val bmpOptions = BitmapFactory.Options()
+            bmpOptions.inSampleSize = 2
+
+            val bitmap = BitmapFactory.decodeFile(imagePath, bmpOptions)
             val bufferStream = ByteArrayOutputStream()
 
             bitmap.compress(format, qualityLevel, bufferStream)
