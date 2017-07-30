@@ -11,7 +11,7 @@ import android.graphics.PorterDuffColorFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment.getExternalStorageDirectory
+import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -51,6 +51,7 @@ class CollectActivity : BaseActivity(), CollectView {
     private val collectPresenter: CollectPresenter = CollectPresenterImpl(this, this)
 
     private var collectLastImage: Uri? = null
+    private var collectLastImagePath: String? = null
     private var collectId: String? = null
 
     private var viewModel = CollectViewModel()
@@ -133,9 +134,9 @@ class CollectActivity : BaseActivity(), CollectView {
                 viewModel.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
                 viewModel.date = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
 
-                collectLastImage.let { image ->
-                    if (image != null) {
-                        viewModel.photo = collectPresenter.compressCollectPhoto(image.encodedPath,
+                collectLastImagePath.let { path ->
+                    if (path != null) {
+                        viewModel.photo = collectPresenter.compressCollectPhoto(path,
                                 Bitmap.CompressFormat.JPEG, 30)
                     }
                 }
@@ -225,13 +226,16 @@ class CollectActivity : BaseActivity(), CollectView {
         if (canAccessCamera()) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
+            val file = File.createTempFile(LAST_COLLECT_PHOTO_FILE_NAME, ".jpg", getExternalFilesDir(Environment.DIRECTORY_PICTURES))
+
             if (Build.VERSION.SDK_INT >= 24) {
                 collectLastImage = FileProvider.getUriForFile(this,
-                        this.applicationContext.packageName + ".br.com.ecostage.mobilecollect.provider",
-                        File(getExternalStorageDirectory(), LAST_COLLECT_PHOTO_FILE_NAME))
+                        this.applicationContext.packageName + ".fileprovider",
+                        file)
             } else {
-                collectLastImage = Uri.fromFile(File(getExternalStorageDirectory(), LAST_COLLECT_PHOTO_FILE_NAME))
+                collectLastImage = Uri.fromFile(file)
             }
+            collectLastImagePath = file.absolutePath
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, collectLastImage)
 
