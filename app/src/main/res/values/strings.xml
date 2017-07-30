@@ -59,5 +59,6 @@
 
     <string name="profile_my_collects">Minhas Coletas</string>
     <string name="collect_photo_validation_error">É necessário tirar uma foto do local!</string>
+    <string name="ranking_my_points">Meus pontos</string>
 
 </resources>
