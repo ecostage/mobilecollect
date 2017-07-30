@@ -4,13 +4,14 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment.getExternalStorageDirectory
+import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -33,7 +34,6 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class CollectActivity : BaseActivity(), CollectView {
 
     companion object {
@@ -48,12 +48,13 @@ class CollectActivity : BaseActivity(), CollectView {
         val CLASSIFICATION_DATA_RESULT = "CollectActivity:classification"
     }
 
-    private val collectPresenter: CollectPresenter = CollectPresenterImpl(this)
+    private val collectPresenter: CollectPresenter = CollectPresenterImpl(this, this)
 
     private var collectLastImage: Uri? = null
+    private var collectLastImagePath: String? = null
     private var collectId: String? = null
 
-    private var model = Collect()
+    private var viewModel = CollectViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,12 +72,14 @@ class CollectActivity : BaseActivity(), CollectView {
         collectId = intent.getStringExtra(COLLECT_ID)
 
         if (collectId != null) {
+            collectPresenter.setupCollectMode(CollectView.CollectMode.VISUALIZING)
+
             collectId?.let { collectId ->
-                collectMapSnapshotImageContainer.visibility = View.GONE
-                collectPhotoContainer.visibility = View.GONE
                 collectPresenter.loadCollect(collectId)
             }
         } else {
+            collectPresenter.setupCollectMode(CollectView.CollectMode.COLLECTING)
+
             val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
 
             collectLatLng.text = resources.getString(R.string.collect_lat_lng_text, latitude(), longitude())
@@ -103,23 +106,42 @@ class CollectActivity : BaseActivity(), CollectView {
         return true
     }
 
+    private fun validateForm() : Boolean {
+        val classificationText = collectClassification.text.toString().trim()
+        if (classificationText.isNullOrEmpty()) {
+            hideProgress()
+            longToast(resources.getString(R.string.collect_classification_validation_error))
+            return false
+        }
+
+        if (collectLastImage == null) {
+            hideProgress()
+            longToast(getString(R.string.collect_photo_validation_error))
+            return false
+        }
+
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_save_collect -> {
-                val classificationText = collectClassification.text.toString()
-                if (classificationText.isNullOrEmpty()) {
-                    longToast(resources.getString(R.string.collect_classification_validation_error))
+                if (!this.validateForm())
                     return false
+
+                viewModel.name = collectName.text.toString()
+                viewModel.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
+                viewModel.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
+                viewModel.date = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
+
+                collectLastImagePath.let { path ->
+                    if (path != null) {
+                        viewModel.photo = collectPresenter.compressCollectPhoto(path,
+                                Bitmap.CompressFormat.JPEG, 30)
+                    }
                 }
 
-                val collectDate = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
-
-                model.name = collectName.text.toString()
-                model.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
-                model.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
-                model.date = collectDate
-
-                collectPresenter.save(model)
+                collectPresenter.save(viewModel)
 
                 return true
             }
@@ -167,8 +189,8 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     private fun applyColorTextSelected(classificationText: String?) {
-        model.classification = classificationText
-        collectClassification.text = model.classification
+        viewModel.classification = classificationText
+        collectClassification.text = viewModel.classification
     }
 
     private fun applyCategoryColorSelected(classificationColor: String?) {
@@ -204,13 +226,16 @@ class CollectActivity : BaseActivity(), CollectView {
         if (canAccessCamera()) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
+            val file = File.createTempFile(LAST_COLLECT_PHOTO_FILE_NAME, ".jpg", getExternalFilesDir(Environment.DIRECTORY_PICTURES))
+
             if (Build.VERSION.SDK_INT >= 24) {
                 collectLastImage = FileProvider.getUriForFile(this,
-                        this.applicationContext.packageName + ".br.com.ecostage.mobilecollect.provider",
-                        File(getExternalStorageDirectory(), LAST_COLLECT_PHOTO_FILE_NAME))
+                        this.applicationContext.packageName + ".fileprovider",
+                        file)
             } else {
-                collectLastImage = Uri.fromFile(File(getExternalStorageDirectory(), LAST_COLLECT_PHOTO_FILE_NAME))
+                collectLastImage = Uri.fromFile(file)
             }
+            collectLastImagePath = file.absolutePath
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, collectLastImage)
 
@@ -274,5 +299,23 @@ class CollectActivity : BaseActivity(), CollectView {
 
         collectTeam.isFocusable = false
         collectTeam.isEnabled = false
+
+        collectViewModel.photo.let { img ->
+            if (img != null) {
+                collectImage.setImageBitmap(collectPresenter.convertCollectPhoto(img))
+            }
+        }
+    }
+
+    override fun hideImageContainers() {
+        collectMapSnapshotImageContainer.visibility = View.GONE
+        collectTakePhotoBtn.visibility = View.GONE
+//        collectPhotoContainer.visibility = View.GONE
+    }
+
+    override fun showImageContainers() {
+        collectMapSnapshotImageContainer.visibility = View.VISIBLE
+        collectTakePhotoBtn.visibility = View.VISIBLE
+//        collectPhotoContainer.visibility = View.VISIBLE
     }
 }
