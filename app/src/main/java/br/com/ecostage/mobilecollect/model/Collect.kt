@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect.ui.collect
+package br.com.ecostage.mobilecollect.model
 
 import br.com.ecostage.mobilecollect.ui.model.Team
 import java.util.*
@@ -11,6 +11,7 @@ class Collect {
     var longitude: Double? = null
     var classification: String? = null
     var userId: String? = null
-    var date: Date = Date()
+    var photo: ByteArray? = null
+    var date: Date? = null
     var team: Team? = null
 }

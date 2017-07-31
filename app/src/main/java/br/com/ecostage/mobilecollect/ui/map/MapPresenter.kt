@@ -8,7 +8,7 @@ interface MapPresenter {
     fun onPermissionNeeded()
     fun onPermissionDenied(message: String)
     fun collect(latitude: Double, longitude: Double, compressedMapSnapshot: ByteArray)
-    fun compressMapSnapshot(mapSnapshot : Bitmap?): ByteArray
+    fun compressMapSnapshot(mapSnapshot : Bitmap): ByteArray
     fun removeLastMarker()
     fun loadUserCollects()
 }

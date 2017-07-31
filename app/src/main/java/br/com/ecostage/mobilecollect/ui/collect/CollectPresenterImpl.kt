@@ -1,45 +1,59 @@
 package br.com.ecostage.mobilecollect.ui.collect
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
+import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.ui.model.Team
+import br.com.ecostage.mobilecollect.util.ImageUtil
 
 /**
  * Created by cmaia on 7/20/17.
  */
-class CollectPresenterImpl(val collectView: CollectView)
+class CollectPresenterImpl(val collectView: CollectView,
+                           val collectActivity: CollectActivity)
     : CollectPresenter,
         CollectInteractor.OnSaveCollectListener,
         OnCollectLoadedListener,
         CollectInteractor.OnTeamListListener {
 
-    private val collectInteractor: CollectInteractor = CollectInteractorImpl(
+    override fun setupCollectMode(mode: CollectView.CollectMode) {
+        when(mode) {
+            CollectView.CollectMode.VISUALIZING -> collectView.hideImageContainers()
+            CollectView.CollectMode.COLLECTING -> collectActivity.showImageContainers()
+        }
+    }
+
+    private val collectInteractor : CollectInteractor = CollectInteractorImpl(
             this,
             this,
             this)
 
     override fun loadCollect(collectId: String) {
+        collectView.showProgress()
         collectInteractor.loadCollect(collectId)
     }
 
     override fun onCollectLoaded(collect: Collect) {
-        collectView.populateFields(CollectViewModel(collect.id,
-                collect.name,
-                collect.latitude,
-                collect.longitude,
-                collect.classification,
-                collect.userId,
-                collect.date,
-                collect.team?.name))
+        val viewModel = CollectViewModel()
+        viewModel.id = collect.id
+        viewModel.name = collect.name
+        viewModel.latitude = collect.latitude
+        viewModel.longitude = collect.longitude
+        viewModel.classification = collect.classification
+        viewModel.userId = collect.userId
+        viewModel.date = collect.date
+        viewModel.photo = collect.photo
+        viewModel.teamName = collect.team?.name
+
+        collectView.populateFields(viewModel)
+        collectView.hideProgress()
     }
 
     override fun onCollectLoadedError() {
         collectView.showMessageAsLongToast("Failed to show collect.")
     }
 
-    override fun decompressMapSnapshot(compressSnapshot: ByteArray): Bitmap =
-            BitmapFactory.decodeByteArray(compressSnapshot, 0, compressSnapshot.size)
+    override fun decompressMapSnapshot(compressSnapshot: ByteArray): Bitmap = ImageUtil.decompress(compressSnapshot)
 
     override fun takePhoto() = collectView.showCamera()
 
@@ -47,15 +61,40 @@ class CollectPresenterImpl(val collectView: CollectView)
 
     override fun onPermissionDenied(message: String) = collectView.showMessageAsLongToast(message)
 
-    override fun save(collect: Collect) {
+    override fun save(viewModel: CollectViewModel) {
         collectView.showProgress()
-        collectInteractor.save(collect)
+
+        val collect = Collect()
+
+        collect.classification = viewModel.classification
+        collect.date = viewModel.date
+        collect.latitude = viewModel.latitude
+        collect.longitude = viewModel.longitude
+        collect.name = viewModel.name
+//        collect.team = viewModel.teamName
+
+        viewModel.photo.let { img ->
+            if (img != null)
+                collectInteractor.save(collect, img)
+        }
     }
 
     override fun onSaveCollect(collect: Collect) {
         collectView.hideProgress()
         collectView.showCollectRequestSuccess()
-        collectView.returnToMap(CollectViewModel(collect.id, collect.name, collect.latitude, collect.longitude, collect.classification, collect.userId, collect.date))
+
+        val viewModel = CollectViewModel()
+        viewModel.id = collect.id
+        viewModel.name = collect.name
+        viewModel.latitude = collect.latitude
+        viewModel.longitude = collect.longitude
+        viewModel.classification = collect.classification
+        viewModel.userId = collect.userId
+        viewModel.date = collect.date
+        viewModel.photo = collect.photo
+        viewModel.teamName = collect.team?.name
+
+        collectView.returnToMap(viewModel)
     }
 
     override fun onSaveCollectError() {
@@ -86,4 +125,9 @@ class CollectPresenterImpl(val collectView: CollectView)
     override fun removeTeamSelected(model: Collect) {
         collectView.removeTeamSelected()
     }
+
+    override fun compressCollectPhoto(filePath: String, format: Bitmap.CompressFormat, qualityLevel: Int): ByteArray =
+            ImageUtil.compress(filePath, format, qualityLevel)
+
+    override fun convertCollectPhoto(img: ByteArray): Bitmap = ImageUtil.convertToBitmap(img)
 }

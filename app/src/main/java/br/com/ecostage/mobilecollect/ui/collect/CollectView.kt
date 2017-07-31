@@ -6,6 +6,11 @@ import br.com.ecostage.mobilecollect.ui.model.Team
  * Created by cmaia on 7/20/17.
  */
 interface CollectView {
+    enum class CollectMode {
+        VISUALIZING,
+        COLLECTING
+    }
+
     fun showCamera()
     fun showRequestPermissionsDialog()
     fun canAccessCamera() : Boolean
@@ -21,4 +26,6 @@ interface CollectView {
     fun showTeamList(teamsList: Array<Team>)
     fun removeTeamSelected()
     fun showUserHasNoTeamsMessage()
+    fun hideImageContainers()
+    fun showImageContainers()
 }

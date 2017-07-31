@@ -1,5 +1,6 @@
 package br.com.ecostage.mobilecollect.ui.collect
 
+import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.ui.model.Team
 
 /**
@@ -18,7 +19,7 @@ interface CollectInteractor {
         fun onTeamListError()
     }
 
-    fun save(collect: Collect)
+    fun save(collect: Collect, photoBytes: ByteArray)
     fun loadCollect(collectId: String)
     fun loadTeamsListForCurrentUser()
 }
