@@ -29,8 +29,8 @@ class CollectInteractorImpl(val onSaveCollectListener: CollectInteractor.OnSaveC
         if (userId != null) {
             collectRepository.save(userId, collect, photoBytes, onSaveCollectListener)
         } else {
-            error { "Error loading collect" }
             onSaveCollectListener.onSaveCollectError()
+            error { "Could not find current user id when saving collect" }
         }
     }
 
@@ -45,8 +45,8 @@ class CollectInteractorImpl(val onSaveCollectListener: CollectInteractor.OnSaveC
             teamRepository.loadTeamsFor(userId, onTeamListListener)
         }
         else {
-            error { "Error loading teams" }
             onTeamListListener.onTeamListError()
+            error { "Could not find current user id when loading teams" }
         }
     }
 }

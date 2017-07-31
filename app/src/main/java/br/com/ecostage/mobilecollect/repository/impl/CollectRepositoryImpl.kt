@@ -7,11 +7,13 @@ import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.error
 
 /**
  * Created by cmaia on 7/23/17.
  */
-class CollectRepositoryImpl : CollectRepository {
+class CollectRepositoryImpl : CollectRepository, AnkoLogger {
 
     companion object {
         val COLLECT_DB_TYPE = "collect"
@@ -40,8 +42,10 @@ class CollectRepositoryImpl : CollectRepository {
                     }
 
                     override fun onCancelled(databaseError: DatabaseError?) {
-                        onCollectLoadedListener.onCollectLoadedError()
-                        error { "Error when loading collect data" }
+                        if (databaseError != null) {
+                            onCollectLoadedListener.onCollectLoadedError()
+                            error { "Error when loading collect data. " + databaseError.message }
+                        }
                     }
                 })
     }
@@ -116,8 +120,10 @@ class CollectRepositoryImpl : CollectRepository {
                     }
 
                     override fun onCancelled(databaseError: DatabaseError?) {
-                        onCollectLoadedListener.onCollectLoadedError()
-                        error { "Error when loading collect data" }
+                        if (databaseError != null) {
+                            onCollectLoadedListener.onCollectLoadedError()
+                            error { "Error when loading collect data. " + databaseError.message }
+                        }
                     }
                 })
     }

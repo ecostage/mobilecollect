@@ -4,9 +4,11 @@ import br.com.ecostage.mobilecollect.model.Team
 import br.com.ecostage.mobilecollect.repository.TeamRepository
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
 import com.google.firebase.database.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.error
 
 
-class TeamRepositoryImpl : TeamRepository {
+class TeamRepositoryImpl : TeamRepository, AnkoLogger {
 
     private val USER_TEAMS_COLLECTION = "team_by_user"
 
@@ -44,9 +46,10 @@ class TeamRepositoryImpl : TeamRepository {
                     }
 
                     override fun onCancelled(databaseError: DatabaseError?) {
-                        onTeamListListener.onTeamListError()
-                        error { "Error when loading team data" }
-
+                        if (databaseError != null) {
+                            onTeamListListener.onTeamListError()
+                            error { "Error when loading team data. " + databaseError.message }
+                        }
                     }
                 })
 
