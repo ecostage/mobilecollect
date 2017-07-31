@@ -76,6 +76,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDmU6CD4gea_JrZ3fFGcyMHEuoLYQsNvVk" />
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="cb30116ada2e31c94c96b05ec50a58c7b2124423" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

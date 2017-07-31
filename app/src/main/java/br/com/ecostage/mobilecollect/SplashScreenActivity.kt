@@ -4,6 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import br.com.ecostage.mobilecollect.ui.login.LoginActivity
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+
+
 
 /**
  * Created by andremaia on 7/15/17.
@@ -12,8 +16,7 @@ class SplashScreenActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        super.onCreate(savedInstanceState)
+        Fabric.with(this, Crashlytics())
         setContentView(R.layout.activity_splash_screen)
 
         val timerThread = object : Thread() {
