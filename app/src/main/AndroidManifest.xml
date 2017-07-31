@@ -50,7 +50,7 @@
             android:label="@string/action_label_profile"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="br.com.ecostage.mobilecollect.ui.ranking.base.RankingActivity"
+            android:name="br.com.ecostage.mobilecollect.ui.ranking.RankingActivity"
             android:label="@string/action_label_ranking"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"

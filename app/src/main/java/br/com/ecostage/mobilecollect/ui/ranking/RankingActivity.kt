@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect.ui.ranking.base
+package br.com.ecostage.mobilecollect.ui.ranking
 
 import android.os.Bundle
 import br.com.ecostage.mobilecollect.BottomNavigationActivity

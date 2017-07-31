@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect.ui.ranking.base
+package br.com.ecostage.mobilecollect.ui.ranking
 
 import br.com.ecostage.mobilecollect.OnUserLoadedListener
 import br.com.ecostage.mobilecollect.repository.UserRepository
