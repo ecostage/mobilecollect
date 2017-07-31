@@ -80,7 +80,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
 
             override fun onComplete(dbError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
                 if (dbError != null) {
-                    undoCollect(collect)
+                    undoCollect(collect, false)
                     onCollectSaveListener.onSaveCollectError()
                     error("Could not save user [" + collect.userId + "] ranking")
                 }
@@ -106,32 +106,34 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
         }
 
         uploadTask.addOnFailureListener {
-            undoCollect(collect)
+            undoCollect(collect, true)
             onCollectSaveListener.onSaveCollectError() // Maybe a message or error code
         }
     }
 
-    private fun undoCollect(collect: Collect) {
+    private fun undoCollect(collect: Collect, hasPointsIncreased: Boolean) {
         firebaseDatabase.child(COLLECT_DB_TYPE).child(collect.userId).removeValue()
         firebaseDatabase.child(COLLECT_BY_USER_DB_TYPE).child(collect.userId).child(collect.userId).removeValue()
 
-        firebaseDatabase.child(COLLECT_RANKING_DB_TYPE).child(collect.userId).runTransaction(object : Transaction.Handler {
-            override fun doTransaction(data: MutableData?): Transaction.Result {
-                val points = data?.getValue(Long::class.java)
+        if (hasPointsIncreased) { // This logic to check if points had increased is wrong, check this later
+            firebaseDatabase.child(COLLECT_RANKING_DB_TYPE).child(collect.userId).runTransaction(object : Transaction.Handler {
+                override fun doTransaction(data: MutableData?): Transaction.Result {
+                    val points = data?.getValue(Long::class.java)
 
-                if (points != null) {
-                    data.value = points - 1
+                    if (points != null) {
+                        data.value = points - 1
+                    }
+
+                    return Transaction.success(data)
                 }
 
-                return Transaction.success(data)
-            }
-
-            override fun onComplete(dbError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
-                if (dbError != null) {
-                    error("Could not save undo user [" + collect.userId + "] ranking")
+                override fun onComplete(dbError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
+                    if (dbError != null) {
+                        error("Could not save undo user [" + collect.userId + "] ranking")
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     override fun loadCollect(collectId: String, onCollectLoadedListener: OnCollectLoadedListener) {
