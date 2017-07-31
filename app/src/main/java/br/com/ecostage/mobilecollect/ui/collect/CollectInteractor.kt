@@ -1,7 +1,7 @@
 package br.com.ecostage.mobilecollect.ui.collect
 
 import br.com.ecostage.mobilecollect.model.Collect
-import br.com.ecostage.mobilecollect.ui.model.Team
+import br.com.ecostage.mobilecollect.model.Team
 
 /**
  * Created by cmaia on 7/20/17.

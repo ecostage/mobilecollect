@@ -3,7 +3,7 @@ package br.com.ecostage.mobilecollect.ui.collect
 import android.graphics.Bitmap
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.model.Collect
-import br.com.ecostage.mobilecollect.ui.model.Team
+import br.com.ecostage.mobilecollect.model.Team
 import br.com.ecostage.mobilecollect.util.ImageUtil
 
 /**
@@ -43,7 +43,12 @@ class CollectPresenterImpl(val collectView: CollectView,
         viewModel.userId = collect.userId
         viewModel.date = collect.date
         viewModel.photo = collect.photo
-        viewModel.teamName = collect.team?.name
+
+        val teamViewModel = TeamViewModel()
+        teamViewModel.name = collect.team?.name
+        teamViewModel.id = collect.team?.id
+
+        viewModel.team = teamViewModel
 
         collectView.populateFields(viewModel)
         collectView.hideProgress()
@@ -71,7 +76,11 @@ class CollectPresenterImpl(val collectView: CollectView,
         collect.latitude = viewModel.latitude
         collect.longitude = viewModel.longitude
         collect.name = viewModel.name
-//        collect.team = viewModel.teamName
+        val team = Team()
+        team.id = viewModel.team?.id
+        team.name = viewModel.team?.name
+
+        collect.team = team
 
         viewModel.photo.let { img ->
             if (img != null)
@@ -92,7 +101,12 @@ class CollectPresenterImpl(val collectView: CollectView,
         viewModel.userId = collect.userId
         viewModel.date = collect.date
         viewModel.photo = collect.photo
-        viewModel.teamName = collect.team?.name
+
+        val teamViewModel = TeamViewModel()
+        teamViewModel.name = collect.team?.name
+        teamViewModel.id = collect.team?.id
+
+        viewModel.team = teamViewModel
 
         collectView.returnToMap(viewModel)
     }
@@ -102,13 +116,23 @@ class CollectPresenterImpl(val collectView: CollectView,
         collectView.showNoUserError()
     }
 
-    override fun selectTeam(model: Collect) {
+    override fun selectTeam(model: CollectViewModel) {
         collectView.showProgressBarForTeams()
         collectInteractor.loadTeamsListForCurrentUser()
     }
 
     override fun onTeamListReady(teams: Array<Team>) {
-        collectView.showTeamList(teams)
+        val teamViewModels = ArrayList<TeamViewModel>()
+
+        teams.mapNotNull {
+            val viewModel = TeamViewModel()
+            viewModel.name = it.name
+            viewModel.id = it.id
+
+            teamViewModels.add(viewModel)
+        }
+
+        collectView.showTeamList(teamViewModels)
         collectView.hideProgressBarForTeams()
     }
 
@@ -122,7 +146,7 @@ class CollectPresenterImpl(val collectView: CollectView,
         collectView.showNoUserError()
     }
 
-    override fun removeTeamSelected(model: Collect) {
+    override fun removeTeamSelected(model: CollectViewModel) {
         collectView.removeTeamSelected()
     }
 

@@ -1,7 +1,5 @@
 package br.com.ecostage.mobilecollect.ui.collect
 
-import br.com.ecostage.mobilecollect.ui.model.Team
-
 /**
  * Created by cmaia on 7/20/17.
  */
@@ -23,7 +21,7 @@ interface CollectView {
     fun returnToMap(collectViewModel: CollectViewModel?)
     fun showNoUserError()
     fun populateFields(collectViewModel: CollectViewModel)
-    fun showTeamList(teamsList: Array<Team>)
+    fun showTeamList(teamsList: ArrayList<TeamViewModel>)
     fun removeTeamSelected()
     fun showUserHasNoTeamsMessage()
     fun hideImageContainers()

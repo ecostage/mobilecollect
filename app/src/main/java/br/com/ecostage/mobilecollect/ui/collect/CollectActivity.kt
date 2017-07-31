@@ -26,7 +26,6 @@ import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationColorSe
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationViewModel
 import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
 import br.com.ecostage.mobilecollect.ui.map.MapActivity
-import br.com.ecostage.mobilecollect.ui.model.Team
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
@@ -105,8 +104,8 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     private fun setupTeamControllers() {
-        collectTeamTextView.setOnClickListener { collectPresenter.selectTeam(model) }
-        collectTeamRemoveButton.setOnClickListener { collectPresenter.removeTeamSelected(model) }
+        collectTeamTextView.setOnClickListener { collectPresenter.selectTeam(viewModel) }
+        collectTeamRemoveButton.setOnClickListener { collectPresenter.removeTeamSelected(viewModel) }
     }
 
     private fun dateFormatted(now: Date?): String = SimpleDateFormat(dateFormat()).format(now)
@@ -319,12 +318,12 @@ class CollectActivity : BaseActivity(), CollectView {
                 doubleFormatted(collectViewModel.latitude), doubleFormatted(collectViewModel.longitude))
 
         collectTeamTextView.isFocusable = true
-        if (collectViewModel.teamName == null) {
+        if (collectViewModel.team == null) {
             collectTeamTextView.text = getString(R.string.message_time_no_informed)
             collectTeamTextView.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
             collectTeamTextView.isEnabled = false
         } else {
-            collectTeamTextView.text = collectViewModel.teamName
+            collectTeamTextView.text = collectViewModel.team?.name
             collectTeamTextView.typeface = Typeface.DEFAULT
         }
 
@@ -338,20 +337,18 @@ class CollectActivity : BaseActivity(), CollectView {
     override fun hideImageContainers() {
         collectMapSnapshotImageContainer.visibility = View.GONE
         collectTakePhotoBtn.visibility = View.GONE
-//        collectPhotoContainer.visibility = View.GONE
     }
 
     override fun showImageContainers() {
         collectMapSnapshotImageContainer.visibility = View.VISIBLE
         collectTakePhotoBtn.visibility = View.VISIBLE
-//        collectPhotoContainer.visibility = View.VISIBLE
     }
 
-    override fun showTeamList(teamsList: Array<Team>) {
+    override fun showTeamList(teamsList: ArrayList<TeamViewModel>) {
 
         val builder = android.app.AlertDialog.Builder(this)
 
-        val arrayAdapter = ArrayAdapter<Team>(this, android.R.layout.select_dialog_singlechoice, teamsList)
+        val arrayAdapter = ArrayAdapter<TeamViewModel>(this, android.R.layout.select_dialog_singlechoice, teamsList)
 
         val dialog = builder.setTitle(getString(R.string.title_select_a_team))
                 .setSingleChoiceItems(arrayAdapter, -1) { dialog, i ->
@@ -366,7 +363,7 @@ class CollectActivity : BaseActivity(), CollectView {
         }
     }
 
-    private fun setTeamTextView(teamsList: Array<Team>, i: Int) {
+    private fun setTeamTextView(teamsList: ArrayList<TeamViewModel>, i: Int) {
         val teamSelected = teamsList[i]
         viewModel.team = teamSelected
         collectTeamTextView.text = teamSelected.name

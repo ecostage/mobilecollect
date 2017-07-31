@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect.ui.model
+package br.com.ecostage.mobilecollect.model
 
 /**
  * Created by andremaia on 7/27/17.

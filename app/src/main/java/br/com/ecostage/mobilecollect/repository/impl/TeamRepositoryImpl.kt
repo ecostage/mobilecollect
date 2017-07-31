@@ -1,8 +1,8 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
+import br.com.ecostage.mobilecollect.model.Team
 import br.com.ecostage.mobilecollect.repository.TeamRepository
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
-import br.com.ecostage.mobilecollect.ui.model.Team
 import com.google.firebase.database.*
 
 
