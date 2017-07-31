@@ -2,9 +2,9 @@ package br.com.ecostage.mobilecollect.ui.map
 
 import android.graphics.Bitmap
 import br.com.ecostage.mobilecollect.OnCollectLoadedListener
-import br.com.ecostage.mobilecollect.ui.collect.Collect
+import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
-import java.io.ByteArrayOutputStream
+import br.com.ecostage.mobilecollect.util.ImageUtil
 
 class MapPresenterImpl(val mapView: MapView,
                        val activity: MapActivity)
@@ -27,12 +27,8 @@ class MapPresenterImpl(val mapView: MapView,
     override fun collect(latitude: Double, longitude: Double, compressedMapSnapshot: ByteArray) =
         mapView.navigateToCollectActivity(latitude, longitude, compressedMapSnapshot)
 
-    override fun compressMapSnapshot(mapSnapshot: Bitmap?) : ByteArray {
-        val stream = ByteArrayOutputStream()
-        mapSnapshot?.compress(Bitmap.CompressFormat.JPEG, 30, stream)
-        val bytes = stream.toByteArray()
-
-        return bytes
+    override fun compressMapSnapshot(mapSnapshot: Bitmap) : ByteArray {
+        return ImageUtil.compress(mapSnapshot, Bitmap.CompressFormat.JPEG,30)
     }
 
     override fun removeLastMarker() = mapView.removeLastMarkerFromMap()
@@ -47,9 +43,16 @@ class MapPresenterImpl(val mapView: MapView,
             collect.longitude?.let { longitude ->
                 val marker = mapView.showMarkerAt(latitude, longitude)
 
-                val collectViewModel = CollectViewModel(collect.id,
-                        collect.name, collect.latitude, collect.longitude,
-                        collect.classification, collect.userId)
+                val collectViewModel = CollectViewModel()
+
+                collectViewModel.id = collect.id
+                collectViewModel.name = collect.name
+                collectViewModel.latitude = collect.latitude
+                collectViewModel.longitude = collect.longitude
+                collectViewModel.classification = collect.classification
+                collectViewModel.userId = collect.userId
+                collectViewModel.date = collect.date
+                collectViewModel.photo = collect.photo
 
                 mapView.populateMarker(marker, collectViewModel, false)
             }

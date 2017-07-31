@@ -58,5 +58,9 @@
     <string name="classification_header_title">Classificação</string>
 
     <string name="profile_my_collects">Minhas Coletas</string>
+    <string name="collect_photo_validation_error">É necessário tirar uma foto do local!</string>
+    <string name="message_snackbar_no_teams_available">There are no teams available.</string>
+    <string name="title_select_a_team">Selecione um time</string>
+    <string name="message_time_no_informed">Team not informed</string>
 
 </resources>
