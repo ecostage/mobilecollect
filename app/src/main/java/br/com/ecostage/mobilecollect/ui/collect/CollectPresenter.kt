@@ -12,6 +12,8 @@ interface CollectPresenter {
     fun onPermissionDenied(message: String)
     fun save(viewModel: CollectViewModel)
     fun loadCollect(collectId: String)
+    fun selectTeam(model: CollectViewModel)
+    fun removeTeamSelected(model: CollectViewModel)
     fun compressCollectPhoto(filePath: String, format: Bitmap.CompressFormat, qualityLevel: Int): ByteArray
     fun setupCollectMode(mode: CollectView.CollectMode)
     fun convertCollectPhoto(img: ByteArray): Bitmap

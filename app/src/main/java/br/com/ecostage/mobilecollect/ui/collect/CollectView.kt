@@ -14,11 +14,16 @@ interface CollectView {
     fun canAccessCamera() : Boolean
     fun showMessageAsLongToast(message: String)
     fun showProgress()
+    fun showProgressBarForTeams()
     fun hideProgress()
+    fun hideProgressBarForTeams()
     fun showCollectRequestSuccess()
     fun returnToMap(collectViewModel: CollectViewModel?)
     fun showNoUserError()
     fun populateFields(collectViewModel: CollectViewModel)
+    fun showTeamList(teamsList: ArrayList<TeamViewModel>)
+    fun removeTeamSelected()
+    fun showUserHasNoTeamsMessage()
     fun hideImageContainers()
     fun showImageContainers()
 }
