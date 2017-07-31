@@ -61,5 +61,9 @@
     <string name="message_snackbar_no_teams_available">Não há times disponíveis.</string>
     <string name="title_select_a_team">Selecione um time</string>
     <string name="message_time_no_informed">Time não informado</string>
+    <string name="ranking_points_sufix">pts</string>
+    <string name="title_teams_leader_board">Team Leader Board</string>
+    <string name="user_points_hint">0</string>
+    <string name="title_user_leader_board">User Leader Board</string>
 
 </resources>
