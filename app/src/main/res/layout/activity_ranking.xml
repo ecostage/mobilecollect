@@ -74,7 +74,7 @@
                     android:text="@string/title_user_leader_board" />
 
                 <ListView
-                    android:id="@+id/userRankingList"
+                    android:id="@+id/generalRankingList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

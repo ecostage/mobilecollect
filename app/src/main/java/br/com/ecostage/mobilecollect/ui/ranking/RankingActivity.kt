@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_ranking.*
  * Created by andremaia on 7/18/17.
  */
 class RankingActivity : BottomNavigationActivity(), RankingView {
+
     private val rankingPresenter : RankingPresenter = RankingPresenterImpl(this)
 
     private var userRankingDetails : UserRankingDetailsViewModel? = null
@@ -18,13 +19,31 @@ class RankingActivity : BottomNavigationActivity(), RankingView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        rankingPresenter.loadUserRankingDetails()
+        rankingPresenter.loadUserPoints()
+        rankingPresenter.loadGeneralRanking()
+        rankingPresenter.loadTeamRanking()
     }
 
-    override fun populateUserRankingInfo(userRankingDetailsViewModel: UserRankingDetailsViewModel) {
+    override fun populateUserPoints(userRankingDetailsViewModel: UserRankingDetailsViewModel) {
         userRankingDetails = userRankingDetailsViewModel
 
         rankingUserPoint.text = userRankingDetailsViewModel.userRankingPoints.toString()
+    }
+
+    override fun populateGeneralRanking(userRankingDetailsViewModel: List<UserRankingDetailsViewModel>) {
+        // show
+    }
+
+    override fun populateTeamsRanking(userTeamRankingViewModel: List<UserTeamRankingViewModel>) {
+        // show
+    }
+
+    override fun showProgress() {
+//        ProgressBarHandler().showProgress(true, scrollViewRankingActivity, rankingProgress)
+    }
+
+    override fun hideProgress() {
+//        ProgressBarHandler().showProgress(false, scrollViewRankingActivity, rankingProgress)
     }
 
     override fun getContentViewId(): Int {

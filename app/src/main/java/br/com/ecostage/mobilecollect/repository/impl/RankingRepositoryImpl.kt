@@ -1,6 +1,6 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
-import br.com.ecostage.mobilecollect.OnUserRankingLoadedListener
+import br.com.ecostage.mobilecollect.OnUserPointsLoadedListener
 import br.com.ecostage.mobilecollect.repository.RankingRepository
 import com.google.firebase.database.*
 
@@ -14,7 +14,7 @@ class RankingRepositoryImpl : RankingRepository {
 
     val firebaseDatabase : DatabaseReference = FirebaseDatabase.getInstance().reference
 
-    override fun getUserPoints(userId: String, onUserRankingLoadedListener: OnUserRankingLoadedListener) {
+    override fun getUserPoints(userId: String, onUserPointsLoadedListener: OnUserPointsLoadedListener) {
         firebaseDatabase
                 .child(RANKING_COLLECT_BY_USER_DB_TYPE)
                 .child(userId)
@@ -22,12 +22,12 @@ class RankingRepositoryImpl : RankingRepository {
                     override fun onDataChange(data: DataSnapshot?) {
                         val points = data?.getValue(Int::class.java)
                         if (points != null) {
-                            onUserRankingLoadedListener.onRankingLoaded(points)
+                            onUserPointsLoadedListener.onRankingLoaded(points)
                         }
                     }
 
                     override fun onCancelled(dbError: DatabaseError?) {
-                        onUserRankingLoadedListener.onRankingLoadingError()
+                        onUserPointsLoadedListener.onRankingLoadingError()
                     }
                 })
     }

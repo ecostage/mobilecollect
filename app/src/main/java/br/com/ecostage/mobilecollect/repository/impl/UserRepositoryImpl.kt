@@ -1,7 +1,7 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
 import br.com.ecostage.mobilecollect.OnUserLoadedListener
-import br.com.ecostage.mobilecollect.OnUserRankingLoadedListener
+import br.com.ecostage.mobilecollect.OnUserPointsLoadedListener
 import br.com.ecostage.mobilecollect.model.User
 import br.com.ecostage.mobilecollect.repository.RankingRepository
 import br.com.ecostage.mobilecollect.repository.UserRepository
@@ -16,7 +16,7 @@ class UserRepositoryImpl : UserRepository {
     override fun getCurrentUser(onUserLoadedListener: OnUserLoadedListener) {
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
-            rankingRepository.getUserPoints(user.uid, object : OnUserRankingLoadedListener {
+            rankingRepository.getUserPoints(user.uid, object : OnUserPointsLoadedListener {
                 override fun onRankingLoaded(userPoints: Int?) {
                     var points = 0
 
