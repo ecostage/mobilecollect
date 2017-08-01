@@ -4,26 +4,27 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.graphics.*
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment.getExternalStorageDirectory
+import android.os.Environment
 import android.provider.MediaStore
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationActivity
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationColorSearch
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationViewModel
+import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
 import br.com.ecostage.mobilecollect.ui.map.MapActivity
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.intentFor
@@ -32,7 +33,6 @@ import java.io.File
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 class CollectActivity : BaseActivity(), CollectView {
 
@@ -48,12 +48,13 @@ class CollectActivity : BaseActivity(), CollectView {
         val CLASSIFICATION_DATA_RESULT = "CollectActivity:classification"
     }
 
-    private val collectPresenter: CollectPresenter = CollectPresenterImpl(this)
+    private val collectPresenter: CollectPresenter = CollectPresenterImpl(this, this)
 
     private var collectLastImage: Uri? = null
+    private var collectLastImagePath: String? = null
     private var collectId: String? = null
 
-    private var model = Collect()
+    private var viewModel = CollectViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,12 +72,14 @@ class CollectActivity : BaseActivity(), CollectView {
         collectId = intent.getStringExtra(COLLECT_ID)
 
         if (collectId != null) {
+            collectPresenter.setupCollectMode(CollectView.CollectMode.VISUALIZING)
+
             collectId?.let { collectId ->
-                collectMapSnapshotImageContainer.visibility = View.GONE
-                collectPhotoContainer.visibility = View.GONE
                 collectPresenter.loadCollect(collectId)
             }
         } else {
+            collectPresenter.setupCollectMode(CollectView.CollectMode.COLLECTING)
+
             val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
 
             collectLatLng.text = resources.getString(R.string.collect_lat_lng_text, latitude(), longitude())
@@ -84,14 +87,25 @@ class CollectActivity : BaseActivity(), CollectView {
             collectDate.text = dateFormatted(now)
             collectMapSnapshotImage.setImageBitmap(collectPresenter.decompressMapSnapshot(compressedMapSnapshot))
 
-            collectClassification.setOnClickListener {
-                startActivityForResult(intentFor<ClassificationActivity>(), CLASSIFICATION_REQUEST)
-            }
-
-            collectTakePhotoBtn.setOnClickListener {
-                collectPresenter.takePhoto()
-            }
+            setupClassificationControllers()
+            setupTeamControllers()
+            setupPhotoControllers()
         }
+    }
+
+    private fun setupClassificationControllers() {
+        collectClassification.setOnClickListener {
+            startActivityForResult(intentFor<ClassificationActivity>(), CLASSIFICATION_REQUEST)
+        }
+    }
+
+    private fun setupPhotoControllers() {
+        collectTakePhotoBtn.setOnClickListener { collectPresenter.takePhoto() }
+    }
+
+    private fun setupTeamControllers() {
+        collectTeamTextView.setOnClickListener { collectPresenter.selectTeam(viewModel) }
+        collectTeamRemoveButton.setOnClickListener { collectPresenter.removeTeamSelected(viewModel) }
     }
 
     private fun dateFormatted(now: Date?): String = SimpleDateFormat(dateFormat()).format(now)
@@ -103,23 +117,42 @@ class CollectActivity : BaseActivity(), CollectView {
         return true
     }
 
+    private fun validateForm(): Boolean {
+        val classificationText = collectClassification.text.toString().trim()
+        if (classificationText.isNullOrEmpty()) {
+            hideProgress()
+            longToast(resources.getString(R.string.collect_classification_validation_error))
+            return false
+        }
+
+        if (collectLastImage == null) {
+            hideProgress()
+            longToast(getString(R.string.collect_photo_validation_error))
+            return false
+        }
+
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_save_collect -> {
-                val classificationText = collectClassification.text.toString()
-                if (classificationText.isNullOrEmpty()) {
-                    longToast(resources.getString(R.string.collect_classification_validation_error))
+                if (!this.validateForm())
                     return false
+
+                viewModel.name = collectName.text.toString()
+                viewModel.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
+                viewModel.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
+                viewModel.date = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
+
+                collectLastImagePath.let { path ->
+                    if (path != null) {
+                        viewModel.photo = collectPresenter.compressCollectPhoto(path,
+                                Bitmap.CompressFormat.JPEG, 30)
+                    }
                 }
 
-                val collectDate = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
-
-                model.name = collectName.text.toString()
-                model.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
-                model.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
-                model.date = collectDate
-
-                collectPresenter.save(model)
+                collectPresenter.save(viewModel)
 
                 return true
             }
@@ -146,7 +179,15 @@ class CollectActivity : BaseActivity(), CollectView {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            CAMERA_REQUEST -> if (resultCode == Activity.RESULT_OK) collectImage.setImageURI(collectLastImage)
+            CAMERA_REQUEST -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    collectImage.setImageURI(collectLastImage)
+                } else {
+                    collectImage.setImageURI(null)
+                    collectLastImage = null
+                    collectLastImagePath = null
+                }
+            }
             CLASSIFICATION_REQUEST -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val selectedClassification = data?.getParcelableExtra<ClassificationViewModel>(CLASSIFICATION_DATA_RESULT)
@@ -167,8 +208,8 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     private fun applyColorTextSelected(classificationText: String?) {
-        model.classification = classificationText
-        collectClassification.text = model.classification
+        viewModel.classification = classificationText
+        collectClassification.text = viewModel.classification
     }
 
     private fun applyCategoryColorSelected(classificationColor: String?) {
@@ -204,13 +245,16 @@ class CollectActivity : BaseActivity(), CollectView {
         if (canAccessCamera()) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
+            val file = File.createTempFile(LAST_COLLECT_PHOTO_FILE_NAME, ".jpg", getExternalFilesDir(Environment.DIRECTORY_PICTURES))
+
             if (Build.VERSION.SDK_INT >= 24) {
                 collectLastImage = FileProvider.getUriForFile(this,
-                        this.applicationContext.packageName + ".br.com.ecostage.mobilecollect.provider",
-                        File(getExternalStorageDirectory(), LAST_COLLECT_PHOTO_FILE_NAME))
+                        this.applicationContext.packageName + ".fileprovider",
+                        file)
             } else {
-                collectLastImage = Uri.fromFile(File(getExternalStorageDirectory(), LAST_COLLECT_PHOTO_FILE_NAME))
+                collectLastImage = Uri.fromFile(file)
             }
+            collectLastImagePath = file.absolutePath
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, collectLastImage)
 
@@ -236,11 +280,19 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     override fun showProgress() {
-        collectProgress.visibility = View.VISIBLE
+        ProgressBarHandler().showProgress(true, scrollViewActivity, collectProgress)
+    }
+
+    override fun showProgressBarForTeams() {
+        collectTeamProgressBar.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
-        collectProgress.visibility = View.GONE
+        ProgressBarHandler().showProgress(false, scrollViewActivity, collectProgress)
+    }
+
+    override fun hideProgressBarForTeams() {
+        collectTeamProgressBar.visibility = View.GONE
     }
 
     override fun showCollectRequestSuccess() {
@@ -248,7 +300,7 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     override fun showNoUserError() {
-        this.showMessageAsLongToast(R.string.collect_save_error_no_user_auth.toString())
+        this.showMessageAsLongToast(getString(R.string.collect_save_error_no_user_auth))
     }
 
     override fun returnToMap(collectViewModel: CollectViewModel?) {
@@ -261,18 +313,80 @@ class CollectActivity : BaseActivity(), CollectView {
     override fun populateFields(collectViewModel: CollectViewModel) {
 
         collectClassification.text = collectViewModel.classification
+        collectClassification.typeface = Typeface.DEFAULT
         applyCategoryColorSelected(ClassificationColorSearch().classificationColor(collectViewModel.classification))
 
         collectName.isFocusable = false
         collectName.isEnabled = false
-        collectName.setText(collectViewModel.name, TextView.BufferType.EDITABLE)
+        collectName.setText(collectViewModel.name, TextView.BufferType.NORMAL)
 
         collectDate.text = dateFormatted(collectViewModel.date)
 
         collectLatLng.text = resources.getString(R.string.collect_lat_lng_text,
                 doubleFormatted(collectViewModel.latitude), doubleFormatted(collectViewModel.longitude))
 
-        collectTeam.isFocusable = false
-        collectTeam.isEnabled = false
+        collectTeamTextView.isFocusable = true
+        if (collectViewModel.team == null) {
+            collectTeamTextView.text = getString(R.string.message_time_no_informed)
+            collectTeamTextView.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
+            collectTeamTextView.isEnabled = false
+        } else {
+            collectTeamTextView.text = collectViewModel.team?.name
+            collectTeamTextView.typeface = Typeface.DEFAULT
+        }
+
+        collectViewModel.photo.let { img ->
+            if (img != null) {
+                collectImage.setImageBitmap(collectPresenter.convertCollectPhoto(img))
+            }
+        }
+    }
+
+    override fun hideImageContainers() {
+        collectMapSnapshotImageContainer.visibility = View.GONE
+        collectTakePhotoBtn.visibility = View.GONE
+    }
+
+    override fun showImageContainers() {
+        collectMapSnapshotImageContainer.visibility = View.VISIBLE
+        collectTakePhotoBtn.visibility = View.VISIBLE
+    }
+
+    override fun showTeamList(teamsList: ArrayList<TeamViewModel>) {
+
+        val builder = android.app.AlertDialog.Builder(this)
+
+        val arrayAdapter = ArrayAdapter<TeamViewModel>(this, android.R.layout.select_dialog_singlechoice, teamsList)
+
+        val dialog = builder.setTitle(getString(R.string.title_select_a_team))
+                .setSingleChoiceItems(arrayAdapter, -1) { dialog, i ->
+                    setTeamTextView(teamsList, i)
+                    dialog.dismiss()
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                .create()
+
+        if (!dialog.isShowing) {
+            dialog.show()
+        }
+    }
+
+    private fun setTeamTextView(teamsList: ArrayList<TeamViewModel>, i: Int) {
+        val teamSelected = teamsList[i]
+        viewModel.team = teamSelected
+        collectTeamTextView.text = teamSelected.name
+        collectTeamTextView.typeface = Typeface.DEFAULT
+        collectTeamRemoveButton.visibility = View.VISIBLE
+    }
+
+    override fun removeTeamSelected() {
+        collectTeamTextView.text = ""
+        collectTeamTextView.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
+        collectTeamRemoveButton.visibility = View.GONE
+    }
+
+    override fun showUserHasNoTeamsMessage() {
+        Snackbar.make(linearLayoutViewContainer, R.string.message_snackbar_no_teams_available, Snackbar.LENGTH_SHORT)
+                .show()
     }
 }

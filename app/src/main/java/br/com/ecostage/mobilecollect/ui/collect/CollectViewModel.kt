@@ -7,15 +7,28 @@ import java.util.*
 /**
  * Created by cmaia on 7/22/17.
  */
-data class CollectViewModel(var id: String? = null, var name: String?, var latitude: Double?, var longitude: Double?, var classification: String?, var userId: String? = null, var date: Date? = null) : Parcelable {
-    constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readValue(Double::class.java.classLoader) as? Double,
-            parcel.readValue(Double::class.java.classLoader) as? Double,
-            parcel.readString(),
-            parcel.readString(),
-            Date(parcel.readLong()))
+class CollectViewModel() : Parcelable {
+    var id: String? = null
+    var name: String? = null
+    var latitude: Double? = null
+    var longitude: Double? = null
+    var classification: String? = null
+    var userId: String? = null
+    var date: Date? = null
+    var photo: ByteArray? = null
+    var team: TeamViewModel? = null
+
+    constructor(parcel: Parcel) : this() {
+        id = parcel.readString()
+        name = parcel.readString()
+        latitude = parcel.readValue(Double::class.java.classLoader) as? Double
+        longitude = parcel.readValue(Double::class.java.classLoader) as? Double
+        classification = parcel.readString()
+        userId = parcel.readString()
+        date = Date(parcel.readLong())
+        photo = parcel.createByteArray()
+        team = parcel.readParcelable(TeamViewModel::class.java.classLoader)
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
@@ -29,6 +42,10 @@ data class CollectViewModel(var id: String? = null, var name: String?, var latit
 
         if (time != null)
             parcel.writeLong(time)
+
+        parcel.writeByteArray(photo)
+
+        parcel.writeParcelable(team, Parcelable.PARCELABLE_WRITE_RETURN_VALUE)
     }
 
     override fun describeContents(): Int {
@@ -44,6 +61,4 @@ data class CollectViewModel(var id: String? = null, var name: String?, var latit
             return arrayOfNulls(size)
         }
     }
-
-
 }

@@ -1,6 +1,6 @@
 package br.com.ecostage.mobilecollect
 
-import br.com.ecostage.mobilecollect.ui.collect.Collect
+import br.com.ecostage.mobilecollect.model.Collect
 
 /**
  * Created by cmaia on 7/23/17.
