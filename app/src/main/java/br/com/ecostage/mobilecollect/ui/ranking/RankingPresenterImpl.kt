@@ -1,8 +1,8 @@
 package br.com.ecostage.mobilecollect.ui.ranking
 
-import br.com.ecostage.mobilecollect.OnGeneralRankingLoadedListener
-import br.com.ecostage.mobilecollect.OnTeamRankingLoadedListener
-import br.com.ecostage.mobilecollect.OnUserLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnGeneralRankingLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnTeamRankingLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnUserLoadedListener
 import br.com.ecostage.mobilecollect.model.TeamRanking
 import br.com.ecostage.mobilecollect.model.User
 import br.com.ecostage.mobilecollect.model.UserRank

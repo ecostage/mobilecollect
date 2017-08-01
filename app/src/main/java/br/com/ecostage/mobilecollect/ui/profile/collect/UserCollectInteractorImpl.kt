@@ -1,6 +1,6 @@
 package br.com.ecostage.mobilecollect.ui.profile.collect
 
-import br.com.ecostage.mobilecollect.OnCollectLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.repository.CollectRepository
 import br.com.ecostage.mobilecollect.repository.UserRepository
 import br.com.ecostage.mobilecollect.repository.impl.CollectRepositoryImpl

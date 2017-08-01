@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.TextView
-import br.com.ecostage.mobilecollect.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.ui.collect.CollectActivity
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel

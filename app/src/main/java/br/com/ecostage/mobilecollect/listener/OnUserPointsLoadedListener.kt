@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect
+package br.com.ecostage.mobilecollect.listener
 
 /**
  * Created by cmaia on 7/30/17.

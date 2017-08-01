@@ -1,7 +1,7 @@
 package br.com.ecostage.mobilecollect.ui.ranking
 
-import br.com.ecostage.mobilecollect.OnGeneralRankingLoadedListener
-import br.com.ecostage.mobilecollect.OnTeamRankingLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnGeneralRankingLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnTeamRankingLoadedListener
 
 /**
  * Created by cmaia on 7/30/17.

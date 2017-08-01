@@ -1,6 +1,6 @@
 package br.com.ecostage.mobilecollect.repository
 
-import br.com.ecostage.mobilecollect.OnUserLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnUserLoadedListener
 
 /**
  * Created by cmaia on 7/23/17.

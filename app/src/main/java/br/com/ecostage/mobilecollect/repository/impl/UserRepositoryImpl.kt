@@ -1,7 +1,7 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
-import br.com.ecostage.mobilecollect.OnUserLoadedListener
-import br.com.ecostage.mobilecollect.OnUserPointsLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnUserLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnUserPointsLoadedListener
 import br.com.ecostage.mobilecollect.model.User
 import br.com.ecostage.mobilecollect.repository.RankingRepository
 import br.com.ecostage.mobilecollect.repository.UserRepository

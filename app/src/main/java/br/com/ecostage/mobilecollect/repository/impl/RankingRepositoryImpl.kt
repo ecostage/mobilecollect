@@ -1,6 +1,6 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
-import br.com.ecostage.mobilecollect.OnUserPointsLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnUserPointsLoadedListener
 import br.com.ecostage.mobilecollect.repository.RankingRepository
 import com.google.firebase.database.*
 
