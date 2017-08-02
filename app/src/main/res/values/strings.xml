@@ -60,5 +60,16 @@
     <string name="message_snackbar_no_teams_available">Não há times disponíveis.</string>
     <string name="title_select_a_team">Selecione um time</string>
     <string name="message_time_no_informed">Time não informado</string>
+    <string name="button_sign_out">Sair</string>
+    <string name="button_change_password">Trocar Senha</string>
+    <string name="dialog_title_reset_password">Reset Password</string>
+    <string name="dialog_message_reset_password_with_success">Foi enviado um email para %1$s com instrução para reiniciar a senha.</string>
+    <string name="message_snackbar_reset_password_request_error">Falhou. Tente novamente</string>
+    <string name="dialog_message_reset_password_not_using_email_and_password">Você não está utilizando email e senha para se autenticar.</string>
+    <string name="profile_subheader_title_user">User</string>
+    <string name="profile_subheader_title_statistics">Statistics</string>
+    <string name="profile_title_collects">Collects</string>
+    <string name="profile_title_ranking_points">Score</string>
+    <string name="profile_subheader_title_my_teams">My Teams</string>
 
 </resources>
