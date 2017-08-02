@@ -44,17 +44,18 @@
 
     </LinearLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_navigation"
-        android:layout_below="@id/rankingHeader">
+    <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_above="@+id/bottom_navigation"-->
+        <!--android:layout_below="@id/rankingHeader">-->
 
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_above="@+id/bottom_navigation">
 
             <View style="@style/Divider" />
 
@@ -152,7 +153,7 @@
 
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    <!--</ScrollView>-->
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"

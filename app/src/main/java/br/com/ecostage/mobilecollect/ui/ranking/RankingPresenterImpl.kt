@@ -21,7 +21,7 @@ class RankingPresenterImpl(val rankingView: RankingView) : RankingPresenter {
 //        rankingView.showUserPointsProgress()
         userRepository.getCurrentUser(object : OnUserLoadedListener {
             override fun onUserLoaded(user: User) {
-                rankingView.populateUserPoints(UserRankingDetailsViewModel(user.id, "", user.rankingPoints))
+                rankingView.populateUserPoints(UserRankingDetailsViewModel(user.id, user.email, user.rankingPoints))
 //                rankingView.hideUserPointsProgress()
             }
 
@@ -37,7 +37,7 @@ class RankingPresenterImpl(val rankingView: RankingView) : RankingPresenter {
         rankingInteractor.findGeneralRanking(object : OnGeneralRankingLoadedListener {
             override fun onGeneralRankingLoaded(generalRank: List<UserRank>) {
                 rankingView.populateGeneralRanking(generalRank.mapNotNull {
-                    UserRankingDetailsViewModel(it.userId, "", it.points)
+                    UserRankingDetailsViewModel(it.userId, it.userEmail, it.points)
                 }.toList())
                 //        rankingView.hideUserRankingProgress()
             }
@@ -57,7 +57,7 @@ class RankingPresenterImpl(val rankingView: RankingView) : RankingPresenter {
                     teamViewModel.id = it.team.id
                     teamViewModel.name = it.team.name
 
-                    val users = it.users.mapNotNull { UserRankingDetailsViewModel(it.userId, "", it.points) }
+                    val users = it.users.mapNotNull { UserRankingDetailsViewModel(it.userId, it.userEmail, it.points) }
 
                     UserTeamRankingViewModel(teamViewModel, users)
                 }

@@ -1,6 +1,7 @@
 package br.com.ecostage.mobilecollect.ui.ranking
 
 import android.os.Bundle
+import android.view.View
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import kotlinx.android.synthetic.main.activity_ranking.*
@@ -31,7 +32,11 @@ class RankingActivity : BottomNavigationActivity(), RankingView {
     }
 
     override fun populateGeneralRanking(userRankingDetailsViewModel: List<UserRankingDetailsViewModel>) {
-        // show
+        if (userRankingDetailsViewModel.isNotEmpty()) {
+            usersRankingListEmptyData.visibility = View.GONE
+            val adapter = GeneralRankingListAdapter(this, userRankingDetailsViewModel)
+            generalRankingList.adapter = adapter
+        }
     }
 
     override fun populateTeamsRanking(userTeamRankingViewModel: List<UserTeamRankingViewModel>) {

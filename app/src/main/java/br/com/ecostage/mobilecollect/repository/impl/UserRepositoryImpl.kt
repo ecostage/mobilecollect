@@ -24,10 +24,10 @@ class UserRepositoryImpl : UserRepository {
                         points = userPoints
 
                     points.let { p ->
-                        val name = user.displayName
+                        val email = user.email
 
-                        if (name is String) {
-                            onUserLoadedListener.onUserLoaded(User(user.uid, name, p))
+                        if (email is String) {
+                            onUserLoadedListener.onUserLoaded(User(user.uid, email, p))
                         }
                         else
                             onUserLoadedListener.onUserLoadingError()

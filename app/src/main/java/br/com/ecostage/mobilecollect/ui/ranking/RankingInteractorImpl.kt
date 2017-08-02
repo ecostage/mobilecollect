@@ -29,8 +29,8 @@ class RankingInteractorImpl : RankingInteractor, AnkoLogger {
         if (userId != null) {
             // load
 
-            val user1 = UserRank("ABC", 10)
-            val user2 = UserRank("XYZ", 9)
+            val user1 = UserRank("ABC", "caaiomaia@gmail.com", 10)
+            val user2 = UserRank("XYZ", "andrenmaia@gmail.com", 9)
 
             val rank = mutableListOf(user1, user2)
 
@@ -50,8 +50,8 @@ class RankingInteractorImpl : RankingInteractor, AnkoLogger {
             team.id = "123"
             team.name = "Time 1"
 
-            val user1 = UserRank("ABC", 10)
-            val user2 = UserRank("XYZ", 9)
+            val user1 = UserRank("ABC", "caaiomaia@gmail.com", 10)
+            val user2 = UserRank("XYZ", "andrenmaia@gmail.com", 9)
 
             val rank1 = TeamRanking(team, mutableListOf(user1, user2))
 
