@@ -1,20 +1,26 @@
 package br.com.ecostage.mobilecollect.ui.profile
 
 import br.com.ecostage.mobilecollect.repository.CollectRepository
+import br.com.ecostage.mobilecollect.repository.TeamRepository
 import br.com.ecostage.mobilecollect.repository.UserRepository
 import br.com.ecostage.mobilecollect.repository.impl.CollectRepositoryImpl
+import br.com.ecostage.mobilecollect.repository.impl.TeamRepositoryImpl
 import br.com.ecostage.mobilecollect.repository.impl.UserRepositoryImpl
+import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
 import com.google.firebase.auth.FirebaseAuth
 
 /**
  * Created by andremaia on 8/2/17.
  */
 class ProfileInteractorImpl(val onPasswordResetResult: ProfileInteractor.OnPasswordResetResult,
-                            val onLoadTotalCollectsFromUser: ProfileInteractor.OnLoadTotalCollectsFromUser)
+                            val onLoadTotalCollectsFromUser: ProfileInteractor.OnLoadTotalCollectsFromUser,
+                            // FIXME: Listeners should not belongs to um interactor.
+                            val onTeamListListener: CollectInteractor.OnTeamListListener)
     : ProfileInteractor {
 
     val collectRepository: CollectRepository = CollectRepositoryImpl()
     val userRepository: UserRepository = UserRepositoryImpl()
+    val teamRepository: TeamRepository = TeamRepositoryImpl()
 
     override fun requestResetPasswordToFirebase() {
         val auth = FirebaseAuth.getInstance()
@@ -43,6 +49,14 @@ class ProfileInteractorImpl(val onPasswordResetResult: ProfileInteractor.OnPassw
 
         if (userId != null) {
             collectRepository.countCollectsByUser(userId, onLoadTotalCollectsFromUser)
+        }
+    }
+
+    override fun loadTeamsListFromUser() {
+        val userId = userRepository.getCurrentUserId()
+
+        if (userId != null) {
+            teamRepository.loadTeamsFor(userId, onTeamListListener)
         }
     }
 }

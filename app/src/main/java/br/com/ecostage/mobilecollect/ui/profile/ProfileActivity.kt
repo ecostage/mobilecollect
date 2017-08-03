@@ -98,4 +98,8 @@ class ProfileActivity :
     override fun setTotalCollectsForUser(total: Long) {
         totalCollectsTextView.text = total.toString()
     }
+
+    override fun setUserTeams(teams: String) {
+        userTeamsTextView.text = teams
+    }
 }

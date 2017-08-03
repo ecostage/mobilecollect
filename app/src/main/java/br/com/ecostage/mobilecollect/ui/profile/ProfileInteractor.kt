@@ -17,4 +17,5 @@ interface ProfileInteractor {
 
     fun requestResetPasswordToFirebase()
     fun loadTotalCollectsFromUser()
+    fun loadTeamsListFromUser()
 }

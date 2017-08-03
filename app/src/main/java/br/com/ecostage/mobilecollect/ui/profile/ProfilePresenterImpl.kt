@@ -1,14 +1,19 @@
 package br.com.ecostage.mobilecollect.ui.profile
 
+import br.com.ecostage.mobilecollect.model.Team
+import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
+
 /**
  * Created by andremaia on 8/2/17.
  */
 class ProfilePresenterImpl(var view: ProfileView) :
         ProfilePresenter,
         ProfileInteractor.OnPasswordResetResult,
-        ProfileInteractor.OnLoadTotalCollectsFromUser {
+        ProfileInteractor.OnLoadTotalCollectsFromUser,
+        CollectInteractor.OnTeamListListener {
 
     private val profileInteractor: ProfileInteractor = ProfileInteractorImpl(
+            this,
             this,
             this)
 
@@ -42,10 +47,27 @@ class ProfilePresenterImpl(var view: ProfileView) :
     }
 
     override fun loadTeamsListFromUser() {
-
+        profileInteractor.loadTeamsListFromUser()
     }
 
     override fun onLoadTotalCollectsFromUser(total: Long) {
         view.setTotalCollectsForUser(total)
+    }
+
+    override fun onTeamListReady(teams: Array<Team>) {
+
+        val teamsString = teams
+                .map { it.name }
+                .joinToString("; ")
+
+        view.setUserTeams(teamsString)
+    }
+
+    override fun onTeamHasNoTeams() {
+
+    }
+
+    override fun onTeamListError() {
+
     }
 }

@@ -143,9 +143,10 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/userTeamsTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="time1; time2; time2; time2; time2; time2; time2; time2; time2; time2; time2; time2; time2; time2; time2;" />
+                    android:text="@string/default_message_user_not_participating_in_a_team" />
 
             </LinearLayout>
 
