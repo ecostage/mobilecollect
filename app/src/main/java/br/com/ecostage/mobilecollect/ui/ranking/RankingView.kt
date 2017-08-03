@@ -5,8 +5,9 @@ package br.com.ecostage.mobilecollect.ui.ranking
  */
 interface RankingView {
     fun populateUserPoints(userRankingDetailsViewModel: UserRankingDetailsViewModel)
-    fun populateRanking(rankingViewModel: List<RankingViewModel>)
-    fun populateTeamsRanking(userTeamRankingViewModel: List<UserTeamRankingViewModel>)
+    fun populateUserGeneralRankingInfo(rankingViewModel: RankingViewModel)
+    fun populateUserTeamsRankingInfo(rankingViewModel: List<RankingViewModel>)
+//    fun populateTeamsRanking(userTeamRankingViewModel: List<UserTeamRankingViewModel>)
     fun showProgress()
     fun hideProgress()
 }

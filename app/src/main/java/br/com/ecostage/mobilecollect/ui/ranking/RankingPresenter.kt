@@ -5,7 +5,8 @@ package br.com.ecostage.mobilecollect.ui.ranking
  */
 interface RankingPresenter {
     fun loadUserPoints()
-    fun loadRanking()
+    fun loadUserGeneralRankingInfo()
+    fun loadUserTeamsRankingInfo()
 //    fun loadGeneralRanking()
 //    fun loadTeamRanking()
 }

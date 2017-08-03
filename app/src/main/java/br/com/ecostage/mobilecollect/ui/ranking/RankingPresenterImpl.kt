@@ -1,6 +1,7 @@
 package br.com.ecostage.mobilecollect.ui.ranking
 
-import br.com.ecostage.mobilecollect.listener.OnRankingGeneratedListener
+import br.com.ecostage.mobilecollect.listener.OnTeamRankingInfoGeneratedListener
+import br.com.ecostage.mobilecollect.listener.OnUserGeneralRankingInfoLoadedListener
 import br.com.ecostage.mobilecollect.listener.OnUserLoadedListener
 import br.com.ecostage.mobilecollect.model.Rank
 import br.com.ecostage.mobilecollect.model.User
@@ -28,13 +29,30 @@ class RankingPresenterImpl(val rankingView: RankingView) : RankingPresenter {
             override fun onUserLoadingError() {
 //                rankingView.hideUserPointsProgress()
             }
-
         })
     }
-    override fun loadRanking() {
-        rankingInteractor.generateRanking(object : OnRankingGeneratedListener {
-            override fun onGeneralRankingLoaded(rank: List<Rank>) {
-                rankingView.populateRanking(rank.mapNotNull {
+
+    override fun loadUserGeneralRankingInfo() {
+//        rankingView.showUserGeneralRankingProgress()
+        rankingInteractor.loadUserGeneralRankingInfo(object : OnUserGeneralRankingInfoLoadedListener {
+            override fun onUserGeneralRankingInfoLoaded(rank: Rank) {
+                if (rank.user != null) {
+                    rankingView.populateUserGeneralRankingInfo(RankingViewModel(rank.place, UserViewModel(rank.user.id, rank.user.email), null, rank.points))
+                    //        rankingView.hideUserGeneralRankingProgress()
+                }
+            }
+
+            override fun onUserGeneralRankingInfoLoadError() {
+                //        rankingView.hideUserGeneralRankingProgress()
+            }
+        })
+    }
+
+    override fun loadUserTeamsRankingInfo() {
+        //        rankingView.showUserTeamsRankingProgress()
+        rankingInteractor.generateRanking(object : OnTeamRankingInfoGeneratedListener {
+            override fun onTeamRankingInfoLoaded(rank: List<Rank>) {
+                rankingView.populateUserTeamsRankingInfo(rank.mapNotNull {
                     if (it.user != null) {
                         RankingViewModel(it.place, UserViewModel(it.user.id, it.user.email), null, it.points)
                     } else {
@@ -43,60 +61,15 @@ class RankingPresenterImpl(val rankingView: RankingView) : RankingPresenter {
                         team.name = it.team?.name
                         RankingViewModel(it.place, null, team, it.points)
                     }
+
+                    //        rankingView.hideUserTeamsRankingProgress()
                 }.toList())
-                //        rankingView.hideUserRankingProgress()
+                //        rankingView.hideUserTeamsRankingProgress()
             }
 
-            override fun onGeneralRankingLoadError() {
+            override fun onTeamRankingInfoLoadError() {
                 //        rankingView.hideUserRankingProgress()
             }
         })
     }
-//
-//    override fun loadGeneralRanking() {
-////        rankingView.showUserRankingProgress()
-//        rankingInteractor.findGeneralRanking(object : OnRankingGeneratedListener {
-//            override fun onGeneralRankingLoaded(rank: List<Rank>) {
-//                rankingView.populateRanking(rank.mapNotNull {
-//                    if (it.user != null) {
-//                        RankingViewModel(it.place, UserViewModel(it.user.id, it.user.email), null, it.points)
-//                    } else {
-//                        val team = TeamViewModel()
-//                        team.id = it.team?.id
-//                        team.name = it.team?.name
-//                        RankingViewModel(it.place, null, team, it.points)
-//                    }
-//                }.toList())
-//                //        rankingView.hideUserRankingProgress()
-//            }
-//
-//            override fun onGeneralRankingLoadError() {
-//                //        rankingView.hideUserRankingProgress()
-//            }
-//        })
-//    }
-//
-//    override fun loadTeamRanking() {
-////        rankingView.showUserTeamRankingProgress()
-//        rankingInteractor.findTeamsRanking(object : OnTeamRankingLoadedListener {
-//            override fun onTeamRankingLoaded(teamsRanking: List<TeamRanking>) {
-//                val teamRankingViewModel = teamsRanking.mapNotNull {
-//                    val teamViewModel = TeamViewModel()
-//                    teamViewModel.id = it.team.id
-//                    teamViewModel.name = it.team.name
-//
-//                    val users = it.users.mapNotNull { UserRankingDetailsViewModel(it.userId, it.userEmail, it.points) }
-//
-//                    UserTeamRankingViewModel(teamViewModel, users)
-//                }
-//
-//                rankingView.populateTeamsRanking(teamRankingViewModel)
-//                //        rankingView.hideUserTeamRankingProgress()
-//            }
-//
-//            override fun onTeamRankingLoadedError() {
-//                //        rankingView.hideUserTeamRankingProgress()
-//            }
-//        })
-//    }
 }

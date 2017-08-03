@@ -15,17 +15,14 @@ class RankingActivity : BottomNavigationActivity(), RankingView {
 
     private val rankingPresenter : RankingPresenter = RankingPresenterImpl(this)
 
-    private var userRankingDetails : UserRankingDetailsViewModel? = null
+    private var userRankingDetails: UserRankingDetailsViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         rankingPresenter.loadUserPoints()
-//        rankingPresenter.loadGeneralRankingInfo()
-//        rankingPresenter.loadTeamRankingInfo()
-        rankingPresenter.loadRanking()
-//        rankingPresenter.loadGeneralRanking()
-//        rankingPresenter.loadTeamRanking()
+        rankingPresenter.loadUserGeneralRankingInfo()
+        rankingPresenter.loadUserTeamsRankingInfo()
     }
 
     override fun populateUserPoints(userRankingDetailsViewModel: UserRankingDetailsViewModel) {
@@ -34,16 +31,18 @@ class RankingActivity : BottomNavigationActivity(), RankingView {
         rankingUserPoint.text = userRankingDetailsViewModel.userRankingPoints.toString()
     }
 
-    override fun populateRanking(rankingViewModel: List<RankingViewModel>) {
+    override fun populateUserGeneralRankingInfo(rankingViewModel: RankingViewModel) {
+        generalRankingUserPlace.text = rankingViewModel.position.toString()
+        generalRankingUserEmail.text = rankingViewModel.user?.email
+        generalRankingUserPoints.text = rankingViewModel.points.toString()
+    }
+
+    override fun populateUserTeamsRankingInfo(rankingViewModel: List<RankingViewModel>) {
         if (rankingViewModel.isNotEmpty()) {
             rankingListEmptyData.visibility = View.GONE
             val adapter = RankingListAdapter(this, rankingViewModel)
             rankingList.adapter = adapter
         }
-    }
-
-    override fun populateTeamsRanking(userTeamRankingViewModel: List<UserTeamRankingViewModel>) {
-        // show
     }
 
     override fun showProgress() {

@@ -1,7 +1,9 @@
 package br.com.ecostage.mobilecollect.ui.ranking
 
-import br.com.ecostage.mobilecollect.listener.OnRankingGeneratedListener
+import br.com.ecostage.mobilecollect.listener.OnTeamRankingInfoGeneratedListener
 import br.com.ecostage.mobilecollect.listener.OnTeamRankingLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnUserGeneralRankingInfoLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnUserLoadedListener
 import br.com.ecostage.mobilecollect.model.*
 import br.com.ecostage.mobilecollect.repository.CollectRepository
 import br.com.ecostage.mobilecollect.repository.RankingRepository
@@ -22,13 +24,24 @@ class RankingInteractorImpl : RankingInteractor, AnkoLogger {
 
     val rankingRepository : RankingRepository = RankingRepositoryImpl()
 
-    override fun generateRanking(onRankingGeneratedListener: OnRankingGeneratedListener) {
+    override fun loadUserGeneralRankingInfo(onUserGeneralRankingInfoLoadedListener: OnUserGeneralRankingInfoLoadedListener) {
+        userRepository.getCurrentUser(object : OnUserLoadedListener {
+            override fun onUserLoaded(user: User) {
+                onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoaded(Rank(1, user, null, 100))
+            }
+
+            override fun onUserLoadingError() {
+                onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoadError()
+            }
+        })
+    }
+
+    override fun generateRanking(onTeamRankingInfoGeneratedListener: OnTeamRankingInfoGeneratedListener) {
         val userId = userRepository.getCurrentUserId()
 
         if (userId != null) {
             // load
 
-            val position1 = Rank(1, User(userId, "caaiomaia@gmail.com", 100), null, 100)
             val team1 = Team()
             team1.id = "123"
             team1.name = "Time 1"
@@ -38,16 +51,16 @@ class RankingInteractorImpl : RankingInteractor, AnkoLogger {
             team2.name = "Time 2"
             val position3 = Rank(5, null, team2, 25)
 
-            val rank = mutableListOf(position1, position2, position3)
+            val rank = mutableListOf(position2, position3)
 
-            onRankingGeneratedListener.onGeneralRankingLoaded(rank)
+            onTeamRankingInfoGeneratedListener.onTeamRankingInfoLoaded(rank)
         } else {
-            onRankingGeneratedListener.onGeneralRankingLoadError()
+            onTeamRankingInfoGeneratedListener.onTeamRankingInfoLoadError()
             error { "Could not find current user id when loading user teams rank" }
         }
     }
 
-    override fun findGeneralRanking(onRankingGeneratedListener: OnRankingGeneratedListener) {
+    override fun findGeneralRanking(onTeamRankingInfoGeneratedListener: OnTeamRankingInfoGeneratedListener) {
         val userId = userRepository.getCurrentUserId()
 
         if (userId != null) {
@@ -58,9 +71,9 @@ class RankingInteractorImpl : RankingInteractor, AnkoLogger {
 
             val rank = mutableListOf(user1, user2)
 
-//            onRankingGeneratedListener.onGeneralRankingLoaded(rank)
+//            onTeamRankingInfoGeneratedListener.onTeamRankingInfoLoaded(rank)
         } else {
-            onRankingGeneratedListener.onGeneralRankingLoadError()
+            onTeamRankingInfoGeneratedListener.onTeamRankingInfoLoadError()
             error { "Could not find current user id when loading user teams rank" }
         }
     }
