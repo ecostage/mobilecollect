@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.ui.collect.TeamViewModel
 
 /**
  * Created by cmaia on 8/1/17.
  */
-class GeneralRankingListAdapter(val context: Context, val items: List<UserRankingDetailsViewModel>)
+class RankingListAdapter(val context: Context, val items: List<RankingViewModel>)
     : BaseAdapter() {
 
     private val inflator: LayoutInflater = LayoutInflater.from(context)
@@ -21,7 +22,7 @@ class GeneralRankingListAdapter(val context: Context, val items: List<UserRankin
         val vh : ListRowHolder
 
         if (convertView == null) {
-            view = this.inflator.inflate(R.layout.general_ranking_row_item, parent, false)
+            view = this.inflator.inflate(R.layout.ranking_row_item, parent, false)
             vh = ListRowHolder(view)
             view.tag = vh
         } else {
@@ -29,9 +30,16 @@ class GeneralRankingListAdapter(val context: Context, val items: List<UserRankin
             vh = view.tag as ListRowHolder
         }
 
-        vh.userEmail.text = items[position].userEmail //Change tho email
-        vh.userPlace.text = "1"
-        vh.userPoints.text = items[position].userRankingPoints.toString()
+        if (items[position].team != null) {
+            vh.userOrTeamName.text = items[position].team?.name
+            vh.team = items[position].team
+        }
+        else {
+            vh.userOrTeamName.text = items[position].user?.email
+        }
+
+        vh.place.text = items[position].position.toString()
+        vh.points.text = items[position].points.toString()
 
         return view
     }
@@ -49,8 +57,9 @@ class GeneralRankingListAdapter(val context: Context, val items: List<UserRankin
     }
 
     private class ListRowHolder(row: View?) {
-        val userPlace = row?.findViewById(R.id.generalRankingUserPlace) as TextView
-        val userEmail = row?.findViewById(R.id.generalRankingUserEmail) as TextView
-        val userPoints = row?.findViewById(R.id.generalRankingUserPoints) as TextView
+        val place = row?.findViewById(R.id.rankingPlace) as TextView
+        val userOrTeamName = row?.findViewById(R.id.rankingUserOrTeamName) as TextView
+        val points = row?.findViewById(R.id.rankingPoints) as TextView
+        var team: TeamViewModel? = null
     }
 }

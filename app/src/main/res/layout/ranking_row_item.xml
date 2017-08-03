@@ -5,18 +5,18 @@
     android:orientation="horizontal"
     style="@style/RankingLine">
     <TextView
-        android:id="@+id/generalRankingUserPlace"
+        android:id="@+id/rankingPlace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1" />
     <TextView
-        android:id="@+id/generalRankingUserEmail"
+        android:id="@+id/rankingUserOrTeamName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1" />
 
     <TextView
-        android:id="@+id/generalRankingUserPoints"
+        android:id="@+id/rankingPoints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"/>

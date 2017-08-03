@@ -1,10 +1,8 @@
 package br.com.ecostage.mobilecollect.ui.ranking
 
-import br.com.ecostage.mobilecollect.listener.OnGeneralRankingLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnRankingGeneratedListener
 import br.com.ecostage.mobilecollect.listener.OnTeamRankingLoadedListener
-import br.com.ecostage.mobilecollect.model.Team
-import br.com.ecostage.mobilecollect.model.TeamRanking
-import br.com.ecostage.mobilecollect.model.UserRank
+import br.com.ecostage.mobilecollect.model.*
 import br.com.ecostage.mobilecollect.repository.CollectRepository
 import br.com.ecostage.mobilecollect.repository.RankingRepository
 import br.com.ecostage.mobilecollect.repository.UserRepository
@@ -21,9 +19,35 @@ class RankingInteractorImpl : RankingInteractor, AnkoLogger {
     val userRepository : UserRepository = UserRepositoryImpl()
 
     val collectRepository : CollectRepository = CollectRepositoryImpl()
+
     val rankingRepository : RankingRepository = RankingRepositoryImpl()
 
-    override fun findGeneralRanking(onGeneralRankingLoadedListener: OnGeneralRankingLoadedListener) {
+    override fun generateRanking(onRankingGeneratedListener: OnRankingGeneratedListener) {
+        val userId = userRepository.getCurrentUserId()
+
+        if (userId != null) {
+            // load
+
+            val position1 = Rank(1, User(userId, "caaiomaia@gmail.com", 100), null, 100)
+            val team1 = Team()
+            team1.id = "123"
+            team1.name = "Time 1"
+            val position2 = Rank(1, null, team1, 75)
+            val team2 = Team()
+            team2.id = "456"
+            team2.name = "Time 2"
+            val position3 = Rank(5, null, team2, 25)
+
+            val rank = mutableListOf(position1, position2, position3)
+
+            onRankingGeneratedListener.onGeneralRankingLoaded(rank)
+        } else {
+            onRankingGeneratedListener.onGeneralRankingLoadError()
+            error { "Could not find current user id when loading user teams rank" }
+        }
+    }
+
+    override fun findGeneralRanking(onRankingGeneratedListener: OnRankingGeneratedListener) {
         val userId = userRepository.getCurrentUserId()
 
         if (userId != null) {
@@ -34,9 +58,9 @@ class RankingInteractorImpl : RankingInteractor, AnkoLogger {
 
             val rank = mutableListOf(user1, user2)
 
-            onGeneralRankingLoadedListener.onGeneralRankingLoaded(rank)
+//            onRankingGeneratedListener.onGeneralRankingLoaded(rank)
         } else {
-            onGeneralRankingLoadedListener.onGeneralRankingLoadError()
+            onRankingGeneratedListener.onGeneralRankingLoadError()
             error { "Could not find current user id when loading user teams rank" }
         }
     }

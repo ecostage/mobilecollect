@@ -21,8 +21,11 @@ class RankingActivity : BottomNavigationActivity(), RankingView {
         super.onCreate(savedInstanceState)
 
         rankingPresenter.loadUserPoints()
-        rankingPresenter.loadGeneralRanking()
-        rankingPresenter.loadTeamRanking()
+//        rankingPresenter.loadGeneralRankingInfo()
+//        rankingPresenter.loadTeamRankingInfo()
+        rankingPresenter.loadRanking()
+//        rankingPresenter.loadGeneralRanking()
+//        rankingPresenter.loadTeamRanking()
     }
 
     override fun populateUserPoints(userRankingDetailsViewModel: UserRankingDetailsViewModel) {
@@ -31,11 +34,11 @@ class RankingActivity : BottomNavigationActivity(), RankingView {
         rankingUserPoint.text = userRankingDetailsViewModel.userRankingPoints.toString()
     }
 
-    override fun populateGeneralRanking(userRankingDetailsViewModel: List<UserRankingDetailsViewModel>) {
-        if (userRankingDetailsViewModel.isNotEmpty()) {
-            usersRankingListEmptyData.visibility = View.GONE
-            val adapter = GeneralRankingListAdapter(this, userRankingDetailsViewModel)
-            generalRankingList.adapter = adapter
+    override fun populateRanking(rankingViewModel: List<RankingViewModel>) {
+        if (rankingViewModel.isNotEmpty()) {
+            rankingListEmptyData.visibility = View.GONE
+            val adapter = RankingListAdapter(this, rankingViewModel)
+            rankingList.adapter = adapter
         }
     }
 
