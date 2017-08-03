@@ -5,9 +5,12 @@ package br.com.ecostage.mobilecollect.ui.profile
  */
 class ProfilePresenterImpl(var view: ProfileView) :
         ProfilePresenter,
-        ProfileInteractor.OnPasswordResetResult {
+        ProfileInteractor.OnPasswordResetResult,
+        ProfileInteractor.OnLoadTotalCollectsFromUser {
 
-    private val profileInteractor: ProfileInteractor = ProfileInteractorImpl(this)
+    private val profileInteractor: ProfileInteractor = ProfileInteractorImpl(
+            this,
+            this)
 
     override fun resetPasswordRequest() {
         view.showProgress()
@@ -29,4 +32,20 @@ class ProfilePresenterImpl(var view: ProfileView) :
         view.resetPasswordRequestUserNotUsingEmailAndPassword()
     }
 
+
+    override fun loadTotalCollectsFromUser() {
+        profileInteractor.loadTotalCollectsFromUser()
+    }
+
+    override fun loadTotalScoresFromUser() {
+
+    }
+
+    override fun loadTeamsListFromUser() {
+
+    }
+
+    override fun onLoadTotalCollectsFromUser(total: Long) {
+        view.setTotalCollectsForUser(total)
+    }
 }

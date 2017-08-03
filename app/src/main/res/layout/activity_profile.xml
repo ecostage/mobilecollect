@@ -84,13 +84,14 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/totalCollectsTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
                     android:drawableTint="@color/gray"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="3000"
+                    android:text="@string/default_value_total_collects"
                     android:textAlignment="textEnd" />
             </LinearLayout>
 

@@ -71,5 +71,6 @@
     <string name="profile_title_collects">Collects</string>
     <string name="profile_title_ranking_points">Score</string>
     <string name="profile_subheader_title_my_teams">My Teams</string>
+    <string name="default_value_total_collects">0</string>
 
 </resources>

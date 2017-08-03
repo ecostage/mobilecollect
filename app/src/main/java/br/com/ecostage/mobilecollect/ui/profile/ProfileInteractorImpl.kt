@@ -1,11 +1,20 @@
 package br.com.ecostage.mobilecollect.ui.profile
 
+import br.com.ecostage.mobilecollect.repository.CollectRepository
+import br.com.ecostage.mobilecollect.repository.UserRepository
+import br.com.ecostage.mobilecollect.repository.impl.CollectRepositoryImpl
+import br.com.ecostage.mobilecollect.repository.impl.UserRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
 
 /**
  * Created by andremaia on 8/2/17.
  */
-class ProfileInteractorImpl(val onPasswordResetResult: ProfileInteractor.OnPasswordResetResult) : ProfileInteractor {
+class ProfileInteractorImpl(val onPasswordResetResult: ProfileInteractor.OnPasswordResetResult,
+                            val onLoadTotalCollectsFromUser: ProfileInteractor.OnLoadTotalCollectsFromUser)
+    : ProfileInteractor {
+
+    val collectRepository: CollectRepository = CollectRepositoryImpl()
+    val userRepository: UserRepository = UserRepositoryImpl()
 
     override fun requestResetPasswordToFirebase() {
         val auth = FirebaseAuth.getInstance()
@@ -27,4 +36,13 @@ class ProfileInteractorImpl(val onPasswordResetResult: ProfileInteractor.OnPassw
                 }
     }
 
+
+    override fun loadTotalCollectsFromUser() {
+
+        val userId = userRepository.getCurrentUserId()
+
+        if (userId != null) {
+            collectRepository.countCollectsByUser(userId, onLoadTotalCollectsFromUser)
+        }
+    }
 }

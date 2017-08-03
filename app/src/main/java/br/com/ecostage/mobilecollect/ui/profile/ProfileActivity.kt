@@ -27,6 +27,7 @@ class ProfileActivity :
         super.onCreate(savedInstanceState)
 
         setupViewControls()
+        loadData()
     }
 
     private fun setupViewControls() {
@@ -42,6 +43,12 @@ class ProfileActivity :
             presenter.resetPasswordRequest()
         }
 
+    }
+
+    private fun loadData() {
+        presenter.loadTotalCollectsFromUser()
+        presenter.loadTotalScoresFromUser()
+        presenter.loadTeamsListFromUser()
     }
 
     override fun getContentViewId(): Int {
@@ -86,5 +93,9 @@ class ProfileActivity :
                 .setNegativeButton(android.R.string.ok) { _, _ -> }
                 .create()
                 .show()
+    }
+
+    override fun setTotalCollectsForUser(total: Long) {
+        totalCollectsTextView.text = total.toString()
     }
 }

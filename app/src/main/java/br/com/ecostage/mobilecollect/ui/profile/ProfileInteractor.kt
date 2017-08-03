@@ -11,5 +11,10 @@ interface ProfileInteractor {
         fun onPasswordResetUserIsNotUsingEmailAuth()
     }
 
+    interface OnLoadTotalCollectsFromUser {
+        fun onLoadTotalCollectsFromUser(total: Long)
+    }
+
     fun requestResetPasswordToFirebase()
+    fun loadTotalCollectsFromUser()
 }

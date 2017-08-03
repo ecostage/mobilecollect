@@ -5,4 +5,7 @@ package br.com.ecostage.mobilecollect.ui.profile
  */
 interface ProfilePresenter {
     fun resetPasswordRequest()
+    fun loadTotalCollectsFromUser()
+    fun loadTotalScoresFromUser()
+    fun loadTeamsListFromUser()
 }
