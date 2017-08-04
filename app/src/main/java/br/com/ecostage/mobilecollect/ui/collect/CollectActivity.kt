@@ -117,7 +117,7 @@ class CollectActivity : BaseActivity(), CollectView {
         return true
     }
 
-    private fun validateForm() : Boolean {
+    private fun validateForm(): Boolean {
         val classificationText = collectClassification.text.toString().trim()
         if (classificationText.isNullOrEmpty()) {
             hideProgress()
@@ -179,7 +179,15 @@ class CollectActivity : BaseActivity(), CollectView {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            CAMERA_REQUEST -> if (resultCode == Activity.RESULT_OK) collectImage.setImageURI(collectLastImage)
+            CAMERA_REQUEST -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    collectImage.setImageURI(collectLastImage)
+                } else {
+                    collectImage.setImageURI(null)
+                    collectLastImage = null
+                    collectLastImagePath = null
+                }
+            }
             CLASSIFICATION_REQUEST -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val selectedClassification = data?.getParcelableExtra<ClassificationViewModel>(CLASSIFICATION_DATA_RESULT)
