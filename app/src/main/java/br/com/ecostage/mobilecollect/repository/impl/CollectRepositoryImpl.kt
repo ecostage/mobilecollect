@@ -4,6 +4,7 @@ import br.com.ecostage.mobilecollect.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.repository.CollectRepository
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
+import br.com.ecostage.mobilecollect.ui.profile.ProfileInteractor
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -22,7 +23,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
         private val STORAGE_BUCKET_PHOTOS_NAME = "collect_photos"
     }
 
-    val firebaseDatabase : DatabaseReference = FirebaseDatabase.getInstance().reference
+    val firebaseDatabase: DatabaseReference = FirebaseDatabase.getInstance().reference
     val firebaseStorage: StorageReference = FirebaseStorage.getInstance().getReferenceFromUrl(STORAGE_BUCKET_URL).child(STORAGE_BUCKET_PHOTOS_NAME)
 
     override fun loadCollectsByUser(userId: String, onCollectLoadedListener: OnCollectLoadedListener) {
@@ -53,7 +54,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
     override fun save(userId: String, collect: Collect, photoBytes: ByteArray, onCollectSaveListener: CollectInteractor.OnSaveCollectListener) {
         collect.userId = userId
 
-        val uid : String? = firebaseDatabase.child(COLLECT_DB_TYPE).push().key
+        val uid: String? = firebaseDatabase.child(COLLECT_DB_TYPE).push().key
 
         // Clean the photo because we don't want to save it to firebase -- Check another way to do this
         collect.photo = null
@@ -79,7 +80,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
         savedCollect.date = collect.date
 
         uploadTask.addOnSuccessListener {
-//            savedCollect.photo = it.downloadUrl
+            //            savedCollect.photo = it.downloadUrl
 
             onCollectSaveListener.onSaveCollect(savedCollect)
         }
@@ -102,11 +103,11 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
                     override fun onDataChange(dataSnapshot: DataSnapshot?) {
 
                         val collect = dataSnapshot?.getValue(Collect::class.java)
-                        collect?.id =  dataSnapshot?.key
+                        collect?.id = dataSnapshot?.key
 
                         if (collect != null) {
                             val storageReference = firebaseStorage.child(collect.id + ".jpg")
-                            val downloadTask = storageReference.getBytes(1024*1024)
+                            val downloadTask = storageReference.getBytes(1024 * 1024)
 
                             downloadTask.addOnSuccessListener {
                                 collect.photo = it
@@ -124,6 +125,29 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
                             onCollectLoadedListener.onCollectLoadedError()
                             error { "Error when loading collect data. " + databaseError.message }
                         }
+                    }
+                })
+    }
+
+
+    override fun countCollectsByUser(userId: String, listener: ProfileInteractor.OnLoadTotalCollectsFromUser) {
+        firebaseDatabase
+                .child(COLLECT_BY_USER_DB_TYPE)
+                .child(userId)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+
+                    override fun onCancelled(databaseError: DatabaseError?) {
+                        listener.onLoadTotalCollectsFromUser(0)
+                    }
+
+                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
+
+                        if (dataSnapshot != null) {
+                            listener.onLoadTotalCollectsFromUser(dataSnapshot.childrenCount)
+                        } else {
+                            listener.onLoadTotalCollectsFromUser(0)
+                        }
+
                     }
                 })
     }
