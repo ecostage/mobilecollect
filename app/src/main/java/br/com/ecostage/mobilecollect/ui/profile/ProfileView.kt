@@ -15,4 +15,6 @@ interface ProfileView {
     fun signOut()
     fun setCurrentUser(email: String)
     fun setCurrentUserOnError()
+    fun setUserScore(userScore: Int?)
+    fun setUserScoreOnError()
 }

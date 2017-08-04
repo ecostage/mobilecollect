@@ -119,6 +119,19 @@ class ProfileActivity :
     }
 
     override fun setCurrentUserOnError() {
-        userEmailTextView.text  = getString(R.string.profile_default_user_email_address)
+        userEmailTextView.text = getString(R.string.profile_default_user_email_address)
     }
+
+    override fun setUserScore(userScore: Int?) {
+        userScoreTextView.text = userScoreFormatted(userScore) ?: defaultUserScore()
+    }
+
+    override fun setUserScoreOnError() {
+        userScoreTextView.text = defaultUserScore()
+
+    }
+
+    private fun userScoreFormatted(userScore: Int?) = resources.getString(R.string.profile_user_score_format, userScore?.toString())
+
+    private fun defaultUserScore() = resources.getString(R.string.profile_user_score_format, getString(R.string.profile_default_user_score))
 }

@@ -108,13 +108,14 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/userScoreTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
                     android:drawableTint="@color/gray"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="3000pts"
+                    android:hint="@string/profile_default_user_score"
                     android:textAlignment="textEnd" />
 
             </LinearLayout>

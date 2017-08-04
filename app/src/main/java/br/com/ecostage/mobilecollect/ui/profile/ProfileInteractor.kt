@@ -24,4 +24,5 @@ interface ProfileInteractor {
     fun loadTeamsListFromUser()
     fun signOut()
     fun loadCurrentUser()
+    fun loadTotalScoresFromUser()
 }

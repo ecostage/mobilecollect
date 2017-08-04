@@ -1,6 +1,7 @@
 package br.com.ecostage.mobilecollect.ui.profile
 
 import br.com.ecostage.mobilecollect.listener.OnUserLoadedWithoutScoreListener
+import br.com.ecostage.mobilecollect.listener.OnUserScoresLoadedListener
 import br.com.ecostage.mobilecollect.model.Team
 import br.com.ecostage.mobilecollect.model.User
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
@@ -14,9 +15,11 @@ class ProfilePresenterImpl(var view: ProfileView) :
         ProfileInteractor.OnLoadTotalCollectsFromUser,
         CollectInteractor.OnTeamListListener,
         ProfileInteractor.OnUserSignOutListener,
-        OnUserLoadedWithoutScoreListener {
+        OnUserLoadedWithoutScoreListener,
+        OnUserScoresLoadedListener {
 
     private val profileInteractor: ProfileInteractor = ProfileInteractorImpl(
+            this,
             this,
             this,
             this,
@@ -49,7 +52,7 @@ class ProfilePresenterImpl(var view: ProfileView) :
     }
 
     override fun loadTotalScoresFromUser() {
-
+        profileInteractor.loadTotalScoresFromUser()
     }
 
     override fun loadTeamsListFromUser() {
@@ -96,4 +99,13 @@ class ProfilePresenterImpl(var view: ProfileView) :
     override fun onUserLoadingError() {
         view.setCurrentUserOnError()
     }
+
+    override fun onRankingLoaded(userPoints: Int?) {
+        view.setUserScore(userPoints)
+    }
+
+    override fun onRankingLoadingError() {
+        view.setUserScoreOnError()
+    }
+
 }
