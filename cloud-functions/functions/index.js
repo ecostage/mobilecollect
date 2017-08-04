@@ -12,14 +12,6 @@ function calculate_scoreboard(event) {
 		// The data is being deleted
 		console.log("removing " + event.params.pushId + " from sorted rank");
 		admin.database().ref('/sorted_general_ranking/' + event.params.pushId).remove();
-		// admin.database().ref('/sorted_general_ranking/' + event.getKey()).on('value')
-		// 	.then(ref => {
-		// 		ref.remove();
-		// 	})
-		// 	.catch(err => {
-		// 		console.log(err.stack);
-		// 		return;
-		// 	});
 	}
 
 	admin.database().ref('/ranking_collect_by_user').orderByChild('score').once('value')
