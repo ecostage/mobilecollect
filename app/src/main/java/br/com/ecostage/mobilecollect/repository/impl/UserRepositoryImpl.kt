@@ -1,6 +1,7 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
 import br.com.ecostage.mobilecollect.listener.OnUserLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnUserLoadedWithoutScoreListener
 import br.com.ecostage.mobilecollect.listener.OnUserPointsLoadedListener
 import br.com.ecostage.mobilecollect.model.User
 import br.com.ecostage.mobilecollect.repository.RankingRepository
@@ -12,6 +13,24 @@ import com.google.firebase.auth.FirebaseAuth
  */
 class UserRepositoryImpl : UserRepository {
     private val rankingRepository: RankingRepository = RankingRepositoryImpl()
+
+    override fun getCurrentUserWithoutScore(onUserLoadedWithoutScoreListener: OnUserLoadedWithoutScoreListener) {
+
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null || user.email == null) {
+            onUserLoadedWithoutScoreListener.onUserLoadingError()
+            return
+        }
+
+        val email = user.email
+        if (email !is String) {
+            onUserLoadedWithoutScoreListener.onUserLoadingError()
+            return
+        }
+
+        onUserLoadedWithoutScoreListener.onUserLoaded(User(user.uid, email, -1))
+
+    }
 
     override fun getCurrentUser(onUserLoadedListener: OnUserLoadedListener) {
         val user = FirebaseAuth.getInstance().currentUser
@@ -28,9 +47,9 @@ class UserRepositoryImpl : UserRepository {
 
                         if (email is String) {
                             onUserLoadedListener.onUserLoaded(User(user.uid, email, p))
-                        }
-                        else
+                        } else {
                             onUserLoadedListener.onUserLoadingError()
+                        }
                     }
                 }
 

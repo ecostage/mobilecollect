@@ -1,6 +1,8 @@
 package br.com.ecostage.mobilecollect.ui.profile
 
+import br.com.ecostage.mobilecollect.listener.OnUserLoadedWithoutScoreListener
 import br.com.ecostage.mobilecollect.model.Team
+import br.com.ecostage.mobilecollect.model.User
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
 
 /**
@@ -11,9 +13,11 @@ class ProfilePresenterImpl(var view: ProfileView) :
         ProfileInteractor.OnPasswordResetResult,
         ProfileInteractor.OnLoadTotalCollectsFromUser,
         CollectInteractor.OnTeamListListener,
-        ProfileInteractor.OnUserSignOutListener {
+        ProfileInteractor.OnUserSignOutListener,
+        OnUserLoadedWithoutScoreListener {
 
     private val profileInteractor: ProfileInteractor = ProfileInteractorImpl(
+            this,
             this,
             this,
             this,
@@ -79,5 +83,17 @@ class ProfilePresenterImpl(var view: ProfileView) :
 
     override fun onUserSignOut() {
         view.signOut()
+    }
+
+    override fun loadCurrentUser() {
+        profileInteractor.loadCurrentUser()
+    }
+
+    override fun onUserLoaded(user: User) {
+        view.setCurrentUser(user.email)
+    }
+
+    override fun onUserLoadingError() {
+        view.setCurrentUserOnError()
     }
 }

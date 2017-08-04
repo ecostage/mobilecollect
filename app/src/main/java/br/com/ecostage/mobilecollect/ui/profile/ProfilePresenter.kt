@@ -9,4 +9,5 @@ interface ProfilePresenter {
     fun loadTotalScoresFromUser()
     fun loadTeamsListFromUser()
     fun signOut()
+    fun loadCurrentUser()
 }

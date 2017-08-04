@@ -51,6 +51,7 @@ class ProfileActivity :
     }
 
     private fun loadData() {
+        presenter.loadCurrentUser()
         presenter.loadTotalCollectsFromUser()
         presenter.loadTotalScoresFromUser()
         presenter.loadTeamsListFromUser()
@@ -111,5 +112,13 @@ class ProfileActivity :
     override fun signOut() {
         startActivity<LoginActivity>()
         finish()
+    }
+
+    override fun setCurrentUser(email: String) {
+        userEmailTextView.text = email
+    }
+
+    override fun setCurrentUserOnError() {
+        userEmailTextView.text  = getString(R.string.profile_default_user_email_address)
     }
 }

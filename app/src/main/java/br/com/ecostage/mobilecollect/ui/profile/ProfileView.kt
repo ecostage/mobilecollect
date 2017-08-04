@@ -13,4 +13,6 @@ interface ProfileView {
     fun setTotalCollectsForUser(total: Long)
     fun setUserTeams(teams: String)
     fun signOut()
+    fun setCurrentUser(email: String)
+    fun setCurrentUserOnError()
 }

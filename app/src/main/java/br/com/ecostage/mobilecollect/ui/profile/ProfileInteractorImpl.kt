@@ -1,5 +1,6 @@
 package br.com.ecostage.mobilecollect.ui.profile
 
+import br.com.ecostage.mobilecollect.listener.OnUserLoadedWithoutScoreListener
 import br.com.ecostage.mobilecollect.repository.CollectRepository
 import br.com.ecostage.mobilecollect.repository.TeamRepository
 import br.com.ecostage.mobilecollect.repository.UserRepository
@@ -16,7 +17,8 @@ class ProfileInteractorImpl(val onPasswordResetResult: ProfileInteractor.OnPassw
                             val onLoadTotalCollectsFromUser: ProfileInteractor.OnLoadTotalCollectsFromUser,
                             // FIXME: Listeners should not belongs to um interactor.
                             val onTeamListListener: CollectInteractor.OnTeamListListener,
-                            val onUserSignOutListener: ProfileInteractor.OnUserSignOutListener)
+                            val onUserSignOutListener: ProfileInteractor.OnUserSignOutListener,
+                            val onUserLoadedWithoutScoreListener: OnUserLoadedWithoutScoreListener)
     : ProfileInteractor {
 
     val collectRepository: CollectRepository = CollectRepositoryImpl()
@@ -64,5 +66,9 @@ class ProfileInteractorImpl(val onPasswordResetResult: ProfileInteractor.OnPassw
     override fun signOut() {
         FirebaseAuth.getInstance().signOut()
         onUserSignOutListener.onUserSignOut()
+    }
+
+    override fun loadCurrentUser() {
+        userRepository.getCurrentUserWithoutScore(onUserLoadedWithoutScoreListener)
     }
 }

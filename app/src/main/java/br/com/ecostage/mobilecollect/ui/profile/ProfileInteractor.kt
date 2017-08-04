@@ -23,4 +23,5 @@ interface ProfileInteractor {
     fun loadTotalCollectsFromUser()
     fun loadTeamsListFromUser()
     fun signOut()
+    fun loadCurrentUser()
 }

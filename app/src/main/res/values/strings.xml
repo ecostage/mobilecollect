@@ -79,5 +79,6 @@
     <string name="profile_subheader_title_my_teams">My Teams</string>
     <string name="default_value_total_collects">0</string>
     <string name="default_message_user_not_participating_in_a_team">Você não pertence a nenhum time</string>
+    <string name="profile_default_user_email_address" />
 
 </resources>
