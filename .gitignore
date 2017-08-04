@@ -338,3 +338,4 @@ gradle-app.setting
 .externalNativeBuild
 /.idea/dictionaries/*
 /.idea/sonarlint/*
+/node_modules
