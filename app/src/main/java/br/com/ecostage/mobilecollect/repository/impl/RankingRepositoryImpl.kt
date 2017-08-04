@@ -14,7 +14,7 @@ class RankingRepositoryImpl : RankingRepository {
 
     val firebaseDatabase : DatabaseReference = FirebaseDatabase.getInstance().reference
 
-    override fun getUserPoints(userId: String, onUserPointsLoadedListener: OnUserPointsLoadedListener) {
+    override fun getUserScore(userId: String, onUserPointsLoadedListener: OnUserPointsLoadedListener) {
         firebaseDatabase
                 .child(RANKING_COLLECT_BY_USER_DB_TYPE)
                 .child(userId)

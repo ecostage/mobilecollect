@@ -6,5 +6,5 @@ import br.com.ecostage.mobilecollect.listener.OnUserPointsLoadedListener
  * Created by cmaia on 7/30/17.
  */
 interface RankingRepository {
-    fun getUserPoints(userId: String, onUserPointsLoadedListener: OnUserPointsLoadedListener)
+    fun getUserScore(userId: String, onUserPointsLoadedListener: OnUserPointsLoadedListener)
 }

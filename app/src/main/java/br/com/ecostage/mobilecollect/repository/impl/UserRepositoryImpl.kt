@@ -35,7 +35,7 @@ class UserRepositoryImpl : UserRepository {
     override fun getCurrentUser(onUserLoadedListener: OnUserLoadedListener) {
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
-            rankingRepository.getUserPoints(user.uid, object : OnUserPointsLoadedListener {
+            rankingRepository.getUserScore(user.uid, object : OnUserPointsLoadedListener {
                 override fun onRankingLoaded(userPoints: Int?) {
                     var points = 0
 
