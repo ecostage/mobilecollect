@@ -20,7 +20,7 @@ class RankingRepositoryImpl : RankingRepository {
                 .child(userId)
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(data: DataSnapshot?) {
-                        val points = data?.getValue(Int::class.java)
+                        val points = data?.child("score")?.getValue(Int::class.java)
                         if (points != null) {
                             onUserPointsLoadedListener.onRankingLoaded(points)
                         }
