@@ -8,4 +8,5 @@ interface ProfilePresenter {
     fun loadTotalCollectsFromUser()
     fun loadTotalScoresFromUser()
     fun loadTeamsListFromUser()
+    fun signOut()
 }

@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
+import br.com.ecostage.mobilecollect.ui.login.LoginActivity
 import br.com.ecostage.mobilecollect.ui.profile.collect.UserCollectActivity
 import br.com.ecostage.mobilecollect.ui.ranking.RankingActivity
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -41,6 +42,10 @@ class ProfileActivity :
 
         profileChangePassword.setOnClickListener {
             presenter.resetPasswordRequest()
+        }
+
+        profileSignOut.setOnClickListener {
+            presenter.signOut()
         }
 
     }
@@ -101,5 +106,10 @@ class ProfileActivity :
 
     override fun setUserTeams(teams: String) {
         userTeamsTextView.text = teams
+    }
+
+    override fun signOut() {
+        startActivity<LoginActivity>()
+        finish()
     }
 }

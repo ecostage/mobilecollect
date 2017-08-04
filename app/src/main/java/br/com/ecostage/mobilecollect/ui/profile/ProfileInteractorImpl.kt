@@ -15,7 +15,8 @@ import com.google.firebase.auth.FirebaseAuth
 class ProfileInteractorImpl(val onPasswordResetResult: ProfileInteractor.OnPasswordResetResult,
                             val onLoadTotalCollectsFromUser: ProfileInteractor.OnLoadTotalCollectsFromUser,
                             // FIXME: Listeners should not belongs to um interactor.
-                            val onTeamListListener: CollectInteractor.OnTeamListListener)
+                            val onTeamListListener: CollectInteractor.OnTeamListListener,
+                            val onUserSignOutListener: ProfileInteractor.OnUserSignOutListener)
     : ProfileInteractor {
 
     val collectRepository: CollectRepository = CollectRepositoryImpl()
@@ -58,5 +59,10 @@ class ProfileInteractorImpl(val onPasswordResetResult: ProfileInteractor.OnPassw
         if (userId != null) {
             teamRepository.loadTeamsFor(userId, onTeamListListener)
         }
+    }
+
+    override fun signOut() {
+        FirebaseAuth.getInstance().signOut()
+        onUserSignOutListener.onUserSignOut()
     }
 }

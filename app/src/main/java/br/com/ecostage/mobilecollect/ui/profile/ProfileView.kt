@@ -12,4 +12,5 @@ interface ProfileView {
     fun resetPasswordRequestUserNotUsingEmailAndPassword()
     fun setTotalCollectsForUser(total: Long)
     fun setUserTeams(teams: String)
+    fun signOut()
 }

@@ -15,7 +15,12 @@ interface ProfileInteractor {
         fun onLoadTotalCollectsFromUser(total: Long)
     }
 
+    interface OnUserSignOutListener {
+        fun onUserSignOut()
+    }
+
     fun requestResetPasswordToFirebase()
     fun loadTotalCollectsFromUser()
     fun loadTeamsListFromUser()
+    fun signOut()
 }

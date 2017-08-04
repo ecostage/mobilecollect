@@ -10,9 +10,11 @@ class ProfilePresenterImpl(var view: ProfileView) :
         ProfilePresenter,
         ProfileInteractor.OnPasswordResetResult,
         ProfileInteractor.OnLoadTotalCollectsFromUser,
-        CollectInteractor.OnTeamListListener {
+        CollectInteractor.OnTeamListListener,
+        ProfileInteractor.OnUserSignOutListener {
 
     private val profileInteractor: ProfileInteractor = ProfileInteractorImpl(
+            this,
             this,
             this,
             this)
@@ -69,5 +71,13 @@ class ProfilePresenterImpl(var view: ProfileView) :
 
     override fun onTeamListError() {
 
+    }
+
+    override fun signOut() {
+        profileInteractor.signOut()
+    }
+
+    override fun onUserSignOut() {
+        view.signOut()
     }
 }
