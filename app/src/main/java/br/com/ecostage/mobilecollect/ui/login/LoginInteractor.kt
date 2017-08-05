@@ -18,6 +18,7 @@ interface LoginInteractor {
 
     interface OnSignInWithGoogleFinishedListener {
         fun onFailureWithGoogle()
+        fun onConnectionFailedWithGoogle()
     }
 
     fun signInWithEmail(username: String, password: String, listener: OnEmailSignInFinishedListener)

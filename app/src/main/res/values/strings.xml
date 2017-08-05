@@ -23,7 +23,8 @@
     <string name="or">ou</string>
     <string name="action_sign_in_with_google">Log In Com Google</string>
     <string name="action_sign_out">Log Out</string>
-    <string name="sign_in_with_google_failure_message">Google Play Services error.</string>
+    <string name="sign_in_with_google_failure_message">Erro no Google Play Services.</string>
+    <string name="sign_in_internet_unavailable_failure_message">Não há conexão com a internet.</string>
     <string name="sign_in_with_email_failure_message">Usuário ou senha inválidos</string>
     <string name="label_sign_in">Log In</string>
     <string name="or_enter_in_you_account_info">ou com seu e-mail</string>
