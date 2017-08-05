@@ -66,7 +66,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
         firebaseDatabase.child(COLLECT_BY_USER_DB_TYPE).child(collect.userId).child(uid).setValue(collect)
 
         // Increment user points
-        firebaseDatabase.child(COLLECT_RANKING_DB_TYPE).child(collect.userId).runTransaction(object : Transaction.Handler {
+        firebaseDatabase.child(COLLECT_RANKING_DB_TYPE).child(collect.userId).child("score").runTransaction(object : Transaction.Handler {
             override fun doTransaction(data: MutableData?): Transaction.Result {
                 val points = data?.getValue(Long::class.java)
 
