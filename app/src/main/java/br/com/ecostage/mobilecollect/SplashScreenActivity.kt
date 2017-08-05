@@ -4,11 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import br.com.ecostage.mobilecollect.ui.login.LoginActivity
-import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.Crashlytics
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import io.fabric.sdk.android.Fabric;
-
+import io.fabric.sdk.android.Fabric
 
 
 /**
@@ -22,7 +20,7 @@ class SplashScreenActivity : Activity() {
         setContentView(R.layout.activity_splash_screen)
 
         logUser()
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
 
         val timerThread = object : Thread() {
             override fun run() {
