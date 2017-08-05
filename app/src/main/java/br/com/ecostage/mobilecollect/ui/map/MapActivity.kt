@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
@@ -33,6 +34,7 @@ import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 
+@SuppressLint("MissingPermission")
 class MapActivity : BottomNavigationActivity(),
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -66,17 +68,28 @@ class MapActivity : BottomNavigationActivity(),
         mapPresenter.loadUserCollects()
     }
 
-    @SuppressLint("MissingPermission")
+
     private fun setupView() {
         supportActionBar?.title = resources.getString(R.string.map)
 
         addNewCollectFloatingActionButton.setOnClickListener {
 
-            val currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
-            mapPresenter.mark(currentLocation.latitude, currentLocation.longitude)
+            accessingLocationInfo {
+                val currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
+                mapPresenter.mark(currentLocation.latitude, currentLocation.longitude)
+            }
         }
 
     }
+
+    fun accessingLocationInfo(body: () -> Unit) {
+        if (canAccessLocation()) {
+            body()
+        } else {
+            mapPresenter.onPermissionNeeded()
+        }
+    }
+
 
     private fun setupMap() {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
@@ -99,22 +112,19 @@ class MapActivity : BottomNavigationActivity(),
         }
     }
 
-    @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
 
         googleMap.setOnMarkerClickListener(this)
 
-        if (canAccessLocation()) {
+        accessingLocationInfo {
             buildGoogleApiClient()
             map.isMyLocationEnabled = true
-        } else {
-            mapPresenter.onPermissionNeeded()
         }
     }
 
-    @SuppressLint("MissingPermission")
+
     override fun onConnected(bundle: Bundle?) {
         info("Location services connected")
 
@@ -123,7 +133,7 @@ class MapActivity : BottomNavigationActivity(),
         locationRequest.fastestInterval = 10000
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
 
-        if (canAccessLocation()) {
+        accessingLocationInfo {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this)
 
             val lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
@@ -152,7 +162,6 @@ class MapActivity : BottomNavigationActivity(),
 
     override fun onLocationChanged(location: Location?) {}
 
-    @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             MAP_PERMISSION_REQUEST_CODE -> if (!grantResults.isEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -197,6 +206,10 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     override fun showMapPermissionRequestDialog() {
+
+        Snackbar.make(mapContainerView, R.string.message_snackbar_location_not_allowed, Snackbar.LENGTH_SHORT)
+                .show()
+
         ActivityCompat.requestPermissions(this,
                 arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
                 MAP_PERMISSION_REQUEST_CODE)
