@@ -51,27 +51,29 @@
         <activity
             android:name="br.com.ecostage.mobilecollect.ui.profile.ProfileActivity"
             android:label="@string/action_label_profile"
-            android:theme="@style/AppTheme" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
             android:name="br.com.ecostage.mobilecollect.ui.ranking.RankingActivity"
+            android:configChanges="orientation"
             android:label="@string/action_label_ranking"
-            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"
-            android:configChanges="orientation" />
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
             android:name="br.com.ecostage.mobilecollect.ui.collect.CollectActivity"
             android:configChanges="orientation"
+            android:label="@string/collect_header_title"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustPan"
-            android:label="@string/collect_header_title"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="br.com.ecostage.mobilecollect.ui.category.selection.ClassificationActivity"
             android:configChanges="orientation"
             android:label="@string/classification_header_title"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name="br.com.ecostage.mobilecollect.ui.profile.collect.UserCollectActivity"
+        <activity
+            android:name="br.com.ecostage.mobilecollect.ui.profile.collect.UserCollectActivity"
             android:configChanges="orientation"
             android:label="@string/profile_my_collects"
             android:screenOrientation="portrait"
