@@ -44,7 +44,7 @@
             android:configChanges="orientation"
             android:label="@string/action_label_map"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="br.com.ecostage.mobilecollect.ui.profile.ProfileActivity"
             android:label="@string/action_label_profile"
