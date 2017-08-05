@@ -37,7 +37,6 @@ class MapActivity : BottomNavigationActivity(),
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        GoogleMap.OnMapLongClickListener,
         GoogleMap.SnapshotReadyCallback,
         GoogleMap.OnMarkerClickListener,
         LocationListener,
@@ -65,12 +64,6 @@ class MapActivity : BottomNavigationActivity(),
 
         // Load collects to show in map
         mapPresenter.loadUserCollects()
-    }
-
-    private fun setupUiSettings(map: GoogleMap) {
-        val uiSettings = map.uiSettings
-
-        uiSettings.isZoomControlsEnabled = true
     }
 
     @SuppressLint("MissingPermission")
@@ -111,10 +104,7 @@ class MapActivity : BottomNavigationActivity(),
         googleMap = map
         googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
 
-        googleMap.setOnMapLongClickListener(this)
         googleMap.setOnMarkerClickListener(this)
-
-        setupUiSettings(googleMap)
 
         if (canAccessLocation()) {
             buildGoogleApiClient()
@@ -174,12 +164,6 @@ class MapActivity : BottomNavigationActivity(),
             } else {
                 mapPresenter.onPermissionDenied(resources.getString(R.string.map_permission_needed))
             }
-        }
-    }
-
-    override fun onMapLongClick(latLng: LatLng?) {
-        if (latLng != null) {
-            mapPresenter.mark(latLng.latitude, latLng.longitude)
         }
     }
 
