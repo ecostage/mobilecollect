@@ -26,7 +26,7 @@
     <string name="sign_in_with_google_failure_message">Google Play Services error.</string>
     <string name="sign_in_with_email_failure_message">Usuário ou senha inválidos</string>
     <string name="label_sign_in">Log In</string>
-    <string name="or_enter_in_you_account_info">or with your e-mail</string>
+    <string name="or_enter_in_you_account_info">ou com seu e-mail</string>
     <string name="developers_logo_tipo">Developers logo tipo</string>
     <string name="logo_da_aplica_o">Logo da aplicação</string>
 
