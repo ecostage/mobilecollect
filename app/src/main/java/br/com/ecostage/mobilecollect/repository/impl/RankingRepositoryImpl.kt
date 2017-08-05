@@ -45,7 +45,7 @@ class RankingRepositoryImpl : RankingRepository {
         firebaseDatabase
                 .child(USER_RANKING_POSITION_DB_TYPE)
                 .child(user.id)
-                .addValueEventListener(object : ValueEventListener {
+                .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(data: DataSnapshot?) {
                         val position = data?.value.toString()
 
