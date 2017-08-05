@@ -7,6 +7,8 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.GradientDrawable
 import android.location.Location
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -25,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -219,10 +222,29 @@ class MapActivity : BottomNavigationActivity(),
 
     override fun showMarkerAt(latitude: Double, longitude: Double): Marker {
         val position: LatLng = LatLng(latitude, longitude)
-        val marker = googleMap.addMarker(MarkerOptions().position(position))
+        val descriptor = BitmapDescriptorFactory.fromBitmap(createPinMap())
+        val marker = googleMap.addMarker(MarkerOptions()
+                .position(position)
+                .icon(descriptor))
+
         markers.add(marker)
 
         return marker
+    }
+
+    private fun createPinMap(): Bitmap? {
+        val px = 42
+        val bitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val shape = resources.getDrawable(R.drawable.shape_pin_collect, theme) as GradientDrawable
+
+        val color = getColor(R.color.default_pin)
+        shape.setStroke(3, color)
+        shape.setColor(color)
+
+        shape.setBounds(0, 0, bitmap.width, bitmap.height)
+        shape.draw(canvas)
+        return bitmap
     }
 
     override fun takeMapSnapshot() {
