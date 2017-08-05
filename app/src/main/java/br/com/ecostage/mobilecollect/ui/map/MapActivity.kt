@@ -15,7 +15,6 @@ import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.collect.CollectActivity
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
-import br.com.ecostage.mobilecollect.ui.login.LoginActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -28,14 +27,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_map.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.startActivity
-import kotlin.error
 
 class MapActivity : BottomNavigationActivity(),
         OnMapReadyCallback,
@@ -56,19 +52,13 @@ class MapActivity : BottomNavigationActivity(),
     private val mapPresenter: MapPresenter = MapPresenterImpl(this, this)
     private val MAP_PERMISSION_REQUEST_CODE = 1
     private var googleApiClient: GoogleApiClient? = null
-    private val markers : MutableList<Marker> = ArrayList()
+    private val markers: MutableList<Marker> = ArrayList()
 
     private lateinit var googleMap: GoogleMap
     private lateinit var locationRequest: LocationRequest
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        sign_out_button.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            startActivity<LoginActivity>()
-            finish()
-        }
 
         setupView()
         setupMap()
@@ -83,8 +73,16 @@ class MapActivity : BottomNavigationActivity(),
         uiSettings.isZoomControlsEnabled = true
     }
 
+    @SuppressLint("MissingPermission")
     private fun setupView() {
         supportActionBar?.title = resources.getString(R.string.map)
+
+        addNewCollectFloatingActionButton.setOnClickListener {
+
+            val currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
+            mapPresenter.mark(currentLocation.latitude, currentLocation.longitude)
+        }
+
     }
 
     private fun setupMap() {
@@ -93,7 +91,7 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when(requestCode) {
+        when (requestCode) {
             COLLECT_REQUEST -> {
                 if (resultCode == Activity.RESULT_CANCELED) {
                     mapPresenter.removeLastMarker()
@@ -222,7 +220,7 @@ class MapActivity : BottomNavigationActivity(),
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-    override fun showMarkerAt(latitude: Double, longitude: Double) : Marker {
+    override fun showMarkerAt(latitude: Double, longitude: Double): Marker {
         val position: LatLng = LatLng(latitude, longitude)
         val marker = googleMap.addMarker(MarkerOptions().position(position))
         markers.add(marker)
@@ -266,7 +264,7 @@ class MapActivity : BottomNavigationActivity(),
         longToast(message)
     }
 
-    override fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?, showInfo : Boolean) {
+    override fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?, showInfo: Boolean) {
         marker.tag = collectViewModel?.id
         marker.title = collectViewModel?.name
         marker.snippet = "Classificacão: " + collectViewModel?.classification + " \n Data: " + collectViewModel?.date
