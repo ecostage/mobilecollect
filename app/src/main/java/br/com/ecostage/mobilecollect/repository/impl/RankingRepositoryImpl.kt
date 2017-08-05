@@ -62,9 +62,10 @@ class RankingRepositoryImpl : RankingRepository {
                                         sortedData?.children?.mapNotNull {
                                             val score = it.child("score").getValue(Int::class.java)
                                             val userId = it.child("userId").getValue(String::class.java)
+                                            val userEmail = it.child("userEmail").getValue(String::class.java)
 
-                                            if (userId != null && score != null) {
-                                                val rank = Rank(it.key.toInt(), User(userId, "test", score), null, score)
+                                            if (userId != null && score != null && userEmail != null) {
+                                                val rank = Rank(it.key.toInt(), User(userId, userEmail, score), null, score)
                                                 result.add(rank)
                                             }
 
