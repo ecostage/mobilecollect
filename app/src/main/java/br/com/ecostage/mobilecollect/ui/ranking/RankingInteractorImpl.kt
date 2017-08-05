@@ -27,7 +27,7 @@ class RankingInteractorImpl : RankingInteractor, AnkoLogger {
     override fun loadUserGeneralRankingInfo(onUserGeneralRankingInfoLoadedListener: OnUserGeneralRankingInfoLoadedListener) {
         userRepository.getCurrentUser(object : OnUserLoadedListener {
             override fun onUserLoaded(user: User) {
-                onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoaded(Rank(1, user, null, 100))
+                rankingRepository.getUserGeneralRankingInfo(user, onUserGeneralRankingInfoLoadedListener)
             }
 
             override fun onUserLoadingError() {

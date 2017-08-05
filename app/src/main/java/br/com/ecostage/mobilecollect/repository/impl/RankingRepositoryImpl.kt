@@ -1,7 +1,13 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
+import br.com.ecostage.mobilecollect.listener.OnUserGeneralRankingInfoLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnUserLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnUserRankingLoadedListener
 import br.com.ecostage.mobilecollect.listener.OnUserScoresLoadedListener
+import br.com.ecostage.mobilecollect.model.Rank
+import br.com.ecostage.mobilecollect.model.User
 import br.com.ecostage.mobilecollect.repository.RankingRepository
+import br.com.ecostage.mobilecollect.repository.UserRepository
 import com.google.firebase.database.*
 
 /**
@@ -10,6 +16,8 @@ import com.google.firebase.database.*
 class RankingRepositoryImpl : RankingRepository {
     companion object {
         private val RANKING_COLLECT_BY_USER_DB_TYPE = "ranking_collect_by_user"
+        private val SORTED_BY_POSITION_RANKING_DB_TYPE = "sorted_by_position_ranking"
+        private val USER_RANKING_POSITION_DB_TYPE = "user_ranking_position"
     }
 
     val firebaseDatabase : DatabaseReference = FirebaseDatabase.getInstance().reference
@@ -27,8 +35,54 @@ class RankingRepositoryImpl : RankingRepository {
                     }
 
                     override fun onCancelled(dbError: DatabaseError?) {
-                        onUserScoresLoadedListener.onRankingLoadingError()
+                        if (dbError != null) {
+                            onUserScoresLoadedListener.onRankingLoadingError()
+                        }
                     }
+                })
+    }
+
+    override fun getUserGeneralRankingInfo(user: User, onUserGeneralRankingInfoLoadedListener: OnUserGeneralRankingInfoLoadedListener) {
+        firebaseDatabase
+                .child(USER_RANKING_POSITION_DB_TYPE)
+                .child(user.id)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(data: DataSnapshot?) {
+                        val position = data?.value.toString()
+
+                        firebaseDatabase
+                                .child(SORTED_BY_POSITION_RANKING_DB_TYPE)
+                                .orderByKey()
+                                .startAt((position.toInt() - 3).toString())
+                                .endAt((position.toInt() + 3).toString())
+                                .addValueEventListener(object : ValueEventListener {
+                                    override fun onDataChange(sortedData: DataSnapshot?) {
+                                        val result = ArrayList<Rank>()
+
+                                        sortedData?.children?.mapNotNull {
+                                            val score = it.child("score").getValue(Int::class.java)
+                                            val userId = it.child("userId").getValue(String::class.java)
+
+                                            if (userId != null && score != null) {
+                                                val rank = Rank(it.key.toInt(), User(userId, "test", score), null, score)
+                                                result.add(rank)
+                                            }
+
+                                        }
+
+                                        onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoaded(result)
+                                    }
+
+                                    override fun onCancelled(p0: DatabaseError?) {
+
+                                    }
+
+                                })
+                    }
+
+                    override fun onCancelled(p0: DatabaseError?) {
+                    }
+
                 })
     }
 }

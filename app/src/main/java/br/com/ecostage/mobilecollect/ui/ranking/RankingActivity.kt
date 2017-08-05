@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
 import kotlinx.android.synthetic.main.activity_ranking.*
 
 /**
@@ -22,7 +23,7 @@ class RankingActivity : BottomNavigationActivity(), RankingView {
 
         rankingPresenter.loadUserPoints()
         rankingPresenter.loadUserGeneralRankingInfo()
-        rankingPresenter.loadUserTeamsRankingInfo()
+//        rankingPresenter.loadUserTeamsRankingInfo()
     }
 
     override fun populateUserPoints(userRankingDetailsViewModel: UserRankingDetailsViewModel) {
@@ -31,10 +32,12 @@ class RankingActivity : BottomNavigationActivity(), RankingView {
         rankingUserPoint.text = userRankingDetailsViewModel.userRankingPoints.toString()
     }
 
-    override fun populateUserGeneralRankingInfo(rankingViewModel: RankingViewModel) {
-        generalRankingUserPlace.text = rankingViewModel.position.toString()
-        generalRankingUserEmail.text = rankingViewModel.user?.email
-        generalRankingUserPoints.text = rankingViewModel.points.toString()
+    override fun populateUserGeneralRankingInfo(rankingViewModel: List<RankingViewModel>) {
+        if (rankingViewModel.isNotEmpty()) {
+            rankingListEmptyData.visibility = View.GONE
+            val adapter = RankingListAdapter(this, rankingViewModel)
+            rankingList.adapter = adapter
+        }
     }
 
     override fun populateUserTeamsRankingInfo(rankingViewModel: List<RankingViewModel>) {
@@ -46,11 +49,11 @@ class RankingActivity : BottomNavigationActivity(), RankingView {
     }
 
     override fun showProgress() {
-//        ProgressBarHandler().showProgress(true, scrollViewRankingActivity, rankingProgress)
+        ProgressBarHandler().showProgress(true, rankingBody, rankingProgressBar)
     }
 
     override fun hideProgress() {
-//        ProgressBarHandler().showProgress(false, scrollViewRankingActivity, rankingProgress)
+        ProgressBarHandler().showProgress(false, rankingBody, rankingProgressBar)
     }
 
     override fun getContentViewId(): Int {

@@ -7,141 +7,111 @@
     android:orientation="vertical"
     tools:context=".ui.ranking.RankingActivity">
 
-    <LinearLayout
-        android:id="@+id/rankingHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/rankingUserName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/ranking_my_points"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/rankingUserPoint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/user_points_hint"
-            android:textAlignment="textEnd"
-            android:textSize="36sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/ranking_points_sufix"
-            android:textAlignment="viewStart"
-            android:textSize="12sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/generalRankingUserInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rankingHeader"
-        android:orientation="vertical">
-
-        <View style="@style/Divider" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp"
-            android:drawablePadding="8dp"
-            android:drawableStart="@drawable/ic_user_24dp"
-            android:drawableTint="@color/strong_gray"
-            android:text="@string/title_user_leader_board" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/generalRankingUserPlace"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/generalRankingUserEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/generalRankingUserPoints"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
+    <ProgressBar
+        android:id="@+id/rankingProgressBar"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/bottom_navigation"
-        android:layout_below="@id/generalRankingUserInfo"
-        android:orientation="vertical">
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
-        <View style="@style/Divider" />
+    <LinearLayout
+        android:id="@+id/rankingBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/rankingHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/rankingUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ranking_my_points"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/rankingUserPoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/user_points_hint"
+                android:textAlignment="textEnd"
+                android:textSize="36sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ranking_points_sufix"
+                android:textAlignment="viewStart"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_people_color_accent_24dp"
-                android:drawableTint="@color/strong_gray"
-                android:text="@string/title_team_leader_board" />
-
-
-            <ListView
-                android:id="@+id/rankingList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <View style="@style/Divider" />
 
             <LinearLayout
-                android:id="@+id/rankingListEmptyData"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="32dp"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/ic_medal"
-                    android:tint="@color/strong_gray" />
-
                 <TextView
-                    android:id="@android:id/empty"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/no_results"
-                    android:textAlignment="center" />
-            </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:drawablePadding="8dp"
+                    android:drawableStart="@drawable/ic_people_color_accent_24dp"
+                    android:drawableTint="@color/strong_gray"
+                    android:text="@string/title_user_leader_board" />
 
+                <ListView
+                    android:id="@+id/rankingList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:id="@+id/rankingListEmptyData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="32dp"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="8dp"
+                        android:src="@drawable/ic_medal"
+                        android:tint="@color/strong_gray" />
+
+                    <TextView
+                        android:id="@android:id/empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/no_results"
+                        android:textAlignment="center" />
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
+
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"

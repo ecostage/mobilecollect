@@ -12,4 +12,5 @@ interface UserRepository {
     fun getCurrentUser(onUserLoadedListener: OnUserLoadedListener)
     fun getCurrentUserWithoutScore(onUserLoadedWithoutScoreListener: OnUserLoadedWithoutScoreListener)
     fun getCurrentUserScore(onUserScoresLoaded: OnUserScoresLoadedListener)
+    fun getUser(userId: String, onUserLoadedListener: OnUserLoadedListener)
 }

@@ -43,10 +43,10 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
                     }
 
                     override fun onCancelled(databaseError: DatabaseError?) {
-                        if (databaseError != null) {
-                            onCollectLoadedListener.onCollectLoadedError()
-                            error { "Error when loading collect data. " + databaseError.message }
-                        }
+//                        if (databaseError != null) {
+//                            onCollectLoadedListener.onCollectLoadedError()
+//                            error("Error when loading collect data. " + databaseError.message)
+//                        }
                     }
                 })
     }

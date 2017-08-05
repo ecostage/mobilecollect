@@ -7,12 +7,30 @@ import br.com.ecostage.mobilecollect.model.User
 import br.com.ecostage.mobilecollect.repository.RankingRepository
 import br.com.ecostage.mobilecollect.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
 /**
  * Created by cmaia on 7/23/17.
  */
 class UserRepositoryImpl : UserRepository {
     private val rankingRepository: RankingRepository = RankingRepositoryImpl()
+    val firebaseDatabase : DatabaseReference = FirebaseDatabase.getInstance().reference
+
+    override fun getUser(userId: String, onUserLoadedListener: OnUserLoadedListener) {
+        firebaseDatabase
+                .child("users")
+                .child(userId)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(data: DataSnapshot?) {
+                        onUserLoadedListener.onUserLoaded(User(userId, "", 0))
+                    }
+
+                    override fun onCancelled(p0: DatabaseError?) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                })
+    }
 
     override fun getCurrentUserWithoutScore(onUserLoadedWithoutScoreListener: OnUserLoadedWithoutScoreListener) {
 

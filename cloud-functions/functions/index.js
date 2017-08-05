@@ -11,7 +11,8 @@ function calculate_scoreboard(event) {
 	if (!event.data.exists()) {
 		// The data is being deleted
 		console.log("removing " + event.params.pushId + " from sorted rank");
-		admin.database().ref('/sorted_general_ranking/' + event.params.pushId).remove();
+
+		admin.database().ref('/user_ranking_position/' + event.params.pushId).remove();
 	}
 
 	admin.database().ref('/ranking_collect_by_user').orderByChild('score').once('value')
@@ -26,18 +27,30 @@ function calculate_scoreboard(event) {
 
 			entities.reverse(); // Reverse because it comes in ascend order
 			
+			var position;			
 			for (var i = 0; i < entities.length; i++) {
 				console.log("entity: " + entities[i].getKey());
 
-				var before = i == 0 ? null : entities[i - 1].getKey();
-				var after = i == entities.length - 1 ? null : entities[i + 1].getKey();
+				position = i + 1;
 
-				admin.database().ref('/sorted_general_ranking/' + entities[i].getKey()).set({
-					position: i + 1,
+				admin.database().ref('/sorted_by_position_ranking/' + position).set({
 					score: entities[i].val().score,
-					before: before,
-					after: after
-				});
+					userId: entities[i].getKey()
+				})
+
+				admin.database().ref('/user_ranking_position/' + entities[i].getKey()).set(position);
+			}
+
+			if (!event.data.exists()) {
+				admin.database().ref("/sorted_by_position_ranking/")
+					.orderByKey()
+					.startAt((position + 1).toString())
+					.once('value')
+					.then(ref => {
+						ref.forEach(function (child) {
+							admin.database().ref("/sorted_by_position_ranking/" + child.getKey()).remove();
+						});
+					});
 			}
 
 			return;

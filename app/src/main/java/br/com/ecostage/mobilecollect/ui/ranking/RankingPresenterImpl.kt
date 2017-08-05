@@ -19,31 +19,37 @@ class RankingPresenterImpl(val rankingView: RankingView) : RankingPresenter {
     private val userRepository: UserRepository = UserRepositoryImpl()
 
     override fun loadUserPoints() {
-//        rankingView.showUserPointsProgress()
         userRepository.getCurrentUser(object : OnUserLoadedListener {
             override fun onUserLoaded(user: User) {
                 rankingView.populateUserPoints(UserRankingDetailsViewModel(user.id, user.email, user.rankingPoints))
-//                rankingView.hideUserPointsProgress()
             }
 
             override fun onUserLoadingError() {
-//                rankingView.hideUserPointsProgress()
             }
         })
     }
 
     override fun loadUserGeneralRankingInfo() {
-//        rankingView.showUserGeneralRankingProgress()
+        rankingView.showProgress()
+
         rankingInteractor.loadUserGeneralRankingInfo(object : OnUserGeneralRankingInfoLoadedListener {
-            override fun onUserGeneralRankingInfoLoaded(rank: Rank) {
-                if (rank.user != null) {
-                    rankingView.populateUserGeneralRankingInfo(RankingViewModel(rank.place, UserViewModel(rank.user.id, rank.user.email), null, rank.points))
-                    //        rankingView.hideUserGeneralRankingProgress()
+            override fun onUserGeneralRankingInfoLoaded(rank: List<Rank>) {
+                if (rank.isNotEmpty()) {
+                    rankingView.populateUserGeneralRankingInfo(
+                            rank.mapNotNull {
+                                if (it.user != null) {
+                                    RankingViewModel(it.place, UserViewModel(it.user.id, it.user.email), null, it.points)
+                                } else {
+                                    null
+                                }
+                            }.toList()
+                    )
+
+                    rankingView.hideProgress()
                 }
             }
 
             override fun onUserGeneralRankingInfoLoadError() {
-                //        rankingView.hideUserGeneralRankingProgress()
             }
         })
     }
