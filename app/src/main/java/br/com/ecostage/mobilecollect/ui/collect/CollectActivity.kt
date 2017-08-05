@@ -2,9 +2,11 @@ package br.com.ecostage.mobilecollect.ui.collect
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -104,8 +106,20 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     private fun setupTeamControllers() {
-        collectTeamTextView.setOnClickListener { collectPresenter.selectTeam(viewModel) }
+        collectTeamTextView.setOnClickListener {
+            if (isNetworkAvailable()) {
+                collectPresenter.selectTeam(viewModel)
+            } else {
+                longToast(R.string.team_selection_internet_unavailable_message)
+            }
+        }
         collectTeamRemoveButton.setOnClickListener { collectPresenter.removeTeamSelected(viewModel) }
+    }
+
+    private fun isNetworkAvailable() : Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
     private fun dateFormatted(now: Date?): String = SimpleDateFormat(dateFormat()).format(now)

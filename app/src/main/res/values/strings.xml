@@ -83,5 +83,5 @@
     <string name="profile_default_user_email_address" />
     <string name="profile_default_user_score">0</string>
     <string name="profile_user_score_format">%1$spts</string>
-
+    <string name="team_selection_internet_unavailable_message">A seleção de times só é possível quando há internet disponível.</string>
 </resources>
