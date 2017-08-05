@@ -44,7 +44,7 @@
     <string name="collect_lat_lng_hint">Latitude / Longitude</string>
     <string name="collect_classification_hint">Classificação</string>
     <string name="collect_team_hint">Time</string>
-    <string name="collect_save_btn">Save</string>
+    <string name="collect_save_btn">Salvar</string>
     <string name="collect_lat_lng_text">%1$s / %2$s</string>
     <string name="collect_take_photo_btn">Tirar foto</string>
     <string name="collect_permission_needed">É necessário permissão da câmera e dos arquivos para coleta de ponto</string>
