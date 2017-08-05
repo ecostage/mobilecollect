@@ -1,13 +1,10 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
 import br.com.ecostage.mobilecollect.listener.OnUserGeneralRankingInfoLoadedListener
-import br.com.ecostage.mobilecollect.listener.OnUserLoadedListener
-import br.com.ecostage.mobilecollect.listener.OnUserRankingLoadedListener
 import br.com.ecostage.mobilecollect.listener.OnUserScoresLoadedListener
 import br.com.ecostage.mobilecollect.model.Rank
 import br.com.ecostage.mobilecollect.model.User
 import br.com.ecostage.mobilecollect.repository.RankingRepository
-import br.com.ecostage.mobilecollect.repository.UserRepository
 import com.google.firebase.database.*
 
 /**
@@ -31,6 +28,8 @@ class RankingRepositoryImpl : RankingRepository {
                         val points = data?.child("score")?.getValue(Int::class.java)
                         if (points != null) {
                             onUserScoresLoadedListener.onRankingLoaded(points)
+                        } else {
+                            onUserScoresLoadedListener.onRankingLoadingError()
                         }
                     }
 
@@ -75,13 +74,14 @@ class RankingRepositoryImpl : RankingRepository {
                                     }
 
                                     override fun onCancelled(p0: DatabaseError?) {
-
+                                        onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoadError()
                                     }
 
                                 })
                     }
 
                     override fun onCancelled(p0: DatabaseError?) {
+                        onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoadError()
                     }
 
                 })

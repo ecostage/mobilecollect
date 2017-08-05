@@ -50,6 +50,7 @@ class RankingPresenterImpl(val rankingView: RankingView) : RankingPresenter {
             }
 
             override fun onUserGeneralRankingInfoLoadError() {
+                rankingView.hideProgress()
             }
         })
     }
