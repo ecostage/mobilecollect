@@ -67,10 +67,6 @@ class MapActivity : BottomNavigationActivity(),
         setupView()
         setupMap()
 
-        accessingLocationInfo {
-            buildGoogleApiClient()
-        }
-
         // Load collects to show in map
         mapPresenter.loadUserCollects()
     }
@@ -125,6 +121,7 @@ class MapActivity : BottomNavigationActivity(),
         googleMap.setOnMarkerClickListener(this)
 
         accessingLocationInfo {
+            buildGoogleApiClient()
             map.isMyLocationEnabled = true
         }
     }
