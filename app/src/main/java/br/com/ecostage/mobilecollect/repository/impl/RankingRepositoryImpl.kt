@@ -47,37 +47,42 @@ class RankingRepositoryImpl : RankingRepository {
                 .child(user.id)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(data: DataSnapshot?) {
-                        val position = data?.value.toString()
+                        if (data != null && data.value != null) {
 
-                        firebaseDatabase
-                                .child(SORTED_BY_POSITION_RANKING_DB_TYPE)
-                                .orderByKey()
-                                .startAt((position.toInt() - 3).toString())
-                                .endAt((position.toInt() + 3).toString())
-                                .addValueEventListener(object : ValueEventListener {
-                                    override fun onDataChange(sortedData: DataSnapshot?) {
-                                        val result = ArrayList<Rank>()
+                            val position = data.value.toString()
 
-                                        sortedData?.children?.mapNotNull {
-                                            val score = it.child("score").getValue(Int::class.java)
-                                            val userId = it.child("userId").getValue(String::class.java)
-                                            val userEmail = it.child("userEmail").getValue(String::class.java)
+                            firebaseDatabase
+                                    .child(SORTED_BY_POSITION_RANKING_DB_TYPE)
+                                    .orderByKey()
+                                    .startAt((position.toInt() - 3).toString())
+                                    .endAt((position.toInt() + 3).toString())
+                                    .addValueEventListener(object : ValueEventListener {
+                                        override fun onDataChange(sortedData: DataSnapshot?) {
+                                            val result = ArrayList<Rank>()
 
-                                            if (userId != null && score != null && userEmail != null) {
-                                                val rank = Rank(it.key.toInt(), User(userId, userEmail, score), null, score)
-                                                result.add(rank)
+                                            sortedData?.children?.mapNotNull {
+                                                val score = it.child("score").getValue(Int::class.java)
+                                                val userId = it.child("userId").getValue(String::class.java)
+                                                val userEmail = it.child("userEmail").getValue(String::class.java)
+
+                                                if (userId != null && score != null && userEmail != null) {
+                                                    val rank = Rank(it.key.toInt(), User(userId, userEmail, score), null, score)
+                                                    result.add(rank)
+                                                }
+
                                             }
 
+                                            onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoaded(result)
                                         }
 
-                                        onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoaded(result)
-                                    }
+                                        override fun onCancelled(p0: DatabaseError?) {
+                                            onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoadError()
+                                        }
 
-                                    override fun onCancelled(p0: DatabaseError?) {
-                                        onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoadError()
-                                    }
-
-                                })
+                                    })
+                        } else {
+                            onUserGeneralRankingInfoLoadedListener.onUserGeneralRankingInfoLoadError()
+                        }
                     }
 
                     override fun onCancelled(p0: DatabaseError?) {
