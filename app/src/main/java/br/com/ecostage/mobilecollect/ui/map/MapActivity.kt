@@ -67,10 +67,13 @@ class MapActivity : BottomNavigationActivity(),
         setupView()
         setupMap()
 
+        accessingLocationInfo {
+            buildGoogleApiClient()
+        }
+
         // Load collects to show in map
         mapPresenter.loadUserCollects()
     }
-
 
     private fun setupView() {
         supportActionBar?.title = resources.getString(R.string.map)
@@ -122,7 +125,6 @@ class MapActivity : BottomNavigationActivity(),
         googleMap.setOnMarkerClickListener(this)
 
         accessingLocationInfo {
-            buildGoogleApiClient()
             map.isMyLocationEnabled = true
         }
     }
