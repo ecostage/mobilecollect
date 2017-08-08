@@ -121,7 +121,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
                 override fun doTransaction(data: MutableData?): Transaction.Result {
                     val points = data?.getValue(Long::class.java)
 
-                    if (points != null) {
+                    if (points != null && points > 0L) {
                         data.value = points - 1
                     }
 
