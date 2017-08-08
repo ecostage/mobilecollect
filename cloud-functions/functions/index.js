@@ -5,6 +5,13 @@ const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
 exports.sortRankOnWrite = functions.database.ref('/ranking_collect_by_user/{pushId}').onWrite(event => calculate_scoreboard(event));
+exports.createInitialRankWhenRegister = functions.auth.user().onCreate(event => create_initial_rank(event));
+
+function create_initial_rank(event) {
+	admin.database().ref('/ranking_collect_by_user/' + event.data.uid).set({
+		score: 0
+	});
+}
 
 function calculate_scoreboard(event) {
 
@@ -28,7 +35,7 @@ function calculate_scoreboard(event) {
 
 			entities.reverse(); // Reverse because it comes in ascend order
 			
-			var position;			
+			var position;
 			for (var i = 0; i < entities.length; i++) {
 				console.log("entity: " + entities[i].getKey());
 
