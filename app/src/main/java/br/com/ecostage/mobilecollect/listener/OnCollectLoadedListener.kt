@@ -1,4 +1,4 @@
-package br.com.ecostage.mobilecollect
+package br.com.ecostage.mobilecollect.listener
 
 import br.com.ecostage.mobilecollect.model.Collect
 

@@ -13,4 +13,5 @@ interface LoginView {
     fun navigateToHome()
     fun showSignInWithFailure()
     fun showSignInWithEmailFailure()
+    fun showInternetUnavailableFailure()
 }

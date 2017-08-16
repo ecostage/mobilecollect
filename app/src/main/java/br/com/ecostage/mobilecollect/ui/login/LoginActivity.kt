@@ -22,17 +22,16 @@ import kotlinx.android.synthetic.main.activity_login.*
  * A sign in  screen that offers sign in via email/password and google.
  */
 class LoginActivity : BaseActivity(), LoginView {
-
     // TODO: Inject LoginActivity with dagger.
     private var presenter: LoginPresenter? =  null
+
     private val RC_SIGN_IN = 9001
     private val TAG = "LoginActivity"
-
-
     override fun onStart() {
         super.onStart()
         presenter?.onStart()
     }
+
 
     override fun onStop() {
         super.onStop()
@@ -137,6 +136,10 @@ class LoginActivity : BaseActivity(), LoginView {
 
     override fun showSignInWithEmailFailure() {
         showToast(getString(R.string.sign_in_with_email_failure_message))
+    }
+
+    override fun showInternetUnavailableFailure() {
+        showToast(getString(R.string.sign_in_internet_unavailable_failure_message))
     }
 
     private fun showToast(message: String?) {

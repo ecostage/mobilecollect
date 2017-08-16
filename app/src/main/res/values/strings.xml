@@ -23,17 +23,18 @@
     <string name="or">ou</string>
     <string name="action_sign_in_with_google">Log In Com Google</string>
     <string name="action_sign_out">Log Out</string>
-    <string name="sign_in_with_google_failure_message">Google Play Services error.</string>
+    <string name="sign_in_with_google_failure_message">Erro no Google Play Services.</string>
+    <string name="sign_in_internet_unavailable_failure_message">Não há conexão com a internet.</string>
     <string name="sign_in_with_email_failure_message">Usuário ou senha inválidos</string>
     <string name="label_sign_in">Log In</string>
-    <string name="or_enter_in_you_account_info">or with your e-mail</string>
+    <string name="or_enter_in_you_account_info">ou com seu e-mail</string>
     <string name="developers_logo_tipo">Developers logo tipo</string>
     <string name="logo_da_aplica_o">Logo da aplicação</string>
 
     <string name="action_settings">Configurações</string>
     <string name="text_map">Mapa</string>
     <string name="text_ranking">Ranking</string>
-    <string name="text_my_profile">Mew Perfil</string>
+    <string name="text_my_profile">Meu Perfil</string>
     <string name="action_label_profile">Perfil</string>
     <string name="action_label_ranking">Ranking</string>
     <string name="action_label_map">Mapa</string>
@@ -43,7 +44,7 @@
     <string name="collect_lat_lng_hint">Latitude / Longitude</string>
     <string name="collect_classification_hint">Classificação</string>
     <string name="collect_team_hint">Time</string>
-    <string name="collect_save_btn">Save</string>
+    <string name="collect_save_btn">Salvar</string>
     <string name="collect_lat_lng_text">%1$s / %2$s</string>
     <string name="collect_take_photo_btn">Tirar foto</string>
     <string name="collect_permission_needed">É necessário permissão da câmera e dos arquivos para coleta de ponto</string>
@@ -57,8 +58,31 @@
 
     <string name="profile_my_collects">Minhas Coletas</string>
     <string name="collect_photo_validation_error">É necessário tirar uma foto do local!</string>
+    <string name="ranking_my_points">Meus pontos</string>
     <string name="message_snackbar_no_teams_available">Não há times disponíveis.</string>
     <string name="title_select_a_team">Selecione um time</string>
     <string name="message_time_no_informed">Time não informado</string>
-
+    <string name="ranking_points_sufix">pts</string>
+    <string name="title_team_leader_board">Team Leaderboard</string>
+    <string name="user_points_hint">0</string>
+    <string name="title_user_leader_board">Ranking Geral</string>
+    <string name="no_results">Sem resultados</string>
+    <string name="button_sign_out">Sair</string>
+    <string name="button_change_password">Trocar Senha</string>
+    <string name="dialog_title_reset_password">Reset Password</string>
+    <string name="dialog_message_reset_password_with_success">Foi enviado um email para %1$s com instrução para reiniciar a senha.</string>
+    <string name="message_snackbar_reset_password_request_error">Falhou. Tente novamente</string>
+    <string name="dialog_message_reset_password_not_using_email_and_password">Você não está utilizando email e senha para se autenticar.</string>
+    <string name="profile_subheader_title_user">User</string>
+    <string name="profile_subheader_title_statistics">Estatísticas</string>
+    <string name="profile_title_collects">Coletas</string>
+    <string name="profile_title_ranking_points">Pontuação</string>
+    <string name="profile_subheader_title_my_teams">Meus times</string>
+    <string name="default_value_total_collects">0</string>
+    <string name="default_message_user_not_participating_in_a_team">Você não pertence a nenhum time</string>
+    <string name="message_snackbar_location_not_allowed">Não foi possível acessar sua localização</string>
+    <string name="profile_default_user_email_address" />
+    <string name="profile_default_user_score">0</string>
+    <string name="profile_user_score_format">%1$spts</string>
+    <string name="team_selection_internet_unavailable_message">A seleção de times só é possível quando há internet disponível.</string>
 </resources>

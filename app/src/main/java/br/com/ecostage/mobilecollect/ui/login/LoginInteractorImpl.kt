@@ -4,6 +4,7 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 
@@ -47,7 +48,12 @@ class LoginInteractorImpl(val emailSignInListener: LoginInteractor.OnEmailSignIn
 
     override fun signInWithCredential(credential: AuthCredential, listener: LoginInteractor.OnSignInWithGoogleFinishedListener) {
         mAuth?.signInWithCredential(credential)
-                ?.addOnFailureListener { listener.onFailureWithGoogle() }
+                ?.addOnFailureListener {
+                    if (it is FirebaseNetworkException)
+                        listener.onConnectionFailedWithGoogle()
+                    else
+                        listener.onFailureWithGoogle()
+                }
     }
 
     private fun setupSignInWithGoogle() {
@@ -78,7 +84,7 @@ class LoginInteractorImpl(val emailSignInListener: LoginInteractor.OnEmailSignIn
     }
 
     override fun onConnectionFailed(connectionResult: ConnectionResult) {
-        googleSignInListener.onFailureWithGoogle()
+        googleSignInListener.onConnectionFailedWithGoogle()
     }
 
     private fun isEmailValid(email: String): Boolean {

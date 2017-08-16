@@ -57,6 +57,10 @@ class LoginPresenterImpl(val view: LoginView,
         view.showSignInWithFailure()
     }
 
+    override fun onConnectionFailedWithGoogle() {
+        view.showInternetUnavailableFailure()
+    }
+
     override fun validateGoogleCredentials() {
         this.loginInteractor.signInWithGoogle(this)
     }
