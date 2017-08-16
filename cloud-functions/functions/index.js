@@ -8,25 +8,27 @@ exports.sortRankOnWrite = functions.database.ref('/ranking_collect_by_user/{push
 exports.createInitialRankWhenRegister = functions.auth.user().onCreate(event => create_initial_rank(event));
 
 function create_initial_rank(event) {
-	admin.database().ref('/ranking_collect_by_user/' + event.data.uid).set({
+	return admin.database().ref('/ranking_collect_by_user/' + event.data.uid).set({
 		score: 0
 	});
 }
 
 function calculate_scoreboard(event) {
+	var promises = [];
 
 	if (!event.data.exists()) {
 		// The data is being deleted
 		console.log("removing " + event.params.pushId + " from sorted rank");
 
-		admin.database().ref('/user_ranking_position/' + event.params.pushId).remove();
+		promises.push(admin.database().ref('/user_ranking_position/' + event.params.pushId).remove());
 	}
 
-	admin.database().ref('/ranking_collect_by_user').orderByChild('score').once('value')
+	promises.push(admin.database().ref('/ranking_collect_by_user').orderByChild('score').once('value')
 		.then(rankingRef => {
 			var entities = [];
 			var processedEntities = new Map();
 			var count = 0;
+			var innerPromises = [];
 
 			rankingRef.forEach(function(child) {
 				entities[count] = child;
@@ -37,8 +39,6 @@ function calculate_scoreboard(event) {
 			
 			var position;
 			for (var i = 0; i < entities.length; i++) {
-				console.log("entity: " + entities[i].getKey());
-
 				position = i + 1;
 
 				var userScore = entities[i].val().score;
@@ -46,28 +46,28 @@ function calculate_scoreboard(event) {
 
 				processedEntities.set(userId,  { score: userScore, position: position });
 
-				admin.auth().getUser(entities[i].getKey())
+				var updatePromise = admin.auth().getUser(entities[i].getKey())
 					.then(function (user) {
 						var userRankInfo = processedEntities.get(user.uid);
 
 						if (userRankInfo != null) {
-							admin.database().ref('/sorted_by_position_ranking/' + userRankInfo.position).set({
+							var sortPromise = admin.database().ref('/sorted_by_position_ranking/' + userRankInfo.position).set({
 								score: userRankInfo.score,
 								userId: user.uid,
 								userEmail: user.email
 							});
 
-							admin.database().ref('/user_ranking_position/' + user.uid).set(userRankInfo.position);
+							var positionPromise = admin.database().ref('/user_ranking_position/' + user.uid).set(userRankInfo.position);
+
+							return Promise.all([sortPromise, positionPromise]);
 						}
-					})
-					.catch(err => {
-						console.log(err.stack);
 					});
 
+				innerPromises.push(updatePromise);
 			}
 
 			if (!event.data.exists()) {
-				admin.database().ref("/sorted_by_position_ranking/")
+				innerPromises.push(admin.database().ref("/sorted_by_position_ranking/")
 					.orderByKey()
 					.startAt((position + 1).toString())
 					.once('value')
@@ -75,13 +75,11 @@ function calculate_scoreboard(event) {
 						ref.forEach(function (child) {
 							admin.database().ref("/sorted_by_position_ranking/" + child.getKey()).remove();
 						});
-					});
+					}));
 			}
 
-			return;
-		})
-		.catch(err => {
-			console.log(err.stack);
-			return;
-		});
+			return Promise.all(innerPromises);
+		}));
+
+	return Promise.all(promises);
 }
