@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.GradientDrawable
@@ -27,10 +28,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_map.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -119,6 +117,8 @@ class MapActivity : BottomNavigationActivity(),
         googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
 
         googleMap.setOnMarkerClickListener(this)
+
+        googleMap.addTileOverlay(TileOverlayOptions().tileProvider(CustomMapTileProvider(assets)))
 
         accessingLocationInfo {
             buildGoogleApiClient()
