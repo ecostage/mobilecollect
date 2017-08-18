@@ -20,11 +20,14 @@ import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.offline.*
+import com.mapbox.mapboxsdk.style.layers.LineLayer
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.android.synthetic.main.activity_mapbox.*
 import org.jetbrains.anko.*
 import org.json.JSONObject
@@ -34,7 +37,8 @@ class MapboxActivity : AppCompatActivity(),
         br.com.ecostage.mobilecollect.ui.map.MapView,
         MapboxMap.SnapshotReadyCallback,
         MapboxMap.OnMarkerClickListener,
-        AnkoLogger {
+        AnkoLogger,
+        MapboxView {
 
     companion object {
         val COLLECT_REQUEST = 1
@@ -42,7 +46,7 @@ class MapboxActivity : AppCompatActivity(),
         val MAP_PERMISSION_REQUEST_CODE = 1
     }
 
-    private val mapPresenter: MapPresenter = MapPresenterImpl(this)
+    private val mapPresenter: MapPresenter = MapPresenterImpl(this, this)
     private var mapBox: MapboxMap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -276,6 +280,8 @@ class MapboxActivity : AppCompatActivity(),
                 .position(position)
                 .icon(iconFactory.fromBitmap(createPinMap()!!)))
 
+        mapPresenter.drawRectangles(position)
+
         val lastIndex = mapBox?.markers?.lastIndex
 
         return lastIndex ?: 0
@@ -346,4 +352,15 @@ class MapboxActivity : AppCompatActivity(),
         }
     }
 
+    override fun addPolygonForPointsAvailableToCollect(rectangle: PolygonOptions) {
+        mapBox?.addPolygon(rectangle)
+    }
+
+    override fun addGeoJsonSourceCreated(source: GeoJsonSource) {
+        mapBox?.addSource(source)
+    }
+
+    override fun addLineLayer(layer: LineLayer) {
+        mapBox?.addLayer(layer)
+    }
 }
