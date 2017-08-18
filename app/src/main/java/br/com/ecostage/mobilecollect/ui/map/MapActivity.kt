@@ -6,7 +6,6 @@ import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.GradientDrawable
@@ -51,7 +50,7 @@ class MapActivity : BottomNavigationActivity(),
         val COLLECT_DATA_RESULT = "MapActivity:collectDataResult"
     }
 
-    private val mapPresenter: MapPresenter = MapPresenterImpl(this, this)
+    private val mapPresenter: MapPresenter = MapPresenterImpl(this)
     private val MAP_PERMISSION_REQUEST_CODE = 1
     private var googleApiClient: GoogleApiClient? = null
     private val markers: MutableList<Marker> = ArrayList()
@@ -104,8 +103,8 @@ class MapActivity : BottomNavigationActivity(),
                 } else if (resultCode == Activity.RESULT_OK) {
                     // Populate marker
                     val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(COLLECT_DATA_RESULT)
+                    this.populateMarker(markers.lastIndex, collectViewModel, showInfo = true)
                     val marker = markers.last()
-                    this.populateMarker(marker, collectViewModel, showInfo = true)
                     this.centralizeMapCameraAt(marker.position.latitude, marker.position.longitude)
                 }
             }
@@ -219,7 +218,7 @@ class MapActivity : BottomNavigationActivity(),
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-    override fun showMarkerAt(latitude: Double, longitude: Double): Marker {
+    override fun showMarkerAt(latitude: Double, longitude: Double): Int {
         val position: LatLng = LatLng(latitude, longitude)
         val descriptor = BitmapDescriptorFactory.fromBitmap(createPinMap())
         val marker = googleMap.addMarker(MarkerOptions()
@@ -228,7 +227,7 @@ class MapActivity : BottomNavigationActivity(),
 
         markers.add(marker)
 
-        return marker
+        return markers.lastIndex
     }
 
     private fun createPinMap(): Bitmap? {
@@ -282,7 +281,8 @@ class MapActivity : BottomNavigationActivity(),
         longToast(message)
     }
 
-    override fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?, showInfo: Boolean) {
+    override fun populateMarker(markerIndex: Int, collectViewModel: CollectViewModel?, showInfo: Boolean) {
+        val marker = markers[markerIndex]
         marker.tag = collectViewModel?.id
         marker.title = collectViewModel?.name
         marker.snippet = "Classificacão: " + collectViewModel?.classification + " \n Data: " + collectViewModel?.date

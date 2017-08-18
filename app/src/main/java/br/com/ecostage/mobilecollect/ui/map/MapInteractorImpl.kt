@@ -10,8 +10,7 @@ import org.jetbrains.anko.AnkoLogger
 /**
  * Created by cmaia on 7/22/17.
  */
-class MapInteractorImpl(val collectLoadedListener: OnCollectLoadedListener,
-                        val mapActivity: MapActivity)
+class MapInteractorImpl(val collectLoadedListener: OnCollectLoadedListener)
     : MapInteractor, AnkoLogger {
 
     val userRepository: UserRepository = UserRepositoryImpl()

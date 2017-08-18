@@ -1,11 +1,16 @@
 package br.com.ecostage.mobilecollect.ui.map
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
-import com.google.android.gms.maps.model.Marker
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import com.mapbox.mapboxsdk.maps.MapView
@@ -20,6 +25,12 @@ import org.json.JSONObject
 
 class MapboxActivity : AppCompatActivity(), br.com.ecostage.mobilecollect.ui.map.MapView, AnkoLogger {
 
+    companion object {
+        val COLLECT_REQUEST = 1
+        val COLLECT_DATA_RESULT = "MapboxActivity:collectDataResult"
+    }
+
+    private val mapPresenter: MapPresenter = MapPresenterImpl(this)
     private var mapView: MapView? = null
     private var mapBox: MapboxMap? = null
 
@@ -29,11 +40,38 @@ class MapboxActivity : AppCompatActivity(), br.com.ecostage.mobilecollect.ui.map
         setContentView(R.layout.activity_mapbox)
 
         setupMap(savedInstanceState)
-
-        downloadTilesButton.setOnClickListener{ downloadTile() }
+        setupView()
     }
 
-    fun setupMap(savedInstanceState: Bundle?) {
+    private fun setupView() {
+        supportActionBar?.title = resources.getString(R.string.map)
+
+        // Test only purpose
+//        downloadTilesButton.setOnClickListener{ downloadTile() }
+
+        startCollectButton.setOnClickListener {
+
+            accessingLocationInfo {
+                val latitude = mapBox?.myLocation?.latitude
+                val longitude = mapBox?.myLocation?.longitude
+                if (latitude != null && longitude != null)
+                    mapPresenter.mark(latitude, longitude)
+            }
+        }
+
+        myLocationButton.setOnClickListener { moveCameraToMyLocation() }
+    }
+
+    private fun moveCameraToMyLocation() {
+        val latitude = mapBox?.myLocation?.latitude
+        val longitude = mapBox?.myLocation?.longitude
+
+        if (latitude != null && longitude != null) { // Check to ensure coordinates aren't null, probably a better way of doing this...
+            mapBox?.easeCamera(CameraUpdateFactory.newLatLng(LatLng(latitude, longitude)))
+        }
+    }
+
+    private fun setupMap(savedInstanceState: Bundle?) {
         mapView = findViewById(R.id.mapView) as MapView
         mapView?.onCreate(savedInstanceState)
 
@@ -41,6 +79,7 @@ class MapboxActivity : AppCompatActivity(), br.com.ecostage.mobilecollect.ui.map
             mapBox = it
             mapBox?.isMyLocationEnabled = true
 
+            moveCameraToMyLocation()
         }
     }
 
@@ -107,6 +146,14 @@ class MapboxActivity : AppCompatActivity(), br.com.ecostage.mobilecollect.ui.map
 
     }
 
+//    override fun getContentViewId(): Int {
+//        return R.layout.activity_mapbox
+//    }
+//
+//    override fun getNavigationMenuItemId(): Int {
+//        return R.id.action_map
+//    }
+
     override fun onStart() {
         super.onStart()
         mapView?.onStart()
@@ -142,6 +189,26 @@ class MapboxActivity : AppCompatActivity(), br.com.ecostage.mobilecollect.ui.map
         if (outState != null) mapView?.onSaveInstanceState(outState)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            COLLECT_REQUEST -> {
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    mapPresenter.removeLastMarker()
+                } else if (resultCode == Activity.RESULT_OK) {
+                    // Populate marker
+                    val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(COLLECT_DATA_RESULT)
+                    val markerLastIndex = mapBox?.markers?.lastIndex
+                    if (markerLastIndex != null) {
+                        this.populateMarker(markerLastIndex, collectViewModel, showInfo = true)
+                        val marker = mapBox?.markers?.last()
+                        if (marker != null)
+                            this.centralizeMapCameraAt(marker.position.latitude, marker.position.longitude)
+                    }
+                }
+            }
+        }
+    }
+
     override fun showMapPermissionRequestDialog() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -150,7 +217,7 @@ class MapboxActivity : AppCompatActivity(), br.com.ecostage.mobilecollect.ui.map
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun showMarkerAt(latitude: Double, longitude: Double): Marker {
+    override fun showMarkerAt(latitude: Double, longitude: Double): Int {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -170,11 +237,24 @@ class MapboxActivity : AppCompatActivity(), br.com.ecostage.mobilecollect.ui.map
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?, showInfo: Boolean) {
+    override fun populateMarker(markerIndex: Int, collectViewModel: CollectViewModel?, showInfo: Boolean) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun centralizeMapCameraAt(latitude: Double, longitude: Double) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    // TODO Move this to another place to avoid copy and paste
+    private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    // TODO Move this to another place to avoid copy and paste
+    fun accessingLocationInfo(body: () -> Unit) {
+        if (canAccessLocation()) {
+            body()
+        } else {
+            mapPresenter.onPermissionNeeded()
+        }
+    }
+
 }
