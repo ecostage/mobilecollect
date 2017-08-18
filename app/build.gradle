@@ -55,6 +55,8 @@ dependencies {
         transitive = true
     }
 
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
+
     compile "org.jetbrains.anko:anko-commons:0.10.1"
     compile "org.jetbrains.anko:anko-appcompat-v7-commons:0.10.1"
 
