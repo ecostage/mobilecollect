@@ -7,7 +7,7 @@
     tools:context="br.com.ecostage.mobilecollect.ui.map.MapboxActivity">
 
     <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/mapContainerView"
+        android:id="@+id/mapBoxContainerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -17,8 +17,6 @@
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:mapbox_cameraTargetLat="40.73581"
-            app:mapbox_cameraTargetLng="-73.99155"
             app:mapbox_styleUrl="mapbox://styles/mapbox/light-v9"
             app:mapbox_cameraZoom="11" />
 
@@ -26,8 +24,8 @@
             android:id="@+id/myLocationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|top"
-            android:layout_marginTop="16dp"
+            android:layout_gravity="end|bottom"
+            android:layout_marginBottom="80dp"
             android:layout_marginEnd="16dp"
             android:src="@android:drawable/ic_menu_mylocation"
             app:borderWidth="0dp"

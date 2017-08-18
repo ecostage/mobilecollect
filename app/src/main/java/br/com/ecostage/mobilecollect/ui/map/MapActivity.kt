@@ -206,15 +206,15 @@ class MapActivity : BottomNavigationActivity(),
         googleApiClient?.connect()
     }
 
-    override fun showMapPermissionRequestDialog() {
+        override fun showMapPermissionRequestDialog() {
 
-        Snackbar.make(mapContainerView, R.string.message_snackbar_location_not_allowed, Snackbar.LENGTH_SHORT)
-                .show()
+            Snackbar.make(mapContainerView, R.string.message_snackbar_location_not_allowed, Snackbar.LENGTH_SHORT)
+                    .show()
 
-        ActivityCompat.requestPermissions(this,
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
-                MAP_PERMISSION_REQUEST_CODE)
-    }
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                    MAP_PERMISSION_REQUEST_CODE)
+        }
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
