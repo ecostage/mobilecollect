@@ -25,7 +25,7 @@ class MapboxActivity : AppCompatActivity(), br.com.ecostage.mobilecollect.ui.map
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Mapbox.getInstance(this, "pk.eyJ1IjoiY25tYWlhIiwiYSI6ImNqNmhiamhhcjBnczYyeHJ5b2t1YjIxYzQifQ.yTIzil1soU0BL-J6v6FU2g")
+        Mapbox.getInstance(this, getString(R.string.mapbox_auth_token))
         setContentView(R.layout.activity_mapbox)
 
         setupMap(savedInstanceState)
