@@ -33,6 +33,7 @@ android {
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    mavenCentral()
 }
 
 dependencies {
@@ -49,6 +50,10 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:11.0.2'
     compile 'com.google.android.gms:play-services-auth:11.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.2@aar') {
+        transitive = true
+    }
 
     compile "org.jetbrains.anko:anko-commons:0.10.1"
     compile "org.jetbrains.anko:anko-appcompat-v7-commons:0.10.1"

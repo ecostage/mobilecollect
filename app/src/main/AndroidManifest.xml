@@ -14,11 +14,11 @@
         android:required="false" />
 
     <application
-        android:hardwareAccelerated="false"
-        android:largeHeap="true"
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/map_biomas_ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/map_biomas_ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -29,51 +29,47 @@
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
-            android:name="br.com.ecostage.mobilecollect.ui.login.LoginActivity"
+            android:name=".ui.login.LoginActivity"
             android:configChanges="orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="br.com.ecostage.mobilecollect.ui.map.MapActivity"
+            android:name=".ui.map.MapActivity"
             android:configChanges="orientation"
             android:label="@string/action_label_map"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name="br.com.ecostage.mobilecollect.ui.profile.ProfileActivity"
+            android:name=".ui.profile.ProfileActivity"
             android:label="@string/action_label_profile"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="br.com.ecostage.mobilecollect.ui.ranking.RankingActivity"
+            android:name=".ui.ranking.RankingActivity"
             android:configChanges="orientation"
             android:label="@string/action_label_ranking"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="br.com.ecostage.mobilecollect.ui.collect.CollectActivity"
+            android:name=".ui.collect.CollectActivity"
             android:configChanges="orientation"
             android:label="@string/collect_header_title"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="br.com.ecostage.mobilecollect.ui.category.selection.ClassificationActivity"
+            android:name=".ui.category.selection.ClassificationActivity"
             android:configChanges="orientation"
             android:label="@string/classification_header_title"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="br.com.ecostage.mobilecollect.ui.profile.collect.UserCollectActivity"
+            android:name=".ui.profile.collect.UserCollectActivity"
             android:configChanges="orientation"
             android:label="@string/profile_my_collects"
             android:screenOrientation="portrait"
@@ -82,7 +78,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDmU6CD4gea_JrZ3fFGcyMHEuoLYQsNvVk" />
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="cb30116ada2e31c94c96b05ec50a58c7b2124423" />
@@ -97,6 +92,13 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
+        <activity android:name=".MapboxActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
