@@ -92,7 +92,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".MapboxActivity">
+        <activity android:name=".ui.map.MapboxActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

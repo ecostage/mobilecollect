@@ -1,7 +1,8 @@
-package br.com.ecostage.mobilecollect
+package br.com.ecostage.mobilecollect.ui.map
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
 import com.google.android.gms.maps.model.Marker
 import com.mapbox.mapboxsdk.Mapbox
