@@ -91,7 +91,10 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".ui.map.MapboxActivity">
+        <activity
+            android:name=".ui.map.MapboxActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
