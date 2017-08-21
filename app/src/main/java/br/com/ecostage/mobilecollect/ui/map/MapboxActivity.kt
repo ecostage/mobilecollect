@@ -27,7 +27,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.offline.*
-import com.mapbox.mapboxsdk.style.layers.LineLayer
+import com.mapbox.mapboxsdk.style.layers.Layer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.android.synthetic.main.activity_mapbox.*
 import org.jetbrains.anko.*
@@ -38,6 +38,7 @@ class MapboxActivity : AppCompatActivity(),
         br.com.ecostage.mobilecollect.ui.map.MapView,
         MapboxMap.SnapshotReadyCallback,
         MapboxMap.OnMarkerClickListener,
+        MapboxMap.OnMapClickListener,
         AnkoLogger,
         MapboxView {
 
@@ -95,7 +96,7 @@ class MapboxActivity : AppCompatActivity(),
         mapView?.getMapAsync {
             mapBox = it
             mapBox?.isMyLocationEnabled = true
-
+            mapBox?.setOnMapClickListener(this)
             moveCameraToMyLocation()
         }
     }
@@ -360,11 +361,30 @@ class MapboxActivity : AppCompatActivity(),
         mapBox?.addSource(source)
     }
 
-    override fun addLineLayer(layer: LineLayer) {
+    override fun addLayer(layer: Layer) {
         mapBox?.addLayer(layer)
     }
 
     override fun addCollectAvailable(collectAvailable: CollectAvailable) {
         mapPresenter.drawRectangles(collectAvailable)
+    }
+
+    override fun onMapClick(point: LatLng) {
+        val pixel = mapBox?.projection?.toScreenLocation(point)
+
+        if (pixel != null) {
+            val features =mapBox?.queryRenderedFeatures(pixel)
+
+            if (features != null && features.isNotEmpty()) {
+
+                val selected = features.first()
+                val lat = selected.properties.get("center_lat")
+
+                if (lat != null) {
+                    val lng = selected.properties.get("center_lng")
+                    mapPresenter.mark(lat.asDouble, lng.asDouble)
+                }
+            }
+        }
     }
 }

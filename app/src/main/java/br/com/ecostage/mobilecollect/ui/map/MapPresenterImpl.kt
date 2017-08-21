@@ -1,9 +1,9 @@
 package br.com.ecostage.mobilecollect.ui.map
 
 import android.graphics.Bitmap
+import br.com.ecostage.mobilecollect.listener.OnCollectAvailableDrawingListener
 import br.com.ecostage.mobilecollect.listener.OnCollectAvailableLoadedListener
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
-import br.com.ecostage.mobilecollect.listener.OnPointsAvailableDrawing
 import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.model.CollectAvailable
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
@@ -11,13 +11,13 @@ import br.com.ecostage.mobilecollect.ui.helper.CollectAvailableDrawer
 import br.com.ecostage.mobilecollect.util.ImageUtil
 import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.style.layers.LineLayer
+import com.mapbox.mapboxsdk.style.layers.Layer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 
 class MapPresenterImpl(val mapView: MapView, val mapboxView: MapboxView? = null) :
         MapPresenter,
         OnCollectLoadedListener,
-        OnPointsAvailableDrawing,
+        OnCollectAvailableDrawingListener,
         OnCollectAvailableLoadedListener {
 
     private val mapInteractor: MapInteractor = MapInteractorImpl(
@@ -94,8 +94,8 @@ class MapPresenterImpl(val mapView: MapView, val mapboxView: MapboxView? = null)
         mapboxView?.addGeoJsonSourceCreated(source)
     }
 
-    override fun lineLayerCreated(lineLayer: LineLayer) {
-        mapboxView?.addLineLayer(lineLayer)
+    override fun layerCreated(layer: Layer) {
+        mapboxView?.addLayer(layer)
     }
 
     override fun loadCollectsAvailable() {

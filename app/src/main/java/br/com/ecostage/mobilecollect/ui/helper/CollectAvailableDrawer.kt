@@ -1,12 +1,12 @@
 package br.com.ecostage.mobilecollect.ui.helper
 
 import android.graphics.Color
-import br.com.ecostage.mobilecollect.listener.OnPointsAvailableDrawing
+import br.com.ecostage.mobilecollect.listener.OnCollectAvailableDrawingListener
 import br.com.ecostage.mobilecollect.model.CollectAvailable
 import com.google.maps.android.SphericalUtil
-import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
+import com.mapbox.mapboxsdk.style.layers.FillLayer
 import com.mapbox.mapboxsdk.style.layers.LineLayer
 import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
@@ -18,9 +18,11 @@ import com.mapbox.services.commons.models.Position
 import java.util.*
 
 /**
+ * Interactor for draw collect availables on mapbox map.
+ *
  * Created by andremaia on 8/18/17.
  */
-class CollectAvailableDrawer(val onPointsAvailableDrawing: OnPointsAvailableDrawing) {
+class CollectAvailableDrawer(val onPointsAvailableDrawing: OnCollectAvailableDrawingListener) {
 
     // Should be the half of the diameter -> Diameter = Radius * 2
     private val radiusInMeters = 15.0
@@ -66,30 +68,43 @@ class CollectAvailableDrawer(val onPointsAvailableDrawing: OnPointsAvailableDraw
     }
 
 
-    fun drawRectangle(position: LatLng, color: Int) {
+    fun drawRectangle(center: LatLng, color: Int) {
         val radiusInMeters = 15.0
-        val localSquare = toBounds(position, radiusInMeters)
+        val localSquare = toBounds(center, radiusInMeters)
 
         val northwest = LatLng(localSquare.southWest.latitude, localSquare.northEast.longitude)
         val southeast = LatLng(localSquare.northEast.latitude, localSquare.southWest.longitude)
 
-        drawSolidPolygons(color, localSquare, northwest, southeast)
-        drawLineLayer(localSquare, northwest, southeast, color)
+        drawLayers(localSquare, northwest, southeast, color)
     }
 
-    private fun drawLineLayer(localSquare: LatLngBounds, northwest: LatLng, southeast: LatLng, color: Int) {
+    private fun drawLayers(localSquare: LatLngBounds, northwest: LatLng, southeast: LatLng, color: Int) {
 
         val coordinates = rectangleCoordinates(localSquare, northwest, southeast)
 
         val lineString = LineString.fromCoordinates(coordinates)
-        val featureCollection = FeatureCollection.fromFeatures(arrayOf(Feature.fromGeometry(lineString)))
+
+        val feature = Feature.fromGeometry(lineString)
+        feature.addNumberProperty("center_lat", localSquare.center.latitude)
+        feature.addNumberProperty("center_lng", localSquare.center.longitude)
+
+        val featureCollection = FeatureCollection.fromFeatures(arrayOf(feature))
         val sourceId = "line-source" + UUID.randomUUID()
 
         // Event
         val geoJsonSource = GeoJsonSource(sourceId, featureCollection)
         onPointsAvailableDrawing.geoJsonSourceCreated(geoJsonSource)
 
-        val lineLayerId = "linelayer" + UUID.randomUUID()
+
+        // transparent area
+        val fillLayerId = "fill-layer-" + UUID.randomUUID()
+        val fillLayer = FillLayer(fillLayerId, sourceId)
+        fillLayer.setProperties(
+                PropertyFactory.fillOpacity(0f)
+        )
+
+        // rectangle borders
+        val lineLayerId = "line-layer-" + UUID.randomUUID()
         val lineLayer = LineLayer(lineLayerId, sourceId)
         lineLayer.setProperties(
                 PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
@@ -98,8 +113,10 @@ class CollectAvailableDrawer(val onPointsAvailableDrawing: OnPointsAvailableDraw
                 PropertyFactory.lineColor(color)
         )
 
+
         // Event
-        onPointsAvailableDrawing.lineLayerCreated(lineLayer)
+        onPointsAvailableDrawing.layerCreated(lineLayer)
+        onPointsAvailableDrawing.layerCreated(fillLayer)
     }
 
     private fun rectangleCoordinates(localSquare: LatLngBounds, northwest: LatLng, southeast: LatLng): List<Position> {
@@ -111,23 +128,6 @@ class CollectAvailableDrawer(val onPointsAvailableDrawing: OnPointsAvailableDraw
                 Position.fromLngLat(localSquare.northEast.longitude, localSquare.northEast.latitude)
         )
         return coordinates
-    }
-
-    private fun drawSolidPolygons(color: Int, localSquare: LatLngBounds, northwest: LatLng, southeast: LatLng) {
-        val centralRectangle = PolygonOptions()
-                .strokeColor(color)
-                .fillColor(Color.TRANSPARENT)
-
-        centralRectangle.add(localSquare.northEast, northwest)
-                .add(northwest, localSquare.southWest)
-                .add(localSquare.southWest, southeast)
-                .add(southeast, localSquare.northEast)
-
-
-        // Event
-        if (centralRectangle != null) {
-            onPointsAvailableDrawing.polygonCreated(centralRectangle)
-        }
     }
 
 
@@ -142,7 +142,10 @@ class CollectAvailableDrawer(val onPointsAvailableDrawing: OnPointsAvailableDraw
                 SphericalUtil.computeOffset(gCenter, distanceFromCenterToCorner, 45.0)
 
 
-        return LatLngBounds.Builder().include(fromGoogleLatLng(northeastCorner)).include(fromGoogleLatLng(southwestCorner)).build()
+        return LatLngBounds.Builder()
+                .include(fromGoogleLatLng(northeastCorner))
+                .include(fromGoogleLatLng(southwestCorner))
+                .build()
     }
 
     private fun toGoogleLatLng(latLng: LatLng): com.google.android.gms.maps.model.LatLng {
