@@ -1,6 +1,7 @@
 package br.com.ecostage.mobilecollect.ui.map
 
 import android.graphics.Bitmap
+import br.com.ecostage.mobilecollect.model.CollectAvailable
 import com.mapbox.mapboxsdk.geometry.LatLng
 
 interface MapPresenter {
@@ -13,4 +14,6 @@ interface MapPresenter {
     fun removeLastMarker()
     fun loadUserCollects()
     fun drawRectangles(position: LatLng)
+    fun drawRectangles(collectAvailable: CollectAvailable)
+    fun loadCollectsAvailable()
 }

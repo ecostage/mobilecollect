@@ -2,6 +2,7 @@ package br.com.ecostage.mobilecollect.ui.helper
 
 import android.graphics.Color
 import br.com.ecostage.mobilecollect.listener.OnPointsAvailableDrawing
+import br.com.ecostage.mobilecollect.model.CollectAvailable
 import com.google.maps.android.SphericalUtil
 import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -19,10 +20,15 @@ import java.util.*
 /**
  * Created by andremaia on 8/18/17.
  */
-class PointsAvailableToCollectDrawer(val onPointsAvailableDrawing: OnPointsAvailableDrawing) {
+class CollectAvailableDrawer(val onPointsAvailableDrawing: OnPointsAvailableDrawing) {
 
     // Should be the half of the diameter -> Diameter = Radius * 2
     private val radiusInMeters = 15.0
+
+    fun drawRectangles(collectAvailable: CollectAvailable) {
+        val position = LatLng(collectAvailable.latitude!!, collectAvailable.longitude!!)
+        drawRectangles(position)
+    }
 
     fun drawRectangles(position: LatLng) {
         val localSquare = toBounds(position, radiusInMeters)

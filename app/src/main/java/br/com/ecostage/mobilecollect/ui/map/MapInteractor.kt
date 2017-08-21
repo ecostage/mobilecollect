@@ -5,4 +5,5 @@ package br.com.ecostage.mobilecollect.ui.map
  */
 interface MapInteractor {
     fun loadUserCollects()
+    fun loadCollectsAvailable()
 }

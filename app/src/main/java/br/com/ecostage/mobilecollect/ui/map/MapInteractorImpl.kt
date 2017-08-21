@@ -1,5 +1,6 @@
 package br.com.ecostage.mobilecollect.ui.map
 
+import br.com.ecostage.mobilecollect.listener.OnCollectAvailableLoadedListener
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.repository.CollectRepository
 import br.com.ecostage.mobilecollect.repository.UserRepository
@@ -10,7 +11,8 @@ import org.jetbrains.anko.AnkoLogger
 /**
  * Created by cmaia on 7/22/17.
  */
-class MapInteractorImpl(val collectLoadedListener: OnCollectLoadedListener)
+class MapInteractorImpl(val collectLoadedListener: OnCollectLoadedListener,
+                        val collectAvailableLoadedListener: OnCollectAvailableLoadedListener)
     : MapInteractor, AnkoLogger {
 
     val userRepository: UserRepository = UserRepositoryImpl()
@@ -22,5 +24,9 @@ class MapInteractorImpl(val collectLoadedListener: OnCollectLoadedListener)
         if (userId != null) {
             collectRepository.loadCollectsByUser(userId, collectLoadedListener)
         }
+    }
+
+    override fun loadCollectsAvailable() {
+        collectRepository.loadCollectsAvailable(collectAvailableLoadedListener)
     }
 }

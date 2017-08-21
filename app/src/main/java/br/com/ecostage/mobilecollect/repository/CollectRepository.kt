@@ -1,5 +1,6 @@
 package br.com.ecostage.mobilecollect.repository
 
+import br.com.ecostage.mobilecollect.listener.OnCollectAvailableLoadedListener
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
@@ -13,4 +14,5 @@ interface CollectRepository {
     fun loadCollectsByUser(userId: String, onCollectLoadedListener: OnCollectLoadedListener)
     fun loadCollect(collectId: String, onCollectLoadedListener: OnCollectLoadedListener)
     fun countCollectsByUser(userId: String, listener: ProfileInteractor.OnLoadTotalCollectsFromUser)
+    fun loadCollectsAvailable(listener: OnCollectAvailableLoadedListener)
 }

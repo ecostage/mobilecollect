@@ -1,11 +1,13 @@
 package br.com.ecostage.mobilecollect.ui.map
 
 import android.graphics.Bitmap
+import br.com.ecostage.mobilecollect.listener.OnCollectAvailableLoadedListener
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.listener.OnPointsAvailableDrawing
 import br.com.ecostage.mobilecollect.model.Collect
+import br.com.ecostage.mobilecollect.model.CollectAvailable
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
-import br.com.ecostage.mobilecollect.ui.helper.PointsAvailableToCollectDrawer
+import br.com.ecostage.mobilecollect.ui.helper.CollectAvailableDrawer
 import br.com.ecostage.mobilecollect.util.ImageUtil
 import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -15,10 +17,14 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 class MapPresenterImpl(val mapView: MapView, val mapboxView: MapboxView? = null) :
         MapPresenter,
         OnCollectLoadedListener,
-        OnPointsAvailableDrawing {
+        OnPointsAvailableDrawing,
+        OnCollectAvailableLoadedListener {
 
-    private val mapInteractor: MapInteractor = MapInteractorImpl(this)
-    private val pointsAvailableToCollectDrawer = PointsAvailableToCollectDrawer(this)
+    private val mapInteractor: MapInteractor = MapInteractorImpl(
+            this,
+            this)
+
+    private val pointsAvailableToCollectDrawer = CollectAvailableDrawer(this)
 
     override fun onPermissionDenied(message: String) = mapView.showMessageAsLongToast(message)
 
@@ -76,6 +82,10 @@ class MapPresenterImpl(val mapView: MapView, val mapboxView: MapboxView? = null)
         pointsAvailableToCollectDrawer.drawRectangles(position)
     }
 
+    override fun drawRectangles(collectAvailable: CollectAvailable) {
+        pointsAvailableToCollectDrawer.drawRectangles(collectAvailable)
+    }
+
     override fun polygonCreated(centralRectangle: PolygonOptions) {
         mapboxView?.addPolygonForPointsAvailableToCollect(centralRectangle)
     }
@@ -86,5 +96,21 @@ class MapPresenterImpl(val mapView: MapView, val mapboxView: MapboxView? = null)
 
     override fun lineLayerCreated(lineLayer: LineLayer) {
         mapboxView?.addLineLayer(lineLayer)
+    }
+
+    override fun loadCollectsAvailable() {
+        mapInteractor.loadCollectsAvailable()
+    }
+
+    override fun onCollectAvailableLoaded(collectAvailable: CollectAvailable) {
+        mapboxView?.addCollectAvailable(collectAvailable)
+    }
+
+    override fun onCollectAvailableLoadedError() {
+        // no-op
+    }
+
+    override fun onCollectAvailableLoadedAndNoCollectsFound() {
+        // no-op
     }
 }

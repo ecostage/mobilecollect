@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.model.CollectAvailable
 import br.com.ecostage.mobilecollect.ui.collect.CollectActivity
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
 import com.mapbox.mapboxsdk.Mapbox
@@ -59,6 +60,7 @@ class MapboxActivity : AppCompatActivity(),
         setupView()
 
         mapPresenter.loadUserCollects()
+        mapPresenter.loadCollectsAvailable()
     }
 
     private fun setupView() {
@@ -280,8 +282,6 @@ class MapboxActivity : AppCompatActivity(),
                 .position(position)
                 .icon(iconFactory.fromBitmap(createPinMap()!!)))
 
-        mapPresenter.drawRectangles(position)
-
         val lastIndex = mapBox?.markers?.lastIndex
 
         return lastIndex ?: 0
@@ -362,5 +362,9 @@ class MapboxActivity : AppCompatActivity(),
 
     override fun addLineLayer(layer: LineLayer) {
         mapBox?.addLayer(layer)
+    }
+
+    override fun addCollectAvailable(collectAvailable: CollectAvailable) {
+        mapPresenter.drawRectangles(collectAvailable)
     }
 }

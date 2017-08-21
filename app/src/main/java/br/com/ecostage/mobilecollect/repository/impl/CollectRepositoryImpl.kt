@@ -1,7 +1,9 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
+import br.com.ecostage.mobilecollect.listener.OnCollectAvailableLoadedListener
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
 import br.com.ecostage.mobilecollect.model.Collect
+import br.com.ecostage.mobilecollect.model.CollectAvailable
 import br.com.ecostage.mobilecollect.repository.CollectRepository
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
 import br.com.ecostage.mobilecollect.ui.profile.ProfileInteractor
@@ -21,6 +23,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
         private val COLLECT_RANKING_DB_TYPE = "ranking_collect_by_user"
         private val STORAGE_BUCKET_URL = "gs://mobilecollect-2b822.appspot.com"
         private val STORAGE_BUCKET_PHOTOS_NAME = "collect_photos"
+        private val COLLECT_AVAILABLE = "collect_available"
     }
 
     val firebaseDatabase: DatabaseReference = FirebaseDatabase.getInstance().reference
@@ -190,6 +193,37 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
                             listener.onLoadTotalCollectsFromUser(0)
                         }
 
+                    }
+                })
+    }
+
+    override fun loadCollectsAvailable(listener: OnCollectAvailableLoadedListener) {
+
+        // TODO: Load a limit os collects available based on user localization
+        firebaseDatabase
+                .child(COLLECT_AVAILABLE)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(dataSnapshot: DatabaseError?) {
+                        listener.onCollectAvailableLoadedError()
+                    }
+
+                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                        when (dataSnapshot) {
+                            null -> listener.onCollectAvailableLoadedAndNoCollectsFound()
+                            else -> notifyCollectsAvailableLoaded(dataSnapshot)
+                        }
+                    }
+
+                    private fun notifyCollectsAvailableLoaded(dataSnapshot: DataSnapshot) {
+                        dataSnapshot.children.forEach {
+                            listener.onCollectAvailableLoaded(convertToObject(it))
+                        }
+                    }
+
+                    private fun convertToObject(dataSnapshot: DataSnapshot): CollectAvailable {
+                        val value = dataSnapshot.getValue(CollectAvailable::class.java)
+                        value?.id = dataSnapshot.key
+                        return value!!
                     }
                 })
     }
