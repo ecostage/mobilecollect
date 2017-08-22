@@ -89,6 +89,7 @@ class MapboxActivity : AppCompatActivity(),
         mapView?.getMapAsync {
             mapBox = it
             mapBox?.isMyLocationEnabled = true
+            mapBox?.setOnMarkerClickListener(this)
 
             moveCameraToMyLocation()
         }
@@ -272,7 +273,7 @@ class MapboxActivity : AppCompatActivity(),
         val position: LatLng = LatLng(latitude, longitude)
         val iconFactory = IconFactory.getInstance(this)
 
-        mapBox?.addMarker(MarkerOptions()
+        mapBox?.addMarker(MapboxCustomMarkerOptions()
                 .position(position)
                 .icon(iconFactory.fromBitmap(createPinMap()!!)))
 
@@ -305,11 +306,15 @@ class MapboxActivity : AppCompatActivity(),
 
     override fun populateMarker(markerIndex: Int, collectViewModel: CollectViewModel?, showInfo: Boolean) {
         val marker = mapBox?.markers?.get(markerIndex)
-        if (marker != null) {
-//            marker.tag = collectViewModel?.id
+        if (marker != null && marker is MapboxCustomMarker) {
+            collectViewModel?.id.let {
+                if (it != null)
+                    marker.tag = it
+            }
+
             marker.title = collectViewModel?.name
             marker.snippet = "Classificacão: " + collectViewModel?.classification + " \n Data: " + collectViewModel?.date
-//
+
 //            if (showInfo)
 //                marker.showInfoWindow(mapBox, mapView)
         }
