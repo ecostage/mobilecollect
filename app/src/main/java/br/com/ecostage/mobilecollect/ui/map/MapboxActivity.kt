@@ -19,7 +19,6 @@ import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.Marker
-import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
@@ -38,7 +37,6 @@ class MapboxActivity : AppCompatActivity(),
 
     companion object {
         val COLLECT_REQUEST = 1
-        val COLLECT_DATA_RESULT = "MapboxActivity:collectDataResult"
         val MAP_PERMISSION_REQUEST_CODE = 1
     }
 
@@ -208,7 +206,7 @@ class MapboxActivity : AppCompatActivity(),
                     mapPresenter.removeLastMarker()
                 } else if (resultCode == Activity.RESULT_OK) {
                     // Populate marker
-                    val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(COLLECT_DATA_RESULT)
+                    val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(CollectActivity.COLLECT_DATA_RESULT)
                     val markerLastIndex = mapBox?.markers?.lastIndex
                     if (markerLastIndex != null) {
                         this.populateMarker(markerLastIndex, collectViewModel, showInfo = true)
@@ -313,10 +311,11 @@ class MapboxActivity : AppCompatActivity(),
             }
 
             marker.title = collectViewModel?.name
-            marker.snippet = "Classificacão: " + collectViewModel?.classification + " \n Data: " + collectViewModel?.date
+            marker.snippet = "Classificacão: " + collectViewModel?.classification + " \nData: " + collectViewModel?.date
 
-//            if (showInfo)
-//                marker.showInfoWindow(mapBox, mapView)
+            if (showInfo && mapBox != null) {
+                mapBox?.selectMarker(marker)
+            }
         }
     }
 

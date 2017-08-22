@@ -28,7 +28,9 @@
             android:layout_marginBottom="80dp"
             android:layout_marginEnd="16dp"
             android:src="@android:drawable/ic_menu_mylocation"
+            android:background="@color/colorPrimary"
             app:borderWidth="0dp"
+            android:backgroundTint="@color/colorPrimary"
             app:elevation="6dp"
             app:pressedTranslationZ="12dp"
             app:fabSize="normal" />

@@ -47,7 +47,6 @@ class MapActivity : BottomNavigationActivity(),
 
     companion object {
         val COLLECT_REQUEST = 1
-        val COLLECT_DATA_RESULT = "MapActivity:collectDataResult"
     }
 
     private val mapPresenter: MapPresenter = MapPresenterImpl(this)
@@ -102,7 +101,7 @@ class MapActivity : BottomNavigationActivity(),
                     mapPresenter.removeLastMarker()
                 } else if (resultCode == Activity.RESULT_OK) {
                     // Populate marker
-                    val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(COLLECT_DATA_RESULT)
+                    val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(CollectActivity.COLLECT_DATA_RESULT)
                     this.populateMarker(markers.lastIndex, collectViewModel, showInfo = true)
                     val marker = markers.last()
                     this.centralizeMapCameraAt(marker.position.latitude, marker.position.longitude)

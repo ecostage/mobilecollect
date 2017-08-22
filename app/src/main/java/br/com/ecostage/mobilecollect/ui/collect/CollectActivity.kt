@@ -43,6 +43,7 @@ class CollectActivity : BaseActivity(), CollectView {
         val MARKER_LATITUDE = "CollectActivity:markerLatitude"
         val MARKER_LONGITUDE = "CollectActivity:markerLongitude"
         val COMPRESSED_MAP_SNAPSHOT = "CollectActivity:MapSnapshot"
+        val COLLECT_DATA_RESULT = "CollectActivity:collectDataResult"
         val CAMERA_REQUEST = 1888
         val CAMERA_PERMISSION_REQUEST_CODE = 2
         val LAST_COLLECT_PHOTO_FILE_NAME = "LAST_COLLECT.jpg"
@@ -319,7 +320,7 @@ class CollectActivity : BaseActivity(), CollectView {
 
     override fun returnToMap(collectViewModel: CollectViewModel?) {
         if (collectViewModel != null)
-            setResult(Activity.RESULT_OK, intentFor<MapActivity>(MapActivity.COLLECT_DATA_RESULT to collectViewModel))
+            setResult(Activity.RESULT_OK, intentFor<MapActivity>(COLLECT_DATA_RESULT to collectViewModel))
 
         finishAfterTransition()
     }
