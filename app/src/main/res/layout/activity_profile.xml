@@ -122,6 +122,35 @@
 
             <View style="@style/Divider" />
 
+            <LinearLayout
+                android:id="@+id/manageOfflineMapLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:text="@string/manage_offline_map"
+                    android:textSize="14sp"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
+                    android:drawableTint="@color/gray"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:layout_marginEnd="16dp" />
+            </LinearLayout>
+
+            <View style="@style/Divider" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

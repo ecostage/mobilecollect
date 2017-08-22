@@ -27,7 +27,7 @@ import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationActivit
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationColorSearch
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationViewModel
 import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
-import br.com.ecostage.mobilecollect.ui.map.MapActivity
+import br.com.ecostage.mobilecollect.ui.map.MapboxActivity
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
@@ -320,7 +320,7 @@ class CollectActivity : BaseActivity(), CollectView {
 
     override fun returnToMap(collectViewModel: CollectViewModel?) {
         if (collectViewModel != null)
-            setResult(Activity.RESULT_OK, intentFor<MapActivity>(COLLECT_DATA_RESULT to collectViewModel))
+            setResult(Activity.RESULT_OK, intentFor<MapboxActivity>(COLLECT_DATA_RESULT to collectViewModel))
 
         finishAfterTransition()
     }

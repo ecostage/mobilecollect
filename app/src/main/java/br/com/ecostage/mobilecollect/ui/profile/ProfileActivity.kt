@@ -6,6 +6,7 @@ import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
 import br.com.ecostage.mobilecollect.ui.login.LoginActivity
+import br.com.ecostage.mobilecollect.ui.map.manage.ManageOfflineMapActivity
 import br.com.ecostage.mobilecollect.ui.profile.collect.UserCollectActivity
 import br.com.ecostage.mobilecollect.ui.ranking.RankingActivity
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -20,9 +21,7 @@ class ProfileActivity :
         BottomNavigationActivity(),
         ProfileView {
 
-
     private val presenter: ProfilePresenter = ProfilePresenterImpl(this)
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +37,10 @@ class ProfileActivity :
 
         totalPointsLinearLayout.setOnClickListener {
             startActivity<RankingActivity>()
+        }
+
+        manageOfflineMapLinearLayout.setOnClickListener {
+            startActivity<ManageOfflineMapActivity>()
         }
 
         profileChangePassword.setOnClickListener {

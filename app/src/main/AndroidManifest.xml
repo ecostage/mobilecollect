@@ -28,6 +28,7 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="cb30116ada2e31c94c96b05ec50a58c7b2124423" />
+
         <activity
             android:name=".SplashScreenActivity"
             android:configChanges="orientation|screenSize"
@@ -35,7 +36,11 @@
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.login.LoginActivity"
@@ -44,6 +49,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.map.MapboxActivity"
+            android:configChanges="orientation"
+            android:label="@string/action_label_map"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".ui.map.MapActivity"
             android:configChanges="orientation"
@@ -80,6 +91,12 @@
             android:label="@string/profile_my_collects"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.map.manage.ManageOfflineMapActivity"
+            android:configChanges="orientation"
+            android:label="@string/select_offline_state_map_header_title"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -90,14 +107,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
-        <activity android:name=".ui.map.MapboxActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

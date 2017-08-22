@@ -85,4 +85,7 @@
     <string name="profile_default_user_score">0</string>
     <string name="profile_user_score_format">%1$spts</string>
     <string name="team_selection_internet_unavailable_message">A seleção de times só é possível quando há internet disponível.</string>
+    <string name="manage_offline_map">Gerenciar mapa offline</string>
+    <string name="manage_offline_map_header_title">Gerenciar mapa offline</string>
+    <string name="select_offline_state_map_header_title">Selecione um estado</string>
 </resources>
