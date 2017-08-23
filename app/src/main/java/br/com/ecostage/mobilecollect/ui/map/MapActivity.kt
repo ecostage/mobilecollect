@@ -117,6 +117,7 @@ class MapActivity : BottomNavigationActivity(),
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15f))
 
         googleMap.setOnMarkerClickListener(this)
 
