@@ -20,6 +20,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.TextView
 import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
@@ -158,6 +159,7 @@ class CollectActivity : BaseActivity(), CollectView {
                 viewModel.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
                 viewModel.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
                 viewModel.date = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
+                viewModel.comments = collectComments.text.trim().toString()
 
                 collectLastImagePath.let { path ->
                     if (path != null) {
@@ -178,7 +180,6 @@ class CollectActivity : BaseActivity(), CollectView {
     private fun longitude(): String {
         return doubleFormatted(intent.getStringExtra(MARKER_LONGITUDE).toDouble())
     }
-
 
     private fun latitude(): String {
         return doubleFormatted(intent.getStringExtra(MARKER_LATITUDE).toDouble())
@@ -330,9 +331,9 @@ class CollectActivity : BaseActivity(), CollectView {
         collectClassification.typeface = Typeface.DEFAULT
         applyCategoryColorSelected(ClassificationColorSearch().classificationColor(collectViewModel.classification))
 
-        collectName.isFocusable = false
-        collectName.isEnabled = false
-        collectName.setText(collectViewModel.name, TextView.BufferType.NORMAL)
+        setTextDisabledTo(collectName,
+                collectViewModel.name,
+                getString(R.string.default_message_for_no_name_for_this_collect))
 
         collectDate.text = dateFormatted(collectViewModel.date)
 
@@ -340,7 +341,7 @@ class CollectActivity : BaseActivity(), CollectView {
                 doubleFormatted(collectViewModel.latitude), doubleFormatted(collectViewModel.longitude))
 
         collectTeamTextView.isFocusable = true
-        if (collectViewModel.team == null) {
+        if (collectViewModel.team == null || collectViewModel.team?.name == null) {
             collectTeamTextView.text = getString(R.string.message_time_no_informed)
             collectTeamTextView.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
             collectTeamTextView.isEnabled = false
@@ -353,6 +354,23 @@ class CollectActivity : BaseActivity(), CollectView {
             if (img != null) {
                 collectImage.setImageBitmap(collectPresenter.convertCollectPhoto(img))
             }
+        }
+
+        setTextDisabledTo(collectComments,
+                collectViewModel.comments,
+                getString(R.string.default_message_for_no_comments_for_this_collect))
+    }
+
+    private fun setTextDisabledTo(editText: EditText, value: String?, defaultValue: String) {
+        editText.isFocusable = false
+        editText.isEnabled = false
+
+        when(value) {
+            null, "" -> {
+                editText.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
+                editText.setText(defaultValue, TextView.BufferType.NORMAL)
+            }
+            else -> editText.setText(value, TextView.BufferType.NORMAL)
         }
     }
 

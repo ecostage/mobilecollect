@@ -5,14 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.collect.CollectActivity">
+
     <ProgressBar
         android:id="@+id/collectProgress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginBottom="8dp"
-        android:visibility="gone"
-        android:layout_gravity="center" />
+        android:visibility="gone" />
 
     <ScrollView
         android:id="@+id/scrollViewActivity"
@@ -52,7 +53,7 @@
                     android:background="@android:color/transparent"
                     android:drawableStart="@drawable/ic_explore_color_accent_24dp"
                     android:hint="@string/collect_name_hint"
-                    android:inputType="text"
+                    android:inputType="textCapSentences"
                     android:maxLines="1" />
 
                 <View style="@style/Divider" />
@@ -123,17 +124,29 @@
                         android:id="@+id/collectTeamRemoveButton"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="16dp"
                         android:background="@drawable/shape_rounded_button"
                         android:backgroundTint="@color/colorPrimary"
-                        android:text="X"
+                        android:text="@string/button_text_remove_team_selected"
                         android:textColor="@color/clear_background"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="16dp"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
 
 
                 </RelativeLayout>
+
+                <View style="@style/Divider" />
+
+                <EditText
+                    android:id="@+id/collectComments"
+                    style="@style/CollectLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableStart="@drawable/ic_insert_comment_color_accent_24dp"
+                    android:hint="@string/edit_text_hint_collect_comments"
+                    android:inputType="textCapSentences|textMultiLine" />
 
                 <View style="@style/Divider" />
 
