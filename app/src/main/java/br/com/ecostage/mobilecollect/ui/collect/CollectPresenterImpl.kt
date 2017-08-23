@@ -2,6 +2,7 @@ package br.com.ecostage.mobilecollect.ui.collect
 
 import android.graphics.Bitmap
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
+import br.com.ecostage.mobilecollect.mapper.CollectMapper
 import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.model.Team
 import br.com.ecostage.mobilecollect.util.ImageUtil
@@ -34,22 +35,7 @@ class CollectPresenterImpl(val collectView: CollectView,
     }
 
     override fun onCollectLoaded(collect: Collect) {
-        val viewModel = CollectViewModel()
-        viewModel.id = collect.id
-        viewModel.name = collect.name
-        viewModel.latitude = collect.latitude
-        viewModel.longitude = collect.longitude
-        viewModel.classification = collect.classification
-        viewModel.userId = collect.userId
-        viewModel.date = collect.date
-        viewModel.photo = collect.photo
-
-        val teamViewModel = TeamViewModel()
-        teamViewModel.name = collect.team?.name
-        teamViewModel.id = collect.team?.id
-
-        viewModel.team = teamViewModel
-
+        val viewModel = CollectMapper().map(collect)
         collectView.populateFields(viewModel)
         collectView.hideProgress()
     }
@@ -69,18 +55,7 @@ class CollectPresenterImpl(val collectView: CollectView,
     override fun save(viewModel: CollectViewModel) {
         collectView.showProgress()
 
-        val collect = Collect()
-
-        collect.classification = viewModel.classification
-        collect.date = viewModel.date
-        collect.latitude = viewModel.latitude
-        collect.longitude = viewModel.longitude
-        collect.name = viewModel.name
-        val team = Team()
-        team.id = viewModel.team?.id
-        team.name = viewModel.team?.name
-
-        collect.team = team
+        val collect = CollectMapper().map(viewModel)
 
         viewModel.photo.let { img ->
             if (img != null)
@@ -92,22 +67,7 @@ class CollectPresenterImpl(val collectView: CollectView,
         collectView.hideProgress()
         collectView.showCollectRequestSuccess()
 
-        val viewModel = CollectViewModel()
-        viewModel.id = collect.id
-        viewModel.name = collect.name
-        viewModel.latitude = collect.latitude
-        viewModel.longitude = collect.longitude
-        viewModel.classification = collect.classification
-        viewModel.userId = collect.userId
-        viewModel.date = collect.date
-        viewModel.photo = collect.photo
-
-        val teamViewModel = TeamViewModel()
-        teamViewModel.name = collect.team?.name
-        teamViewModel.id = collect.team?.id
-
-        viewModel.team = teamViewModel
-
+        val viewModel = CollectMapper().map(collect)
         collectView.returnToMap(viewModel)
     }
 

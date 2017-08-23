@@ -1,6 +1,7 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
+import br.com.ecostage.mobilecollect.mapper.CollectMapper
 import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.repository.CollectRepository
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
@@ -92,15 +93,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
         val storageReference = firebaseStorage.child(uid + ".jpg")
         val uploadTask = storageReference.putBytes(photoBytes)
 
-        val savedCollect = Collect()
-
-        savedCollect.id = uid
-        savedCollect.name = collect.name
-        savedCollect.latitude = collect.latitude
-        savedCollect.longitude = collect.longitude
-        savedCollect.classification = collect.classification
-        savedCollect.userId = collect.userId
-        savedCollect.date = collect.date
+        val savedCollect = CollectMapper().map(collect, uid)
 
         uploadTask.addOnSuccessListener {
             onCollectSaveListener.onSaveCollect(savedCollect)

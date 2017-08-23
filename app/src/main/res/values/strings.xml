@@ -87,4 +87,6 @@
     <string name="team_selection_internet_unavailable_message">A seleção de times só é possível quando há internet disponível.</string>
     <string name="button_text_remove_team_selected">X</string>
     <string name="edit_text_hint_collect_comments"><font size="14">Deixe um comentário sobre esta coleta</font></string>
+    <string name="default_message_for_no_comments_for_this_collect"><font size="8">Não há comentário para esta coleta</font></string>
+    <string name="default_message_for_no_name_for_this_collect" />
 </resources>

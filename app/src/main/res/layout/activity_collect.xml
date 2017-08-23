@@ -53,7 +53,7 @@
                     android:background="@android:color/transparent"
                     android:drawableStart="@drawable/ic_explore_color_accent_24dp"
                     android:hint="@string/collect_name_hint"
-                    android:inputType="text"
+                    android:inputType="textCapSentences"
                     android:maxLines="1" />
 
                 <View style="@style/Divider" />
@@ -146,7 +146,7 @@
                     android:background="@android:color/transparent"
                     android:drawableStart="@drawable/ic_insert_comment_color_accent_24dp"
                     android:hint="@string/edit_text_hint_collect_comments"
-                    android:inputType="textMultiLine" />
+                    android:inputType="textCapSentences|textMultiLine" />
 
                 <View style="@style/Divider" />
 
