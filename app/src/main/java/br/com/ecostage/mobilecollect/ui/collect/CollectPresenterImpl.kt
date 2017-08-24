@@ -40,8 +40,17 @@ class CollectPresenterImpl(val collectView: CollectView,
         collectView.hideProgress()
     }
 
+    override fun onCollectImageLoaded(collect: Collect) {
+        val viewModel = CollectMapper().map(collect)
+        collectView.populateCollectImage(viewModel)
+    }
+
     override fun onCollectLoadedError() {
         collectView.showMessageAsLongToast("Failed to show collect.")
+    }
+
+    override fun onCollectImageLoadedError() {
+        collectView.showMessageAsLongToast("Failed to show image collect.")
     }
 
     override fun decompressMapSnapshot(compressSnapshot: ByteArray): Bitmap = ImageUtil.decompress(compressSnapshot)

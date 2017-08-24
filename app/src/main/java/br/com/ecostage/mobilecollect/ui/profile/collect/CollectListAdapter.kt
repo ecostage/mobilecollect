@@ -70,6 +70,14 @@ class CollectListAdapter(val context: Context)
         // no-op
     }
 
+    override fun onCollectImageLoaded(collect: Collect) {
+        // no-op
+    }
+
+    override fun onCollectImageLoadedError() {
+        //  no-op
+    }
+
     private class ListRowHolder(row: View?) {
         val label: TextView = row?.findViewById(R.id.userCollectRow) as TextView
     }

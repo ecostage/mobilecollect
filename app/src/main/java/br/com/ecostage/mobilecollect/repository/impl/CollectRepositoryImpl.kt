@@ -140,17 +140,19 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
                         val collect = dataSnapshot?.getValue(Collect::class.java)
                         collect?.id = dataSnapshot?.key
 
-                        if (collect != null) {
+                        if (collect != null){
+                            onCollectLoadedListener.onCollectLoaded(collect)
+
                             val storageReference = firebaseStorage.child(collect.id + ".jpg")
                             val downloadTask = storageReference.getBytes(1024 * 1024)
 
                             downloadTask.addOnSuccessListener {
                                 collect.photo = it
-                                onCollectLoadedListener.onCollectLoaded(collect)
+                                onCollectLoadedListener.onCollectImageLoaded(collect)
                             }
 
                             downloadTask.addOnFailureListener {
-                                onCollectLoadedListener.onCollectLoadedError()
+                                onCollectLoadedListener.onCollectImageLoadedError()
                             }
                         }
                     }

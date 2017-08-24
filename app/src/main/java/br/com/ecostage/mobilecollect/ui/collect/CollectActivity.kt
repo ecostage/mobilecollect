@@ -350,15 +350,19 @@ class CollectActivity : BaseActivity(), CollectView {
             collectTeamTextView.typeface = Typeface.DEFAULT
         }
 
+        setTextDisabledTo(collectComments,
+                collectViewModel.comments,
+                getString(R.string.default_message_for_no_comments_for_this_collect))
+    }
+
+    override fun populateCollectImage(collectViewModel: CollectViewModel) {
+
         collectViewModel.photo.let { img ->
             if (img != null) {
                 collectImage.setImageBitmap(collectPresenter.convertCollectPhoto(img))
             }
         }
 
-        setTextDisabledTo(collectComments,
-                collectViewModel.comments,
-                getString(R.string.default_message_for_no_comments_for_this_collect))
     }
 
     private fun setTextDisabledTo(editText: EditText, value: String?, defaultValue: String) {

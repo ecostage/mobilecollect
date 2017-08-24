@@ -52,4 +52,11 @@ class MapPresenterImpl(val mapView: MapView,
         // no-op
     }
 
+    override fun onCollectImageLoaded(collect: Collect) {
+        // no-op
+    }
+
+    override fun onCollectImageLoadedError() {
+        // no-op
+    }
 }

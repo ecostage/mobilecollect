@@ -21,6 +21,7 @@ interface CollectView {
     fun returnToMap(collectViewModel: CollectViewModel?)
     fun showNoUserError()
     fun populateFields(collectViewModel: CollectViewModel)
+    fun populateCollectImage(collectViewModel: CollectViewModel)
     fun showTeamList(teamsList: ArrayList<TeamViewModel>)
     fun removeTeamSelected()
     fun showUserHasNoTeamsMessage()
