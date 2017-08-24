@@ -5,6 +5,7 @@ import android.os.Bundle
 import br.com.ecostage.mobilecollect.ui.login.LoginActivity
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import io.fabric.sdk.android.Fabric
 import org.jetbrains.anko.startActivity
 
@@ -17,9 +18,9 @@ class SplashScreenActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Fabric.with(this, Crashlytics())
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
 
         logUser()
-//        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
 
         startActivity<LoginActivity>()
         finish()
