@@ -84,7 +84,10 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
 
         setupView()
         setupKeyboardUI(activity_collect)
+        setupSensors()
+    }
 
+    fun setupSensors() {
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         sensorAccelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         sensorMagneticField = sensorManager?.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
