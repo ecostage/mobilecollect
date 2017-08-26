@@ -22,6 +22,7 @@ class CollectMapper {
         collect.classification = viewModel.classification
         collect.team = mapTeam(viewModel)
         collect.comments = viewModel.comments
+        collect.photoAzimuth = viewModel.photoAzimuth
 
         return collect
     }
@@ -48,6 +49,7 @@ class CollectMapper {
         viewModel.photo = model.photo
         viewModel.team = mapTeam(model)
         viewModel.comments = model.comments
+        viewModel.photoAzimuth = model.photoAzimuth
 
         return viewModel
     }
@@ -71,6 +73,7 @@ class CollectMapper {
         copy.userId = model.userId
         copy.date = model.date
         copy.comments = model.comments
+        copy.photoAzimuth = model.photoAzimuth
 
         return copy
     }
