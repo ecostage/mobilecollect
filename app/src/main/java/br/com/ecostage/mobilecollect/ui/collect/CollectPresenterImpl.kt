@@ -76,6 +76,8 @@ class CollectPresenterImpl(val collectView: CollectView,
         collect.latitude = viewModel.latitude
         collect.longitude = viewModel.longitude
         collect.name = viewModel.name
+        collect.photoAzimuth = viewModel.photoAzimuth
+
         val team = Team()
         team.id = viewModel.team?.id
         team.name = viewModel.team?.name
@@ -101,6 +103,7 @@ class CollectPresenterImpl(val collectView: CollectView,
         viewModel.userId = collect.userId
         viewModel.date = collect.date
         viewModel.photo = collect.photo
+        viewModel.photoAzimuth = collect.photoAzimuth
 
         val teamViewModel = TeamViewModel()
         teamViewModel.name = collect.team?.name

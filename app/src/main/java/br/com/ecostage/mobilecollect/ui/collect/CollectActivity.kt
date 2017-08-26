@@ -228,6 +228,7 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
                 viewModel.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
                 viewModel.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
                 viewModel.date = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
+                viewModel.photoAzimuth = photoAzimuth
 
                 collectLastImagePath.let { path ->
                     if (path != null) {
