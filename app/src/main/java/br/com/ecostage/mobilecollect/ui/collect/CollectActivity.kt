@@ -6,6 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
@@ -36,7 +40,7 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CollectActivity : BaseActivity(), CollectView {
+class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
 
     companion object {
         val COLLECT_ID = "CollectActivity:collectId"
@@ -45,7 +49,7 @@ class CollectActivity : BaseActivity(), CollectView {
         val COMPRESSED_MAP_SNAPSHOT = "CollectActivity:MapSnapshot"
         val CAMERA_REQUEST = 1888
         val CAMERA_PERMISSION_REQUEST_CODE = 2
-        val LAST_COLLECT_PHOTO_FILE_NAME = "LAST_COLLECT.jpg"
+        val LAST_COLLECT_PHOTO_FILE_NAME = "LAST_COLLECT"
         val CLASSIFICATION_REQUEST = 3
         val CLASSIFICATION_DATA_RESULT = "CollectActivity:classification"
     }
@@ -58,6 +62,20 @@ class CollectActivity : BaseActivity(), CollectView {
 
     private var viewModel = CollectViewModel()
 
+    private var sensorManager: SensorManager? = null
+    private var sensorAccelerometer: Sensor? = null
+    private var sensorMagneticField: Sensor? = null
+
+    private var valuesAccelerometer: FloatArray? = null
+    private var valuesMagneticField: FloatArray? = null
+
+    private lateinit var matrixR: FloatArray
+    private lateinit var matrixI: FloatArray
+    private lateinit var matrixValues: FloatArray
+
+    private var azimuth: Double? = null
+    private var photoAzimuth: Double? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -65,6 +83,56 @@ class CollectActivity : BaseActivity(), CollectView {
 
         setupView()
         setupKeyboardUI(activity_collect)
+
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        sensorAccelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        sensorMagneticField = sensorManager?.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+
+        valuesAccelerometer = FloatArray(3)
+        valuesMagneticField = FloatArray(3)
+
+        matrixR = FloatArray(9)
+        matrixI = FloatArray(9)
+        matrixValues = FloatArray(9)
+    }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+        // no-op
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        when (event?.sensor?.type) {
+            Sensor.TYPE_ACCELEROMETER -> for (i in 0..2) {
+                valuesAccelerometer?.set(i, event.values[i])
+            }
+            Sensor.TYPE_MAGNETIC_FIELD -> for (i in 0..2) {
+                valuesMagneticField?.set(i, event.values[i])
+            }
+        }
+
+        val success = SensorManager.getRotationMatrix(
+                matrixR,
+                matrixI,
+                valuesAccelerometer,
+                valuesMagneticField)
+
+        if (success) {
+            SensorManager.getOrientation(matrixR, matrixValues)
+
+            azimuth = Math.toDegrees(matrixValues[0].toDouble())
+        }
+    }
+
+    override fun onResume() {
+        sensorManager?.registerListener(this, sensorAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager?.registerListener(this, sensorMagneticField, SensorManager.SENSOR_DELAY_NORMAL)
+        super.onResume()
+    }
+
+    override fun onPause() {
+        sensorManager?.unregisterListener(this, sensorAccelerometer)
+        sensorManager?.unregisterListener(this, sensorMagneticField)
+        super.onPause()
     }
 
     private fun setupView() {
@@ -102,7 +170,9 @@ class CollectActivity : BaseActivity(), CollectView {
     }
 
     private fun setupPhotoControllers() {
-        collectTakePhotoBtn.setOnClickListener { collectPresenter.takePhoto() }
+        collectTakePhotoBtn.setOnClickListener {
+            collectPresenter.takePhoto()
+        }
     }
 
     private fun setupTeamControllers() {
@@ -196,6 +266,10 @@ class CollectActivity : BaseActivity(), CollectView {
             CAMERA_REQUEST -> {
                 if (resultCode == Activity.RESULT_OK) {
                     collectImage.setImageURI(collectLastImage)
+
+                    if (azimuth != null) {
+                        photoAzimuth = azimuth
+                    }
                 } else {
                     collectImage.setImageURI(null)
                     collectLastImage = null
@@ -209,8 +283,6 @@ class CollectActivity : BaseActivity(), CollectView {
                     val classificationColor = selectedClassification?.colorHexadecimal
 
                     applyCategorySelected(classificationText, classificationColor)
-
-
                 }
             }
         }
