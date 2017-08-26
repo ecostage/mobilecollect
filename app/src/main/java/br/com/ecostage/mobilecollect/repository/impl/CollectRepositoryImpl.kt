@@ -82,7 +82,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
 
             override fun onComplete(dbError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
                 if (dbError != null) {
-                    undoCollect(collect, false)
+//                    undoCollect(collect, false)
                     onCollectSaveListener.onSaveCollectError()
                     error("Could not save user [" + collect.userId + "] ranking")
                 }
@@ -100,7 +100,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
         }
 
         uploadTask.addOnFailureListener {
-            undoCollect(collect, true)
+//            undoCollect(collect, true)
             onCollectSaveListener.onSaveCollectError() // Maybe a message or error code
         }
     }

@@ -18,6 +18,7 @@ class CollectViewModel() : Parcelable {
     var photo: ByteArray? = null
     var team: TeamViewModel? = null
     var comments: String? = null
+    var photoAzimuth: Double? = null
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()
@@ -30,6 +31,7 @@ class CollectViewModel() : Parcelable {
         photo = parcel.createByteArray()
         team = parcel.readParcelable(TeamViewModel::class.java.classLoader)
         comments = parcel.readString()
+        photoAzimuth = parcel.readValue(Double::class.java.classLoader) as? Double
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -49,6 +51,7 @@ class CollectViewModel() : Parcelable {
 
         parcel.writeParcelable(team, Parcelable.PARCELABLE_WRITE_RETURN_VALUE)
         parcel.writeString(comments)
+        parcel.writeValue(photoAzimuth)
     }
 
     override fun describeContents(): Int {
