@@ -77,6 +77,8 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
     private var azimuth: Double? = null
     private var photoAzimuth: Double? = null
 
+    private var menu: Menu? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -200,6 +202,7 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_collect, menu)
+        this.menu = menu
         return true
     }
 
@@ -223,8 +226,12 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_save_collect -> {
-                if (!this.validateForm())
+                menu?.getItem(0)?.isEnabled = false
+
+                if (!this.validateForm()) {
+                    menu?.getItem(0)?.isEnabled = true
                     return false
+                }
 
                 viewModel.name = collectName.text.toString()
                 viewModel.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
