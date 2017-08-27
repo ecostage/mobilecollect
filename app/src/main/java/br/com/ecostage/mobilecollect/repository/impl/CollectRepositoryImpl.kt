@@ -12,6 +12,8 @@ import com.google.firebase.storage.StorageReference
 import org.jetbrains.anko.AnkoLogger
 
 /**
+ * Default collects repository operations implementation.
+ *
  * Created by cmaia on 7/23/17.
  */
 class CollectRepositoryImpl : CollectRepository, AnkoLogger {
@@ -140,7 +142,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
                         val collect = dataSnapshot?.getValue(Collect::class.java)
                         collect?.id = dataSnapshot?.key
 
-                        if (collect != null){
+                        if (collect != null) {
                             onCollectLoadedListener.onCollectLoaded(collect)
 
                             val storageReference = firebaseStorage.child(collect.id + ".jpg")
@@ -187,5 +189,12 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
 
                     }
                 })
+    }
+
+    override fun keepCollectsSyncedFor(userId: String) {
+        firebaseDatabase
+                .child(COLLECT_BY_USER_DB_TYPE)
+                .child(userId)
+                .keepSynced(true)
     }
 }
