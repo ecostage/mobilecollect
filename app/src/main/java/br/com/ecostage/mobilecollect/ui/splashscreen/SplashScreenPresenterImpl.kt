@@ -1,29 +1,28 @@
-package br.com.ecostage.mobilecollect
+package br.com.ecostage.mobilecollect.ui.splashscreen
 
-import android.app.Activity
-import android.os.Bundle
-import br.com.ecostage.mobilecollect.ui.login.LoginActivity
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import io.fabric.sdk.android.Fabric
-import org.jetbrains.anko.startActivity
-
 
 /**
- * Created by andremaia on 7/15/17.
+ * Default Splash Screen Presenter implementation.
+ *
+ * Created by andremaia on 8/27/17.
  */
-class SplashScreenActivity : Activity() {
+class SplashScreenPresenterImpl(val viewContext: SplashScreenActivity, val view: SplashScreenView) :
+        SplashScreenPresenter {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Fabric.with(this, Crashlytics())
+
+    override fun initializeFirebase() {
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+    }
 
+    override fun setupCrashReports() {
+        Fabric.with(viewContext, Crashlytics())
         logUser()
 
-        startActivity<LoginActivity>()
-        finish()
+        view.goToNextView()
     }
 
     private fun logUser() {
@@ -37,5 +36,4 @@ class SplashScreenActivity : Activity() {
         }
 
     }
-
 }
