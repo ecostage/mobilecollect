@@ -34,6 +34,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
+import java.io.File
 
 @SuppressLint("MissingPermission")
 class MapActivity : BottomNavigationActivity(),
@@ -115,9 +116,11 @@ class MapActivity : BottomNavigationActivity(),
 
         googleMap.setOnMarkerClickListener(this)
 
-        googleMap.addTileOverlay(TileOverlayOptions().tileProvider(
-                MapBoxOfflineTileProvider(
-                        Environment.getExternalStorageDirectory().absolutePath + "/mobilecollect_64fc36.mbtiles")))
+        val mapOfflinePath = Environment.getExternalStorageDirectory().absolutePath + "/mobilecollect.mbtiles"
+        val file = File(mapOfflinePath)
+        if(file.exists()) {
+            googleMap.addTileOverlay(TileOverlayOptions().tileProvider(MapBoxOfflineTileProvider(mapOfflinePath)))
+        }
 
         accessingLocationInfo {
             buildGoogleApiClient()

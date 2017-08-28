@@ -1,15 +1,21 @@
 package br.com.ecostage.mobilecollect.ui.profile
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.view.View
+import android.view.WindowManager
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
 import br.com.ecostage.mobilecollect.ui.login.LoginActivity
-import br.com.ecostage.mobilecollect.ui.map.manage.ManageOfflineMapActivity
 import br.com.ecostage.mobilecollect.ui.profile.collect.UserCollectActivity
 import br.com.ecostage.mobilecollect.ui.ranking.RankingActivity
 import kotlinx.android.synthetic.main.activity_profile.*
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
 
 /**
@@ -20,6 +26,10 @@ import org.jetbrains.anko.startActivity
 class ProfileActivity :
         BottomNavigationActivity(),
         ProfileView {
+
+    companion object {
+        private val WRITE_PERMISSION_CODE = 456
+    }
 
     private val presenter: ProfilePresenter = ProfilePresenterImpl(this)
 
@@ -39,9 +49,17 @@ class ProfileActivity :
             startActivity<RankingActivity>()
         }
 
-        manageOfflineMapLinearLayout.setOnClickListener {
-            startActivity<ManageOfflineMapActivity>()
+        downloadOfflineMapArea.setOnClickListener {
+            if (canWriteFiles()) {
+                presenter.downloadOfflineArea()
+            } else {
+                presenter.onPermissionNeeded()
+            }
         }
+
+//        manageOfflineMapLinearLayout.setOnClickListener {
+//            startActivity<ManageOfflineMapActivity>()
+//        }
 
         profileChangePassword.setOnClickListener {
             presenter.resetPasswordRequest()
@@ -50,7 +68,6 @@ class ProfileActivity :
         profileSignOut.setOnClickListener {
             presenter.signOut()
         }
-
     }
 
     private fun loadData() {
@@ -131,7 +148,61 @@ class ProfileActivity :
 
     override fun setUserScoreOnError() {
         userScoreTextView.text = defaultUserScore()
+    }
 
+    override fun showMapDownloadSuccess() {
+        longToast(R.string.map_downloaded_message)
+    }
+
+    override fun showMapDownloadFailure() {
+        longToast(R.string.map_download_failure_message)
+    }
+
+    override fun showMenuBar() {
+        bottom_navigation.visibility = View.VISIBLE
+    }
+
+    override fun showMapDownloadProgress() {
+        this.showProgress()
+        mapProgressText.visibility = View.VISIBLE
+    }
+
+    override fun hideMapDownloadProgress() {
+        this.hideProgress()
+        mapProgressText.visibility = View.GONE
+    }
+
+    override fun hideMenuBar() {
+        bottom_navigation.visibility = View.GONE
+    }
+
+    override fun disableScreenTimeout() {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    override fun canWriteFiles(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun showRequestPermissionsDialog() {
+        ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                WRITE_PERMISSION_CODE)
+    }
+
+    override fun showMessageAsLongToast(message: String) {
+        longToast(message)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            WRITE_PERMISSION_CODE ->
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    presenter.onPermissionDenied(resources.getString(R.string.download_map_permission_needed))
+                } else {
+                    presenter.downloadOfflineArea()
+                }
+        }
     }
 
     private fun userScoreFormatted(userScore: Int?) = resources.getString(R.string.profile_user_score_format, userScore?.toString())

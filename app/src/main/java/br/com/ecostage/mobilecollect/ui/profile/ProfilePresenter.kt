@@ -10,4 +10,7 @@ interface ProfilePresenter {
     fun loadTeamsListFromUser()
     fun signOut()
     fun loadCurrentUser()
+    fun downloadOfflineArea()
+    fun onPermissionNeeded()
+    fun onPermissionDenied(message: String)
 }

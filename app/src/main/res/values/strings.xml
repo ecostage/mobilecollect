@@ -69,6 +69,7 @@
     <string name="no_results">Sem resultados</string>
     <string name="button_sign_out">Sair</string>
     <string name="button_change_password">Trocar Senha</string>
+    <string name="button_download_offline_area">Baixar área offline (Petrópolis - BA)</string>
     <string name="dialog_title_reset_password">Reset Password</string>
     <string name="dialog_message_reset_password_with_success">Foi enviado um email para %1$s com instrução para reiniciar a senha.</string>
     <string name="message_snackbar_reset_password_request_error">Falhou. Tente novamente</string>
@@ -88,4 +89,8 @@
     <string name="manage_offline_map">Gerenciar mapa offline</string>
     <string name="manage_offline_map_header_title">Gerenciar mapa offline</string>
     <string name="select_offline_state_map_header_title">Selecione um estado</string>
+    <string name="map_downloading_message">Baixando área offline do mapa...</string>
+    <string name="map_downloaded_message">Download de área offline terminado com successo!</string>
+    <string name="map_download_failure_message">Falha ao baixar área offline do mapa. Tente novamente mais tarde.</string>
+    <string name="download_map_permission_needed">É necessário permissão da de escrita nos arquivos para download de área offline</string>
 </resources>

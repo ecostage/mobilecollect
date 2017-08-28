@@ -17,4 +17,14 @@ interface ProfileView {
     fun setCurrentUserOnError()
     fun setUserScore(userScore: Int?)
     fun setUserScoreOnError()
+    fun showMapDownloadSuccess()
+    fun showMapDownloadFailure()
+    fun showMenuBar()
+    fun showMapDownloadProgress()
+    fun hideMapDownloadProgress()
+    fun hideMenuBar()
+    fun disableScreenTimeout()
+    fun canWriteFiles(): Boolean
+    fun showRequestPermissionsDialog()
+    fun showMessageAsLongToast(message: String)
 }
