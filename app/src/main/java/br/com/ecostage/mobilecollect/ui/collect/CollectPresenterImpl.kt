@@ -73,16 +73,20 @@ class CollectPresenterImpl(val collectView: CollectView,
     }
 
     override fun onSaveCollect(collect: Collect) {
-        collectView.hideProgress()
         collectView.showCollectRequestSuccess()
-
-        val viewModel = CollectMapper().map(collect)
-        collectView.returnToMap(viewModel)
     }
 
     override fun onSaveCollectError() {
         collectView.hideProgress()
         collectView.showNoUserError()
+    }
+
+    override fun onSaveCollectComplete(collect: Collect) {
+        collectView.hideProgress()
+        collectView.showCollectRequestRegistered()
+
+        val viewModel = CollectMapper().map(collect)
+        collectView.returnToMap(viewModel)
     }
 
     override fun selectTeam(model: CollectViewModel) {

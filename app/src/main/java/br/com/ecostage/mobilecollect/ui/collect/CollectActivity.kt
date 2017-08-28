@@ -181,16 +181,12 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
 
     private fun setupTeamControllers() {
         collectTeamTextView.setOnClickListener {
-            if (isNetworkAvailable()) {
-                collectPresenter.selectTeam(viewModel)
-            } else {
-                longToast(R.string.team_selection_internet_unavailable_message)
-            }
+            collectPresenter.selectTeam(viewModel)
         }
         collectTeamRemoveButton.setOnClickListener { collectPresenter.removeTeamSelected(viewModel) }
     }
 
-    private fun isNetworkAvailable() : Boolean {
+    private fun isNetworkAvailable(): Boolean {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetworkInfo = connectivityManager.activeNetworkInfo
         return activeNetworkInfo != null && activeNetworkInfo.isConnected
@@ -395,6 +391,12 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
         longToast(R.string.collect_save_success)
     }
 
+    override fun showCollectRequestRegistered() {
+        if (!isNetworkAvailable()) {
+            longToast(R.string.collect_save_registered)
+        }
+    }
+
     override fun showNoUserError() {
         this.showMessageAsLongToast(getString(R.string.collect_save_error_no_user_auth))
     }
@@ -450,7 +452,7 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
         editText.isFocusable = false
         editText.isEnabled = false
 
-        when(value) {
+        when (value) {
             null, "" -> {
                 editText.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
                 editText.setText(defaultValue, TextView.BufferType.NORMAL)

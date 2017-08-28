@@ -57,16 +57,17 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
     override fun save(userId: String, collect: Collect, photoBytes: ByteArray, onCollectSaveListener: CollectInteractor.OnSaveCollectListener) {
         collect.userId = userId
 
-        val uid: String? = firebaseDatabase.child(COLLECT_DB_TYPE).push().key
+        val collectID: String? = firebaseDatabase.child(COLLECT_DB_TYPE).push().key
 
         // Clean the photo because we don't want to save it to firebase -- Check another way to do this
         collect.photo = null
 
         // Save in the right db
-        firebaseDatabase.child(COLLECT_DB_TYPE).child(uid).setValue(collect)
+        firebaseDatabase.child(COLLECT_DB_TYPE).child(collectID).setValue(collect)
 
         // Index by user in a new collection
-        firebaseDatabase.child(COLLECT_BY_USER_DB_TYPE).child(collect.userId).child(uid).setValue(collect)
+        firebaseDatabase.child(COLLECT_BY_USER_DB_TYPE).child(collect.userId).child(collectID).setValue(collect)
+                .addOnCompleteListener {  }
 
         // Increment user points
         firebaseDatabase.child(COLLECT_RANKING_DB_TYPE).child(collect.userId).child("score").runTransaction(object : Transaction.Handler {
@@ -92,10 +93,10 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
         })
 
         // Save the photo in storage
-        val storageReference = firebaseStorage.child(uid + ".jpg")
+        val storageReference = firebaseStorage.child(collectID + ".jpg")
         val uploadTask = storageReference.putBytes(photoBytes)
 
-        val savedCollect = CollectMapper().map(collect, uid)
+        val savedCollect = CollectMapper().map(collect, collectID)
 
         uploadTask.addOnSuccessListener {
             onCollectSaveListener.onSaveCollect(savedCollect)
@@ -105,6 +106,8 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
 //            undoCollect(collect, true)
             onCollectSaveListener.onSaveCollectError() // Maybe a message or error code
         }
+
+        onCollectSaveListener.onSaveCollectComplete(savedCollect)
     }
 
     private fun undoCollect(collect: Collect, hasPointsIncreased: Boolean) {
@@ -136,36 +139,49 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
         firebaseDatabase
                 .child(COLLECT_DB_TYPE)
                 .child(collectId)
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                .addValueEventListener(createEventListenerCollect(onCollectLoadedListener))
+    }
 
-                        val collect = dataSnapshot?.getValue(Collect::class.java)
-                        collect?.id = dataSnapshot?.key
+    override fun loadCollect(collectId: String, userId: String, onCollectLoadedListener: OnCollectLoadedListener) {
+        firebaseDatabase
+                .child(COLLECT_BY_USER_DB_TYPE)
+                .child(userId)
+                .child(collectId)
+                .addValueEventListener(createEventListenerCollect(onCollectLoadedListener))
+    }
 
-                        if (collect != null) {
-                            onCollectLoadedListener.onCollectLoaded(collect)
+    private fun createEventListenerCollect(onCollectLoadedListener: OnCollectLoadedListener): ValueEventListener {
+        return object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot?) {
 
-                            val storageReference = firebaseStorage.child(collect.id + ".jpg")
-                            val downloadTask = storageReference.getBytes(1024 * 1024)
+                val collect = dataSnapshot?.getValue(Collect::class.java)
+                collect?.id = dataSnapshot?.key
 
-                            downloadTask.addOnSuccessListener {
-                                collect.photo = it
-                                onCollectLoadedListener.onCollectImageLoaded(collect)
-                            }
+                if (collect != null) {
+                    onCollectLoadedListener.onCollectLoaded(collect)
 
-                            downloadTask.addOnFailureListener {
-                                onCollectLoadedListener.onCollectImageLoadedError()
-                            }
-                        }
+                    val storageReference = firebaseStorage.child(collect.id + ".jpg")
+                    val downloadTask = storageReference.getBytes(1024 * 1024)
+
+                    downloadTask.addOnSuccessListener {
+                        collect.photo = it
+                        onCollectLoadedListener.onCollectImageLoaded(collect)
                     }
 
-                    override fun onCancelled(databaseError: DatabaseError?) {
-//                        if (databaseError != null) {
-//                            onCollectLoadedListener.onCollectLoadedError()
-//                            error { "Error when loading collect data. " + databaseError.message }
-//                        }
+                    downloadTask.addOnFailureListener {
+                        onCollectLoadedListener.onCollectImageLoadedError()
                     }
-                })
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError?) {
+    //                        if (databaseError != null) {
+    //                            onCollectLoadedListener.onCollectLoadedError()
+    //                            error { "Error when loading collect data. " + databaseError.message }
+    //                        }
+            }
+        }
+
     }
 
 

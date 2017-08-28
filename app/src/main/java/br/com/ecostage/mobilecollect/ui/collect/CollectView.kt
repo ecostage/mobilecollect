@@ -18,6 +18,7 @@ interface CollectView {
     fun hideProgress()
     fun hideProgressBarForTeams()
     fun showCollectRequestSuccess()
+    fun showCollectRequestRegistered()
     fun returnToMap(collectViewModel: CollectViewModel?)
     fun showNoUserError()
     fun populateFields(collectViewModel: CollectViewModel)

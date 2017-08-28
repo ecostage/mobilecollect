@@ -13,7 +13,7 @@ interface CollectRepository {
     fun save(userId: String, collect: Collect, photoBytes: ByteArray, onCollectSaveListener: CollectInteractor.OnSaveCollectListener)
     fun loadCollectsByUser(userId: String, onCollectLoadedListener: OnCollectLoadedListener)
     fun loadCollect(collectId: String, onCollectLoadedListener: OnCollectLoadedListener)
+    fun loadCollect(collectId: String, userId: String, onCollectLoadedListener: OnCollectLoadedListener)
     fun countCollectsByUser(userId: String, listener: ProfileInteractor.OnLoadTotalCollectsFromUser)
-
     fun keepCollectsSyncedFor(userId: String)
 }

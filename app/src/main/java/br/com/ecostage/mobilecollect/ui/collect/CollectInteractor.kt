@@ -11,6 +11,7 @@ interface CollectInteractor {
     interface OnSaveCollectListener {
         fun onSaveCollect(collect: Collect)
         fun onSaveCollectError()
+        fun onSaveCollectComplete(collect: Collect)
     }
 
     interface OnTeamListListener {
