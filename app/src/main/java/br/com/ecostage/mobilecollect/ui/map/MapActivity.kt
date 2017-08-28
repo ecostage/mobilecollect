@@ -18,6 +18,7 @@ import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.collect.CollectActivity
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
+import br.com.ecostage.mobilecollect.ui.splashscreen.OfflineDataInteractor
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -53,6 +54,8 @@ class MapActivity : BottomNavigationActivity(),
         val COLLECT_DATA_RESULT = "MapActivity:collectDataResult"
     }
 
+    private val interactor = OfflineDataInteractor()
+
     private val mapPresenter: MapPresenter = MapPresenterImpl(this, this)
     private val MAP_PERMISSION_REQUEST_CODE = 1
     private var googleApiClient: GoogleApiClient? = null
@@ -66,6 +69,8 @@ class MapActivity : BottomNavigationActivity(),
 
         setupView()
         setupMap()
+
+        interactor.keepBasedAppDataSynced()
 
         // Load collects to show in map
         mapPresenter.loadUserCollects()

@@ -24,7 +24,7 @@ class OfflineDataInteractor :
     val teamRepo: TeamRepository = TeamRepositoryImpl()
     val rankRepo: RankingRepository = RankingRepositoryImpl()
 
-    fun downloadBaseOfflineData() {
+    fun keepBasedAppDataSynced() {
 
         val currentUserId = userRepo.getCurrentUserId()
 
