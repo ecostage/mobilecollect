@@ -10,7 +10,7 @@ import android.widget.Toast
 import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
-import br.com.ecostage.mobilecollect.ui.map.MapboxActivity
+import br.com.ecostage.mobilecollect.ui.map.MapActivity
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.SignInButton
@@ -112,7 +112,7 @@ class LoginActivity : BaseActivity(), LoginView {
     }
 
     override fun navigateToHome() {
-        startActivity<MapboxActivity>()
+        startActivity<MapActivity>()
         finish()
     }
 

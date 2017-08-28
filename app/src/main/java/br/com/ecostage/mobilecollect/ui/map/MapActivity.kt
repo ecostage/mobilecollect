@@ -11,6 +11,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.GradientDrawable
 import android.location.Location
 import android.os.Bundle
+import android.os.Environment
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -77,7 +78,6 @@ class MapActivity : BottomNavigationActivity(),
                 mapPresenter.mark(currentLocation.latitude, currentLocation.longitude)
             }
         }
-
     }
 
     fun accessingLocationInfo(body: () -> Unit) {
@@ -87,7 +87,6 @@ class MapActivity : BottomNavigationActivity(),
             mapPresenter.onPermissionNeeded()
         }
     }
-
 
     private fun setupMap() {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
@@ -116,14 +115,15 @@ class MapActivity : BottomNavigationActivity(),
 
         googleMap.setOnMarkerClickListener(this)
 
-        googleMap.addTileOverlay(TileOverlayOptions().tileProvider(CustomMapTileProvider(assets)))
+        googleMap.addTileOverlay(TileOverlayOptions().tileProvider(
+                MapBoxOfflineTileProvider(
+                        Environment.getExternalStorageDirectory().absolutePath + "/mobilecollect_64fc36.mbtiles")))
 
         accessingLocationInfo {
             buildGoogleApiClient()
             map.isMyLocationEnabled = true
         }
     }
-
 
     override fun onConnected(bundle: Bundle?) {
         info("Location services connected")

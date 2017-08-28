@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import br.com.ecostage.mobilecollect.ui.map.MapboxActivity
+import br.com.ecostage.mobilecollect.ui.map.MapActivity
 import br.com.ecostage.mobilecollect.ui.profile.ProfileActivity
 import br.com.ecostage.mobilecollect.ui.ranking.RankingActivity
 
@@ -46,7 +46,7 @@ abstract class BottomNavigationActivity : AppCompatActivity(),
         navigationView.postDelayed({
             when (item.itemId) {
                 R.id.action_map -> {
-                    startActivity(Intent(this, MapboxActivity::class.java))
+                    startActivity(Intent(this, MapActivity::class.java))
 
                 }
                 R.id.action_ranking -> {
