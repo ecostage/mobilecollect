@@ -21,9 +21,7 @@ class SplashScreenActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        presenter.initializeFirebase()
-        presenter.setupCrashReports()
+        presenter.onCreated()
     }
 
     override fun goToNextView() {

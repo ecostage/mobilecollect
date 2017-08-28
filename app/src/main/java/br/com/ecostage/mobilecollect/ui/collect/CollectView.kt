@@ -1,5 +1,7 @@
 package br.com.ecostage.mobilecollect.ui.collect
 
+import com.google.firebase.storage.UploadTask
+
 /**
  * Created by cmaia on 7/20/17.
  */
@@ -28,4 +30,5 @@ interface CollectView {
     fun showUserHasNoTeamsMessage()
     fun hideImageContainers()
     fun showImageContainers()
+    fun showCollectImageCompleted(result: UploadTask.TaskSnapshot?)
 }

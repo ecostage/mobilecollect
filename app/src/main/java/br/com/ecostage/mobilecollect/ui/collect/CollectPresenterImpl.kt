@@ -6,6 +6,7 @@ import br.com.ecostage.mobilecollect.mapper.CollectMapper
 import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.model.Team
 import br.com.ecostage.mobilecollect.util.ImageUtil
+import com.google.firebase.storage.UploadTask
 
 /**
  * Created by cmaia on 7/20/17.
@@ -89,6 +90,10 @@ class CollectPresenterImpl(val collectView: CollectView,
         collectView.returnToMap(viewModel)
     }
 
+    override fun onSaveCollectPhotoCompleted(result: UploadTask.TaskSnapshot?) {
+        collectView.showCollectImageCompleted(result)
+    }
+
     override fun selectTeam(model: CollectViewModel) {
         collectView.showProgressBarForTeams()
         collectInteractor.loadTeamsListForCurrentUser()
@@ -127,4 +132,8 @@ class CollectPresenterImpl(val collectView: CollectView,
             ImageUtil.compress(filePath, format, qualityLevel)
 
     override fun convertCollectPhoto(img: ByteArray): Bitmap = ImageUtil.convertToBitmap(img)
+
+    override fun generateCollectId(): String? {
+        return collectInteractor.generateCollectId()
+    }
 }

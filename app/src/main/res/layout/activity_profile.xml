@@ -18,7 +18,8 @@
     <ScrollView
         android:id="@+id/containerScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_navigation">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -114,8 +115,8 @@
                     android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
                     android:drawableTint="@color/gray"
                     android:ellipsize="end"
-                    android:maxLines="1"
                     android:hint="@string/profile_default_user_score"
+                    android:maxLines="1"
                     android:textAlignment="textEnd" />
 
             </LinearLayout>
@@ -144,6 +145,44 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/default_message_user_not_participating_in_a_team" />
+
+            </LinearLayout>
+
+            <View style="@style/Divider" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_margin="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/profile_subheader_sync_status"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/userSyncDataInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_message_user_all_data_synced" />
+
+                <Button
+                    android:id="@+id/profileSyncData"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="8dp"
+                    android:drawablePadding="8dp"
+                    android:drawableStart="@drawable/ic_cloud_upload_white_24dp"
+                    android:text="@string/button_sync_local_data" />
 
             </LinearLayout>
 
@@ -184,7 +223,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:itemBackground="@color/colorPrimary"
+        android:background="@color/colorPrimary"
+        android:elevation="16dp"
         app:itemIconTint="@drawable/nav_item_color_state"
         app:itemTextColor="@drawable/nav_item_color_state"
         app:menu="@menu/menu_navigation" />

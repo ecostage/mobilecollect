@@ -1,5 +1,7 @@
 package br.com.ecostage.mobilecollect.ui.profile
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
@@ -9,6 +11,7 @@ import br.com.ecostage.mobilecollect.ui.login.LoginActivity
 import br.com.ecostage.mobilecollect.ui.profile.collect.UserCollectActivity
 import br.com.ecostage.mobilecollect.ui.ranking.RankingActivity
 import kotlinx.android.synthetic.main.activity_profile.*
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
 
 /**
@@ -48,6 +51,20 @@ class ProfileActivity :
             presenter.signOut()
         }
 
+        profileSyncData.setOnClickListener {
+            if (isNetworkAvailable()) {
+                profileSyncData.isEnabled = false
+                presenter.syncCollectedData()
+            } else {
+                longToast(R.string.profile_message_sync_no_networking_available)
+            }
+        }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
     private fun loadData() {
@@ -55,6 +72,7 @@ class ProfileActivity :
         presenter.loadTotalCollectsFromUser()
         presenter.loadTotalScoresFromUser()
         presenter.loadTeamsListFromUser()
+        presenter.loadDataToSync()
     }
 
     override fun getContentViewId(): Int {
@@ -128,10 +146,44 @@ class ProfileActivity :
 
     override fun setUserScoreOnError() {
         userScoreTextView.text = defaultUserScore()
-
     }
 
     private fun userScoreFormatted(userScore: Int?) = resources.getString(R.string.profile_user_score_format, userScore?.toString())
 
     private fun defaultUserScore() = resources.getString(R.string.profile_user_score_format, getString(R.string.profile_default_user_score))
+
+    override fun setSyncStatus(size: Int) {
+        when (size) {
+            0 -> applyAllDataSynced()
+            else -> applyDataToSync(size)
+        }
+    }
+
+    private fun applyAllDataSynced() {
+        syncStarted()
+        userSyncDataInfo.text = getString(R.string.default_message_user_all_data_synced)
+    }
+
+    private fun syncStarted() {
+        profileSyncData.isEnabled = false
+    }
+
+    private fun applyDataToSync(size: Int) {
+        profileSyncData.isEnabled = isNetworkAvailable()
+        userSyncDataInfo.text = getString(R.string.profile_message_collects_to_sync, size)
+    }
+
+    override fun collectSyncStarted() {
+        syncStarted()
+    }
+
+    override fun showSuccessMessageSyncedData() {
+        presenter.loadDataToSync()
+        longToast(R.string.profile_message_sync_with_success)
+    }
+
+    override fun showFailMessageSyncedData() {
+        longToast(R.string.profile_message_sync_fail)
+    }
+
 }

@@ -15,6 +15,7 @@ class CollectMapper {
     fun map(viewModel: CollectViewModel): Collect {
         val collect = Collect()
 
+        collect.id = viewModel.id
         collect.name = viewModel.name
         collect.latitude = viewModel.latitude
         collect.longitude = viewModel.longitude

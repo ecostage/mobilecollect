@@ -1,14 +1,18 @@
 package br.com.ecostage.mobilecollect.repository.impl
 
+import android.graphics.Bitmap
+import br.com.ecostage.mobilecollect.interactor.CollectPhotoLocalInteractor
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
-import br.com.ecostage.mobilecollect.mapper.CollectMapper
+import br.com.ecostage.mobilecollect.listener.OnCollectLocalPhotosSyncListener
 import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.repository.CollectRepository
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
 import br.com.ecostage.mobilecollect.ui.profile.ProfileInteractor
+import br.com.ecostage.mobilecollect.util.ImageUtil
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import org.jetbrains.anko.AnkoLogger
 
 /**
@@ -57,7 +61,11 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
     override fun save(userId: String, collect: Collect, photoBytes: ByteArray, onCollectSaveListener: CollectInteractor.OnSaveCollectListener) {
         collect.userId = userId
 
-        val collectID: String? = firebaseDatabase.child(COLLECT_DB_TYPE).push().key
+        val collectID: String? = collect.id
+
+        if (collect.id == null) {
+            throw RuntimeException("Não veio o id da collection")
+        }
 
         // Clean the photo because we don't want to save it to firebase -- Check another way to do this
         collect.photo = null
@@ -67,7 +75,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
 
         // Index by user in a new collection
         firebaseDatabase.child(COLLECT_BY_USER_DB_TYPE).child(collect.userId).child(collectID).setValue(collect)
-                .addOnCompleteListener {  }
+                .addOnCompleteListener { }
 
         // Increment user points
         firebaseDatabase.child(COLLECT_RANKING_DB_TYPE).child(collect.userId).child("score").runTransaction(object : Transaction.Handler {
@@ -88,26 +96,64 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
 //                    undoCollect(collect, false)
                     onCollectSaveListener.onSaveCollectError()
                     error("Could not save user [" + collect.userId + "] ranking")
+                } else {
+                    onCollectSaveListener.onSaveCollect(collect)
                 }
             }
         })
 
+        onCollectSaveListener.onSaveCollectComplete(collect)
+
         // Save the photo in storage
-        val storageReference = firebaseStorage.child(collectID + ".jpg")
-        val uploadTask = storageReference.putBytes(photoBytes)
+        saveCollectPhotos(object : OnCollectLocalPhotosSyncListener{
+            override fun onCollectLocalPhotosSyncStarted() {
+            }
 
-        val savedCollect = CollectMapper().map(collect, collectID)
+            override fun onCollectLocalPhotosSynced(result: UploadTask.TaskSnapshot?) {
+                onCollectSaveListener.onSaveCollectPhotoCompleted(result)
+            }
 
-        uploadTask.addOnSuccessListener {
-            onCollectSaveListener.onSaveCollect(savedCollect)
+            override fun onCollectLocalPhotosSyncError() {
+                onCollectSaveListener.onSaveCollectError()
+            }
+        })
+    }
+
+    private fun saveCollectPhotos(listener: OnCollectLocalPhotosSyncListener) {
+
+        val photoFolder = CollectPhotoLocalInteractor.COLLECT_PHOTO_PATH
+        if (photoFolder == null || !photoFolder.exists()) {
+            return
         }
 
-        uploadTask.addOnFailureListener {
-//            undoCollect(collect, true)
-            onCollectSaveListener.onSaveCollectError() // Maybe a message or error code
-        }
+        listener.onCollectLocalPhotosSyncStarted()
 
-        onCollectSaveListener.onSaveCollectComplete(savedCollect)
+        for (photo in photoFolder.listFiles()) {
+            val photoName = "${photo.nameWithoutExtension}.jpg"
+            val storageReference = firebaseStorage.child(photoName)
+            val compressed = ImageUtil.compress(photo.absolutePath, Bitmap.CompressFormat.JPEG, 30)
+            val uploadTask = storageReference.putBytes(compressed)
+
+            uploadTask.addOnSuccessListener {
+                photo.delete()
+            }
+
+            uploadTask.addOnFailureListener {
+                listener.onCollectLocalPhotosSyncError()
+            }
+
+            uploadTask.addOnCompleteListener {
+                listener.onCollectLocalPhotosSynced(it.result)
+            }
+        }
+    }
+
+    override fun syncImagesToCloud(listener: OnCollectLocalPhotosSyncListener) {
+        saveCollectPhotos(listener)
+    }
+
+    override fun generateCollectId(): String? {
+        return firebaseDatabase.child(COLLECT_DB_TYPE).push().key
     }
 
     private fun undoCollect(collect: Collect, hasPointsIncreased: Boolean) {
@@ -139,7 +185,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
         firebaseDatabase
                 .child(COLLECT_DB_TYPE)
                 .child(collectId)
-                .addValueEventListener(createEventListenerCollect(onCollectLoadedListener))
+                .addListenerForSingleValueEvent(createEventListenerCollect(onCollectLoadedListener))
     }
 
     override fun loadCollect(collectId: String, userId: String, onCollectLoadedListener: OnCollectLoadedListener) {
@@ -147,7 +193,7 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
                 .child(COLLECT_BY_USER_DB_TYPE)
                 .child(userId)
                 .child(collectId)
-                .addValueEventListener(createEventListenerCollect(onCollectLoadedListener))
+                .addListenerForSingleValueEvent(createEventListenerCollect(onCollectLoadedListener))
     }
 
     private fun createEventListenerCollect(onCollectLoadedListener: OnCollectLoadedListener): ValueEventListener {
@@ -175,10 +221,10 @@ class CollectRepositoryImpl : CollectRepository, AnkoLogger {
             }
 
             override fun onCancelled(databaseError: DatabaseError?) {
-    //                        if (databaseError != null) {
-    //                            onCollectLoadedListener.onCollectLoadedError()
-    //                            error { "Error when loading collect data. " + databaseError.message }
-    //                        }
+                //                        if (databaseError != null) {
+                //                            onCollectLoadedListener.onCollectLoadedError()
+                //                            error { "Error when loading collect data. " + databaseError.message }
+                //                        }
             }
         }
 

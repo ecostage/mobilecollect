@@ -1,6 +1,7 @@
 package br.com.ecostage.mobilecollect.repository
 
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
+import br.com.ecostage.mobilecollect.listener.OnCollectLocalPhotosSyncListener
 import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
 import br.com.ecostage.mobilecollect.ui.profile.ProfileInteractor
@@ -16,4 +17,6 @@ interface CollectRepository {
     fun loadCollect(collectId: String, userId: String, onCollectLoadedListener: OnCollectLoadedListener)
     fun countCollectsByUser(userId: String, listener: ProfileInteractor.OnLoadTotalCollectsFromUser)
     fun keepCollectsSyncedFor(userId: String)
+    fun generateCollectId(): String?
+    fun syncImagesToCloud(listener: OnCollectLocalPhotosSyncListener)
 }

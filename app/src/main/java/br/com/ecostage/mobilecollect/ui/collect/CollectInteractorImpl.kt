@@ -56,4 +56,8 @@ class CollectInteractorImpl(val onSaveCollectListener: CollectInteractor.OnSaveC
             error { "Could not find current user id when loading teams" }
         }
     }
+
+    override fun generateCollectId(): String? {
+        return collectRepository.generateCollectId()
+    }
 }

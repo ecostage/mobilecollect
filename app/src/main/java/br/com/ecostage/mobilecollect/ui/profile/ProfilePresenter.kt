@@ -10,4 +10,6 @@ interface ProfilePresenter {
     fun loadTeamsListFromUser()
     fun signOut()
     fun loadCurrentUser()
+    fun loadDataToSync()
+    fun syncCollectedData()
 }

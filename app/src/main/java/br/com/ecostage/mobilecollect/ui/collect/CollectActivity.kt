@@ -14,7 +14,6 @@ import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
@@ -28,11 +27,13 @@ import android.widget.EditText
 import android.widget.TextView
 import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.interactor.CollectPhotoLocalInteractor
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationActivity
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationColorSearch
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationViewModel
 import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
 import br.com.ecostage.mobilecollect.ui.map.MapActivity
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
@@ -154,6 +155,8 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
                 collectPresenter.loadCollect(collectId)
             }
         } else {
+            viewModel.id = collectPresenter.generateCollectId()
+
             collectPresenter.setupCollectMode(CollectView.CollectMode.COLLECTING)
 
             val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
@@ -271,7 +274,17 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
         when (requestCode) {
             CAMERA_REQUEST -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    collectImage.setImageURI(collectLastImage)
+//                    collectImage.setImageURI(collectLastImage)
+
+                    val extras = data?.extras
+                    val file = File(collectLastImagePath)
+
+                    if (extras != null && file.exists()) {
+                        val thumbnail = extras.get("data")
+                        collectImage.setImageBitmap(thumbnail as Bitmap?)
+                    } else {
+                        collectImage.setImageBitmap(null)
+                    }
 
                     if (azimuth != null) {
                         photoAzimuth = azimuth
@@ -337,7 +350,11 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
         if (canAccessCamera()) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
-            val file = File.createTempFile(LAST_COLLECT_PHOTO_FILE_NAME, ".jpg", getExternalFilesDir(Environment.DIRECTORY_PICTURES))
+            val file = File("${CollectPhotoLocalInteractor.COLLECT_PHOTO_PATH}/${viewModel.id}.jpg")
+            if (file.exists()) {
+                file.delete()
+                collectImage.setImageBitmap(null)
+            }
 
             if (Build.VERSION.SDK_INT >= 24) {
                 collectLastImage = FileProvider.getUriForFile(this,
@@ -354,6 +371,11 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
         } else {
             collectPresenter.onPermissionsNeeded()
         }
+    }
+
+    override fun showCollectImageCompleted(result: UploadTask.TaskSnapshot?) {
+//        longToast(result?.totalByteCount.toString())
+//        longToast(result?.downloadUrl?.lastPathSegment.toString())
     }
 
     override fun showRequestPermissionsDialog() {

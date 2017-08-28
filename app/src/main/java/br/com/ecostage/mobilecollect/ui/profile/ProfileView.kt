@@ -17,4 +17,8 @@ interface ProfileView {
     fun setCurrentUserOnError()
     fun setUserScore(userScore: Int?)
     fun setUserScoreOnError()
+    fun setSyncStatus(size: Int)
+    fun showSuccessMessageSyncedData()
+    fun showFailMessageSyncedData()
+    fun collectSyncStarted()
 }

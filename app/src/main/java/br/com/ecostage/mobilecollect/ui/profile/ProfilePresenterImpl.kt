@@ -1,10 +1,14 @@
 package br.com.ecostage.mobilecollect.ui.profile
 
+import br.com.ecostage.mobilecollect.interactor.CollectPhotoLocalInteractor
+import br.com.ecostage.mobilecollect.listener.OnCollectLocalPhotosQueueSizeReadListener
+import br.com.ecostage.mobilecollect.listener.OnCollectLocalPhotosSyncListener
 import br.com.ecostage.mobilecollect.listener.OnUserLoadedWithoutScoreListener
 import br.com.ecostage.mobilecollect.listener.OnUserScoresLoadedListener
 import br.com.ecostage.mobilecollect.model.Team
 import br.com.ecostage.mobilecollect.model.User
 import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
+import com.google.firebase.storage.UploadTask
 
 /**
  * Created by andremaia on 8/2/17.
@@ -16,13 +20,19 @@ class ProfilePresenterImpl(var view: ProfileView) :
         CollectInteractor.OnTeamListListener,
         ProfileInteractor.OnUserSignOutListener,
         OnUserLoadedWithoutScoreListener,
-        OnUserScoresLoadedListener {
+        OnUserScoresLoadedListener,
+        OnCollectLocalPhotosQueueSizeReadListener,
+        OnCollectLocalPhotosSyncListener {
 
     private val profileInteractor: ProfileInteractor = ProfileInteractorImpl(
             this,
             this,
             this,
             this,
+            this,
+            this)
+
+    private val collectPhotoLocalInteractor = CollectPhotoLocalInteractor(
             this,
             this)
 
@@ -108,4 +118,30 @@ class ProfilePresenterImpl(var view: ProfileView) :
         view.setUserScoreOnError()
     }
 
+    override fun loadDataToSync() {
+        collectPhotoLocalInteractor.loadTotalPhotosNotSynced()
+    }
+
+    override fun onCollectLocalPhotosQueueSizeRead(size: Int) {
+        view.setSyncStatus(size)
+    }
+
+    override fun syncCollectedData() {
+        collectPhotoLocalInteractor.syncCollectedData()
+    }
+
+    override fun onCollectLocalPhotosSyncStarted() {
+        view.collectSyncStarted()
+    }
+
+    override fun onCollectLocalPhotosSynced(result: UploadTask.TaskSnapshot?) {
+        when(result?.error) {
+            null -> view.showSuccessMessageSyncedData()
+            else -> view.showFailMessageSyncedData()
+        }
+    }
+
+    override fun onCollectLocalPhotosSyncError() {
+        view.showFailMessageSyncedData()
+    }
 }
