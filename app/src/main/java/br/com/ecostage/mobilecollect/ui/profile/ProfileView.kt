@@ -27,4 +27,5 @@ interface ProfileView {
     fun canWriteFiles(): Boolean
     fun showRequestPermissionsDialog()
     fun showMessageAsLongToast(message: String)
+    fun updateMapDownloadProgress(progress: Float)
 }

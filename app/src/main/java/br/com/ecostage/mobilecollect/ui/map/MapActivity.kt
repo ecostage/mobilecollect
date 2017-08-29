@@ -112,14 +112,21 @@ class MapActivity : BottomNavigationActivity(),
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
-
+        googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
         googleMap.setOnMarkerClickListener(this)
 
         val mapOfflinePath = Environment.getExternalStorageDirectory().absolutePath + "/mobilecollect.mbtiles"
-        val file = File(mapOfflinePath)
-        if(file.exists()) {
-            googleMap.addTileOverlay(TileOverlayOptions().tileProvider(MapBoxOfflineTileProvider(mapOfflinePath)))
+        val mapFile = File(mapOfflinePath)
+        val lock = File(Environment.getExternalStorageDirectory().absolutePath, MapInteractorImpl.LOCK_MAP_DOWNLOAD)
+
+        if (lock.exists()) {
+            lock.delete()
+            mapFile.delete()
+            longToast(R.string.message_download_offline_map_again)
+        } else {
+            if (mapFile.exists()) {
+                googleMap.addTileOverlay(TileOverlayOptions().tileProvider(MapBoxOfflineTileProvider(mapOfflinePath)))
+            }
         }
 
         accessingLocationInfo {
@@ -208,15 +215,15 @@ class MapActivity : BottomNavigationActivity(),
         googleApiClient?.connect()
     }
 
-        override fun showMapPermissionRequestDialog() {
+    override fun showMapPermissionRequestDialog() {
 
-            Snackbar.make(mapContainerView, R.string.message_snackbar_location_not_allowed, Snackbar.LENGTH_SHORT)
-                    .show()
+        Snackbar.make(mapContainerView, R.string.message_snackbar_location_not_allowed, Snackbar.LENGTH_SHORT)
+                .show()
 
-            ActivityCompat.requestPermissions(this,
-                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
-                    MAP_PERMISSION_REQUEST_CODE)
-        }
+        ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                MAP_PERMISSION_REQUEST_CODE)
+    }
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 

@@ -6,4 +6,5 @@ package br.com.ecostage.mobilecollect.listener
 interface OnMapDownloadListener {
     fun onMapDownloadSuccess()
     fun onMapDownloadFailure()
+    fun onMapDownloadProgress(progress: Float)
 }

@@ -21,6 +21,7 @@ class MapInteractorImpl(val collectLoadedListener: OnCollectLoadedListener? = nu
     companion object {
         private val STORAGE_BUCKET_URL = "gs://mobilecollect-2b822.appspot.com"
         private val STORAGE_BUCKET_MAP_TILES = "map_tiles"
+        val LOCK_MAP_DOWNLOAD = "map.download.lock"
     }
 
     val userRepository: UserRepository = UserRepositoryImpl()
@@ -39,15 +40,21 @@ class MapInteractorImpl(val collectLoadedListener: OnCollectLoadedListener? = nu
         val storageReference = firebaseStorage.child("mobilecollect-1.0.1.mbtiles")
         val localFile = File(Environment.getExternalStorageDirectory().absolutePath, "mobilecollect.mbtiles")
 
+        File(Environment.getExternalStorageDirectory().absolutePath, LOCK_MAP_DOWNLOAD).createNewFile()
+
         storageReference.getFile(localFile).addOnSuccessListener {
             onMapDownloadListener.onMapDownloadSuccess()
         }.addOnFailureListener {
             val file = File(Environment.getExternalStorageDirectory().absolutePath + "/mobilecollect-1.0.1.mbtiles")
-            if(file.exists()) {
+            if (file.exists()) {
                 file.canonicalFile.delete()
             }
 
             onMapDownloadListener.onMapDownloadFailure()
+        }.addOnProgressListener {
+            onMapDownloadListener.onMapDownloadProgress(100f * (it.bytesTransferred.toFloat() / it.totalByteCount))
+        }.addOnCompleteListener {
+            File(Environment.getExternalStorageDirectory().absolutePath, LOCK_MAP_DOWNLOAD).delete()
         }
     }
 }

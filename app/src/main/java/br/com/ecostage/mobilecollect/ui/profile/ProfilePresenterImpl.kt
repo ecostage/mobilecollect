@@ -135,4 +135,8 @@ class ProfilePresenterImpl(var view: ProfileView) :
     override fun onPermissionDenied(message: String) = view.showMessageAsLongToast(message)
 
     override fun onPermissionNeeded() = view.showRequestPermissionsDialog()
+
+    override fun onMapDownloadProgress(progress: Float) {
+        view.updateMapDownloadProgress(progress)
+    }
 }

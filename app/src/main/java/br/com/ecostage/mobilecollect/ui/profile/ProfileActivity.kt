@@ -208,4 +208,12 @@ class ProfileActivity :
     private fun userScoreFormatted(userScore: Int?) = resources.getString(R.string.profile_user_score_format, userScore?.toString())
 
     private fun defaultUserScore() = resources.getString(R.string.profile_user_score_format, getString(R.string.profile_default_user_score))
+
+    override fun updateMapDownloadProgress(progress: Float) {
+        if (progress <= 0f) {
+            mapProgressText.text = getString(R.string.map_downloading_message, 0f)
+        } else {
+            mapProgressText.text = getString(R.string.map_downloading_message, progress)
+        }
+    }
 }

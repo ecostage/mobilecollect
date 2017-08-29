@@ -89,8 +89,9 @@
     <string name="manage_offline_map">Gerenciar mapa offline</string>
     <string name="manage_offline_map_header_title">Gerenciar mapa offline</string>
     <string name="select_offline_state_map_header_title">Selecione um estado</string>
-    <string name="map_downloading_message">Baixando área offline do mapa...</string>
+    <string name="map_downloading_message">Baixando área do mapa… %.1f%%</string>
     <string name="map_downloaded_message">Download de área offline terminado com successo!</string>
     <string name="map_download_failure_message">Falha ao baixar área offline do mapa. Tente novamente mais tarde.</string>
     <string name="download_map_permission_needed">É necessário permissão da de escrita nos arquivos para download de área offline</string>
+    <string name="message_download_offline_map_again">Falha ao carregar o mapa offline. Baixe novamente.</string>
 </resources>
