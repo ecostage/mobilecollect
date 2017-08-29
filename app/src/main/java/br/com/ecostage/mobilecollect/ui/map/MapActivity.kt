@@ -54,7 +54,7 @@ class MapActivity : BottomNavigationActivity(),
 
     private val interactor = OfflineDataInteractor()
 
-    private val mapPresenter: MapPresenter = MapPresenterImpl(this, this)
+    private val mapPresenter: MapPresenter = MapPresenterImpl(this)
     private val MAP_PERMISSION_REQUEST_CODE = 1
     private var googleApiClient: GoogleApiClient? = null
     private val markers: MutableList<Marker> = ArrayList()

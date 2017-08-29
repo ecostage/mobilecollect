@@ -426,7 +426,7 @@ class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
 
     override fun returnToMap(collectViewModel: CollectViewModel?) {
         if (collectViewModel != null)
-            setResult(Activity.RESULT_OK, intentFor<MapActivity>(MapActivity.COLLECT_DATA_RESULT to collectViewModel))
+            setResult(Activity.RESULT_OK, intentFor<MapActivity>(COLLECT_DATA_RESULT to collectViewModel))
 
         finishAfterTransition()
     }
