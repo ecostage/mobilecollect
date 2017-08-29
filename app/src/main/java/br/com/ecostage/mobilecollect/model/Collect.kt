@@ -13,4 +13,6 @@ class Collect {
     var photo: ByteArray? = null
     var date: Date? = null
     var team: Team? = null
+    var comments: String? = null
+    var photoAzimuth: Double? = null
 }

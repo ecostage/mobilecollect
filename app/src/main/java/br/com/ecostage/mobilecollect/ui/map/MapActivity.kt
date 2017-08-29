@@ -19,6 +19,7 @@ import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.collect.CollectActivity
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
+import br.com.ecostage.mobilecollect.ui.splashscreen.OfflineDataInteractor
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -51,7 +52,9 @@ class MapActivity : BottomNavigationActivity(),
         val COLLECT_REQUEST = 1
     }
 
-    private val mapPresenter: MapPresenter = MapPresenterImpl(this)
+    private val interactor = OfflineDataInteractor()
+
+    private val mapPresenter: MapPresenter = MapPresenterImpl(this, this)
     private val MAP_PERMISSION_REQUEST_CODE = 1
     private var googleApiClient: GoogleApiClient? = null
     private val markers: MutableList<Marker> = ArrayList()
@@ -64,6 +67,8 @@ class MapActivity : BottomNavigationActivity(),
 
         setupView()
         setupMap()
+
+        interactor.keepBasedAppDataSynced()
 
         // Load collects to show in map
         mapPresenter.loadUserCollects()
@@ -112,7 +117,9 @@ class MapActivity : BottomNavigationActivity(),
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+        googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15f))
+
         googleMap.setOnMarkerClickListener(this)
 
         val mapOfflinePath = Environment.getExternalStorageDirectory().absolutePath + "/mobilecollect.mbtiles"

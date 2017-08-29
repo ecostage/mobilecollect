@@ -7,5 +7,7 @@ import br.com.ecostage.mobilecollect.model.Collect
  */
 interface OnCollectLoadedListener {
     fun onCollectLoaded(collect: Collect)
+    fun onCollectImageLoaded(collect: Collect)
     fun onCollectLoadedError()
+    fun onCollectImageLoadedError()
 }

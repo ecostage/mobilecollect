@@ -9,6 +9,7 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
+import br.com.ecostage.mobilecollect.mapper.CollectMapper
 import br.com.ecostage.mobilecollect.model.Collect
 import br.com.ecostage.mobilecollect.ui.collect.CollectActivity
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
@@ -60,24 +61,21 @@ class CollectListAdapter(val context: Context)
     }
 
     override fun onCollectLoaded(collect: Collect) {
-        val collectViewModel = CollectViewModel()
-
-        collectViewModel.id = collect.id
-        collectViewModel.name = collect.name
-        collectViewModel.latitude = collect.latitude
-        collectViewModel.longitude = collect.longitude
-        collectViewModel.classification = collect.classification
-        collectViewModel.userId = collect.userId
-        collectViewModel.date = collect.date
-        collectViewModel.photo = collect.photo
-
+        val collectViewModel = CollectMapper().map(collect)
         items.add(collectViewModel)
-
         this.notifyDataSetChanged()
     }
 
     override fun onCollectLoadedError() {
         // no-op
+    }
+
+    override fun onCollectImageLoaded(collect: Collect) {
+        // no-op
+    }
+
+    override fun onCollectImageLoadedError() {
+        //  no-op
     }
 
     private class ListRowHolder(row: View?) {

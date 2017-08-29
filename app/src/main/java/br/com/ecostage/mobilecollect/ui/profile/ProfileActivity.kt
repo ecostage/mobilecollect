@@ -2,6 +2,8 @@ package br.com.ecostage.mobilecollect.ui.profile
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
@@ -68,6 +70,21 @@ class ProfileActivity :
         profileSignOut.setOnClickListener {
             presenter.signOut()
         }
+
+        profileSyncData.setOnClickListener {
+            if (isNetworkAvailable()) {
+                profileSyncData.isEnabled = false
+                presenter.syncCollectedData()
+            } else {
+                longToast(R.string.profile_message_sync_no_networking_available)
+            }
+        }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
     private fun loadData() {
@@ -75,6 +92,7 @@ class ProfileActivity :
         presenter.loadTotalCollectsFromUser()
         presenter.loadTotalScoresFromUser()
         presenter.loadTeamsListFromUser()
+        presenter.loadDataToSync()
     }
 
     override fun getContentViewId(): Int {
@@ -208,6 +226,41 @@ class ProfileActivity :
     private fun userScoreFormatted(userScore: Int?) = resources.getString(R.string.profile_user_score_format, userScore?.toString())
 
     private fun defaultUserScore() = resources.getString(R.string.profile_user_score_format, getString(R.string.profile_default_user_score))
+
+    override fun setSyncStatus(size: Int) {
+        when (size) {
+            0 -> applyAllDataSynced()
+            else -> applyDataToSync(size)
+        }
+    }
+
+    private fun applyAllDataSynced() {
+        syncStarted()
+        userSyncDataInfo.text = getString(R.string.default_message_user_all_data_synced)
+    }
+
+    private fun syncStarted() {
+        profileSyncData.isEnabled = false
+    }
+
+    private fun applyDataToSync(size: Int) {
+        profileSyncData.isEnabled = isNetworkAvailable()
+        userSyncDataInfo.text = getString(R.string.profile_message_collects_to_sync, size)
+    }
+
+    override fun collectSyncStarted() {
+        syncStarted()
+    }
+
+    override fun showSuccessMessageSyncedData() {
+        presenter.loadDataToSync()
+        longToast(R.string.profile_message_sync_with_success)
+    }
+
+    override fun showFailMessageSyncedData() {
+        longToast(R.string.profile_message_sync_fail)
+    }
+
 
     override fun updateMapDownloadProgress(progress: Float) {
         if (progress <= 0f) {

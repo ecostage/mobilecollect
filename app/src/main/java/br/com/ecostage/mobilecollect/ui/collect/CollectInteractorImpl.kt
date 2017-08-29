@@ -35,7 +35,14 @@ class CollectInteractorImpl(val onSaveCollectListener: CollectInteractor.OnSaveC
     }
 
     override fun loadCollect(collectId: String) {
-        collectRepository.loadCollect(collectId, onCollectLoadedListener)
+        val userId = userRepository.getCurrentUserId()
+
+        if (userId != null) {
+            collectRepository.loadCollect(collectId, userId, onCollectLoadedListener)
+        } else {
+            error { "Could not find current user id when load collects" }
+        }
+
     }
 
     override fun loadTeamsListForCurrentUser() {
@@ -48,5 +55,9 @@ class CollectInteractorImpl(val onSaveCollectListener: CollectInteractor.OnSaveC
             onTeamListListener.onTeamListError()
             error { "Could not find current user id when loading teams" }
         }
+    }
+
+    override fun generateCollectId(): String? {
+        return collectRepository.generateCollectId()
     }
 }

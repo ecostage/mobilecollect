@@ -27,7 +27,7 @@ class TeamRepositoryImpl : TeamRepository, AnkoLogger {
                             return
                         }
 
-                        if (dataSnapshot.childrenCount <= 0 ){
+                        if (dataSnapshot.childrenCount <= 0) {
                             onTeamListListener.onTeamHasNoTeams()
                             return
                         }
@@ -54,4 +54,13 @@ class TeamRepositoryImpl : TeamRepository, AnkoLogger {
                 })
 
     }
+
+    override fun keepTeamsSyncedFor(currentUserId: String) {
+        firebaseDatabase
+                .child(USER_TEAMS_COLLECTION)
+                .child(currentUserId)
+                .keepSynced(true)
+
+    }
+
 }

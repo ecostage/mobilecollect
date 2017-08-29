@@ -28,4 +28,8 @@ interface ProfileView {
     fun showRequestPermissionsDialog()
     fun showMessageAsLongToast(message: String)
     fun updateMapDownloadProgress(progress: Float)
+    fun setSyncStatus(size: Int)
+    fun showSuccessMessageSyncedData()
+    fun showFailMessageSyncedData()
+    fun collectSyncStarted()
 }

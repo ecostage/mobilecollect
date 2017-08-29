@@ -40,7 +40,7 @@
     <string name="action_label_map">Mapa</string>
 
     <string name="collect_header_title">Coleta</string>
-    <string name="collect_name_hint">Apelido</string>
+    <string name="collect_name_hint"><font size="14">Apelido</font></string>
     <string name="collect_lat_lng_hint">Latitude / Longitude</string>
     <string name="collect_classification_hint">Classificação</string>
     <string name="collect_team_hint">Time</string>
@@ -48,7 +48,8 @@
     <string name="collect_lat_lng_text">%1$s / %2$s</string>
     <string name="collect_take_photo_btn">Tirar foto</string>
     <string name="collect_permission_needed">É necessário permissão da câmera e dos arquivos para coleta de ponto</string>
-    <string name="collect_save_success">Ponto coletado!</string>
+    <string name="collect_save_success">Ponto(s) sincronizado(s)</string>
+    <string name="collect_save_registered">Ponto registrado</string>
     <string name="collect_save_error_no_user_auth">Não há usuário autenticado para coleta</string>
     <string name="collect_map_snapshot_description">Ponto sendo coletado</string>
     <string name="collect_classification_validation_error">A classificação é obrigatória!</string>
@@ -86,6 +87,17 @@
     <string name="profile_default_user_score">0</string>
     <string name="profile_user_score_format">%1$spts</string>
     <string name="team_selection_internet_unavailable_message">A seleção de times só é possível quando há internet disponível.</string>
+    <string name="button_text_remove_team_selected">X</string>
+    <string name="edit_text_hint_collect_comments"><font size="14">Deixe um comentário sobre esta coleta</font></string>
+    <string name="default_message_for_no_comments_for_this_collect"><font size="8">Não há comentário para esta coleta</font></string>
+    <string name="default_message_for_no_name_for_this_collect" />
+    <string name="profile_subheader_sync_status">Sincronização</string>
+    <string name="default_message_user_all_data_synced">Todos os dados estão sincronizados.</string>
+    <string name="profile_message_collects_to_sync">Falta(m) sincronizar %1d coletas.</string>
+    <string name="button_sync_local_data">Sincronizar</string>
+    <string name="profile_message_sync_with_success">Coletas sincronizadas com sucesso.</string>
+    <string name="profile_message_sync_fail">Falha ao sincronizar as coletas.</string>
+    <string name="profile_message_sync_no_networking_available">Não foi possível conectar com a internet. Tente novamente mais tarde.</string>
     <string name="manage_offline_map">Gerenciar mapa offline</string>
     <string name="manage_offline_map_header_title">Gerenciar mapa offline</string>
     <string name="select_offline_state_map_header_title">Selecione um estado</string>

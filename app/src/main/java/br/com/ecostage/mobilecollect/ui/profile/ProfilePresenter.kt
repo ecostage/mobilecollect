@@ -13,4 +13,6 @@ interface ProfilePresenter {
     fun downloadOfflineArea()
     fun onPermissionNeeded()
     fun onPermissionDenied(message: String)
+    fun loadDataToSync()
+    fun syncCollectedData()
 }

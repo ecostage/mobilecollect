@@ -2,8 +2,8 @@ package br.com.ecostage.mobilecollect.ui.map
 
 import android.graphics.Bitmap
 import br.com.ecostage.mobilecollect.listener.OnCollectLoadedListener
+import br.com.ecostage.mobilecollect.mapper.CollectMapper
 import br.com.ecostage.mobilecollect.model.Collect
-import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
 import br.com.ecostage.mobilecollect.util.ImageUtil
 
 class MapPresenterImpl(val mapView: MapView)
@@ -40,20 +40,9 @@ class MapPresenterImpl(val mapView: MapView)
         // This was used to avoid smart cast impossible problem
         collect.latitude?.let { latitude ->
             collect.longitude?.let { longitude ->
-                val markerIndex = mapView.showMarkerAt(latitude, longitude)
-
-                val collectViewModel = CollectViewModel()
-
-                collectViewModel.id = collect.id
-                collectViewModel.name = collect.name
-                collectViewModel.latitude = collect.latitude
-                collectViewModel.longitude = collect.longitude
-                collectViewModel.classification = collect.classification
-                collectViewModel.userId = collect.userId
-                collectViewModel.date = collect.date
-                collectViewModel.photo = collect.photo
-
-                mapView.populateMarker(markerIndex, collectViewModel, false)
+                val marker = mapView.showMarkerAt(latitude, longitude)
+                val collectViewModel = CollectMapper().map(collect)
+                mapView.populateMarker(marker, collectViewModel, false)
             }
         }
     }
@@ -62,4 +51,11 @@ class MapPresenterImpl(val mapView: MapView)
         // no-op
     }
 
+    override fun onCollectImageLoaded(collect: Collect) {
+        // no-op
+    }
+
+    override fun onCollectImageLoadedError() {
+        // no-op
+    }
 }

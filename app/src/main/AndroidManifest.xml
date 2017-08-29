@@ -30,15 +30,14 @@
             android:value="cb30116ada2e31c94c96b05ec50a58c7b2124423" />
 
         <activity
-            android:name=".SplashScreenActivity"
+            android:name=".ui.splashscreen.SplashScreenActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

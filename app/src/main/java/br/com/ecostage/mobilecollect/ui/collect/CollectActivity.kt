@@ -6,11 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
@@ -20,14 +23,17 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.TextView
 import br.com.ecostage.mobilecollect.BaseActivity
 import br.com.ecostage.mobilecollect.R
+import br.com.ecostage.mobilecollect.interactor.CollectPhotoLocalInteractor
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationActivity
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationColorSearch
 import br.com.ecostage.mobilecollect.ui.category.selection.ClassificationViewModel
 import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
-import br.com.ecostage.mobilecollect.ui.map.MapboxActivity
+import br.com.ecostage.mobilecollect.ui.map.MapActivity
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_collect.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
@@ -36,7 +42,7 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CollectActivity : BaseActivity(), CollectView {
+class CollectActivity : BaseActivity(), CollectView, SensorEventListener {
 
     companion object {
         val COLLECT_ID = "CollectActivity:collectId"
@@ -46,7 +52,7 @@ class CollectActivity : BaseActivity(), CollectView {
         val COLLECT_DATA_RESULT = "CollectActivity:collectDataResult"
         val CAMERA_REQUEST = 1888
         val CAMERA_PERMISSION_REQUEST_CODE = 2
-        val LAST_COLLECT_PHOTO_FILE_NAME = "LAST_COLLECT.jpg"
+        val LAST_COLLECT_PHOTO_FILE_NAME = "LAST_COLLECT"
         val CLASSIFICATION_REQUEST = 3
         val CLASSIFICATION_DATA_RESULT = "CollectActivity:classification"
     }
@@ -59,6 +65,22 @@ class CollectActivity : BaseActivity(), CollectView {
 
     private var viewModel = CollectViewModel()
 
+    private var sensorManager: SensorManager? = null
+    private var sensorAccelerometer: Sensor? = null
+    private var sensorMagneticField: Sensor? = null
+
+    private var valuesAccelerometer: FloatArray? = null
+    private var valuesMagneticField: FloatArray? = null
+
+    private lateinit var matrixR: FloatArray
+    private lateinit var matrixI: FloatArray
+    private lateinit var matrixValues: FloatArray
+
+    private var azimuth: Double? = null
+    private var photoAzimuth: Double? = null
+
+    private var menu: Menu? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -66,6 +88,59 @@ class CollectActivity : BaseActivity(), CollectView {
 
         setupView()
         setupKeyboardUI(activity_collect)
+        setupSensors()
+    }
+
+    fun setupSensors() {
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        sensorAccelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        sensorMagneticField = sensorManager?.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+
+        valuesAccelerometer = FloatArray(3)
+        valuesMagneticField = FloatArray(3)
+
+        matrixR = FloatArray(9)
+        matrixI = FloatArray(9)
+        matrixValues = FloatArray(9)
+    }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+        // no-op
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        when (event?.sensor?.type) {
+            Sensor.TYPE_ACCELEROMETER -> for (i in 0..2) {
+                valuesAccelerometer?.set(i, event.values[i])
+            }
+            Sensor.TYPE_MAGNETIC_FIELD -> for (i in 0..2) {
+                valuesMagneticField?.set(i, event.values[i])
+            }
+        }
+
+        val success = SensorManager.getRotationMatrix(
+                matrixR,
+                matrixI,
+                valuesAccelerometer,
+                valuesMagneticField)
+
+        if (success) {
+            SensorManager.getOrientation(matrixR, matrixValues)
+
+            azimuth = Math.toDegrees(matrixValues[0].toDouble())
+        }
+    }
+
+    override fun onResume() {
+        sensorManager?.registerListener(this, sensorAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager?.registerListener(this, sensorMagneticField, SensorManager.SENSOR_DELAY_NORMAL)
+        super.onResume()
+    }
+
+    override fun onPause() {
+        sensorManager?.unregisterListener(this, sensorAccelerometer)
+        sensorManager?.unregisterListener(this, sensorMagneticField)
+        super.onPause()
     }
 
     private fun setupView() {
@@ -81,6 +156,8 @@ class CollectActivity : BaseActivity(), CollectView {
                 collectPresenter.loadCollect(collectId)
             }
         } else {
+            viewModel.id = collectPresenter.generateCollectId()
+
             collectPresenter.setupCollectMode(CollectView.CollectMode.COLLECTING)
 
             val compressedMapSnapshot = intent.getByteArrayExtra(COMPRESSED_MAP_SNAPSHOT)
@@ -108,16 +185,12 @@ class CollectActivity : BaseActivity(), CollectView {
 
     private fun setupTeamControllers() {
         collectTeamTextView.setOnClickListener {
-            if (isNetworkAvailable()) {
-                collectPresenter.selectTeam(viewModel)
-            } else {
-                longToast(R.string.team_selection_internet_unavailable_message)
-            }
+            collectPresenter.selectTeam(viewModel)
         }
         collectTeamRemoveButton.setOnClickListener { collectPresenter.removeTeamSelected(viewModel) }
     }
 
-    private fun isNetworkAvailable() : Boolean {
+    private fun isNetworkAvailable(): Boolean {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetworkInfo = connectivityManager.activeNetworkInfo
         return activeNetworkInfo != null && activeNetworkInfo.isConnected
@@ -129,6 +202,7 @@ class CollectActivity : BaseActivity(), CollectView {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_collect, menu)
+        this.menu = menu
         return true
     }
 
@@ -152,13 +226,19 @@ class CollectActivity : BaseActivity(), CollectView {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_save_collect -> {
-                if (!this.validateForm())
+                menu?.getItem(0)?.isEnabled = false
+
+                if (!this.validateForm()) {
+                    menu?.getItem(0)?.isEnabled = true
                     return false
+                }
 
                 viewModel.name = collectName.text.toString()
                 viewModel.latitude = intent.getStringExtra(MARKER_LATITUDE).toDouble()
                 viewModel.longitude = intent.getStringExtra(MARKER_LONGITUDE).toDouble()
                 viewModel.date = SimpleDateFormat(dateFormat()).parse(collectDate.text.toString())
+                viewModel.photoAzimuth = photoAzimuth
+                viewModel.comments = collectComments.text.trim().toString()
 
                 collectLastImagePath.let { path ->
                     if (path != null) {
@@ -180,7 +260,6 @@ class CollectActivity : BaseActivity(), CollectView {
         return doubleFormatted(intent.getStringExtra(MARKER_LONGITUDE).toDouble())
     }
 
-
     private fun latitude(): String {
         return doubleFormatted(intent.getStringExtra(MARKER_LATITUDE).toDouble())
     }
@@ -196,7 +275,21 @@ class CollectActivity : BaseActivity(), CollectView {
         when (requestCode) {
             CAMERA_REQUEST -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    collectImage.setImageURI(collectLastImage)
+//                    collectImage.setImageURI(collectLastImage)
+
+                    val extras = data?.extras
+                    val file = File(collectLastImagePath)
+
+                    if (extras != null && file.exists()) {
+                        val thumbnail = extras.get("data")
+                        collectImage.setImageBitmap(thumbnail as Bitmap?)
+                    } else {
+                        collectImage.setImageBitmap(null)
+                    }
+
+                    if (azimuth != null) {
+                        photoAzimuth = azimuth
+                    }
                 } else {
                     collectImage.setImageURI(null)
                     collectLastImage = null
@@ -210,8 +303,6 @@ class CollectActivity : BaseActivity(), CollectView {
                     val classificationColor = selectedClassification?.colorHexadecimal
 
                     applyCategorySelected(classificationText, classificationColor)
-
-
                 }
             }
         }
@@ -260,7 +351,11 @@ class CollectActivity : BaseActivity(), CollectView {
         if (canAccessCamera()) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
-            val file = File.createTempFile(LAST_COLLECT_PHOTO_FILE_NAME, ".jpg", getExternalFilesDir(Environment.DIRECTORY_PICTURES))
+            val file = File("${CollectPhotoLocalInteractor.COLLECT_PHOTO_PATH}/${viewModel.id}.jpg")
+            if (file.exists()) {
+                file.delete()
+                collectImage.setImageBitmap(null)
+            }
 
             if (Build.VERSION.SDK_INT >= 24) {
                 collectLastImage = FileProvider.getUriForFile(this,
@@ -277,6 +372,11 @@ class CollectActivity : BaseActivity(), CollectView {
         } else {
             collectPresenter.onPermissionsNeeded()
         }
+    }
+
+    override fun showCollectImageCompleted(result: UploadTask.TaskSnapshot?) {
+//        longToast(result?.totalByteCount.toString())
+//        longToast(result?.downloadUrl?.lastPathSegment.toString())
     }
 
     override fun showRequestPermissionsDialog() {
@@ -314,13 +414,19 @@ class CollectActivity : BaseActivity(), CollectView {
         longToast(R.string.collect_save_success)
     }
 
+    override fun showCollectRequestRegistered() {
+        if (!isNetworkAvailable()) {
+            longToast(R.string.collect_save_registered)
+        }
+    }
+
     override fun showNoUserError() {
         this.showMessageAsLongToast(getString(R.string.collect_save_error_no_user_auth))
     }
 
     override fun returnToMap(collectViewModel: CollectViewModel?) {
         if (collectViewModel != null)
-            setResult(Activity.RESULT_OK, intentFor<MapboxActivity>(COLLECT_DATA_RESULT to collectViewModel))
+            setResult(Activity.RESULT_OK, intentFor<MapActivity>(MapActivity.COLLECT_DATA_RESULT to collectViewModel))
 
         finishAfterTransition()
     }
@@ -331,9 +437,9 @@ class CollectActivity : BaseActivity(), CollectView {
         collectClassification.typeface = Typeface.DEFAULT
         applyCategoryColorSelected(ClassificationColorSearch().classificationColor(collectViewModel.classification))
 
-        collectName.isFocusable = false
-        collectName.isEnabled = false
-        collectName.setText(collectViewModel.name, TextView.BufferType.NORMAL)
+        setTextDisabledTo(collectName,
+                collectViewModel.name,
+                getString(R.string.default_message_for_no_name_for_this_collect))
 
         collectDate.text = dateFormatted(collectViewModel.date)
 
@@ -341,7 +447,7 @@ class CollectActivity : BaseActivity(), CollectView {
                 doubleFormatted(collectViewModel.latitude), doubleFormatted(collectViewModel.longitude))
 
         collectTeamTextView.isFocusable = true
-        if (collectViewModel.team == null) {
+        if (collectViewModel.team == null || collectViewModel.team?.name == null) {
             collectTeamTextView.text = getString(R.string.message_time_no_informed)
             collectTeamTextView.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
             collectTeamTextView.isEnabled = false
@@ -350,10 +456,31 @@ class CollectActivity : BaseActivity(), CollectView {
             collectTeamTextView.typeface = Typeface.DEFAULT
         }
 
+        setTextDisabledTo(collectComments,
+                collectViewModel.comments,
+                getString(R.string.default_message_for_no_comments_for_this_collect))
+    }
+
+    override fun populateCollectImage(collectViewModel: CollectViewModel) {
+
         collectViewModel.photo.let { img ->
             if (img != null) {
                 collectImage.setImageBitmap(collectPresenter.convertCollectPhoto(img))
             }
+        }
+
+    }
+
+    private fun setTextDisabledTo(editText: EditText, value: String?, defaultValue: String) {
+        editText.isFocusable = false
+        editText.isEnabled = false
+
+        when (value) {
+            null, "" -> {
+                editText.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
+                editText.setText(defaultValue, TextView.BufferType.NORMAL)
+            }
+            else -> editText.setText(value, TextView.BufferType.NORMAL)
         }
     }
 
