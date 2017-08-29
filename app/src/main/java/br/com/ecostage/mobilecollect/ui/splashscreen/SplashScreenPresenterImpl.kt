@@ -17,20 +17,14 @@ class SplashScreenPresenterImpl(val viewContext: SplashScreenActivity, val view:
 
 
     override fun onCreated() {
-        this.initializeFirebase()
         this.setupCrashReports()
         this.setupCollectPhotoLocalInteractor()
-    }
-
-    private fun initializeFirebase() {
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        view.goToNextView()
     }
 
     private fun setupCrashReports() {
         Fabric.with(viewContext, Crashlytics())
         logUser()
-
-        view.goToNextView()
     }
 
     private fun setupCollectPhotoLocalInteractor() {

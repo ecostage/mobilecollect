@@ -21,7 +21,8 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/map_biomas_ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".MobileCollectApplication">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDmU6CD4gea_JrZ3fFGcyMHEuoLYQsNvVk" />
