@@ -37,7 +37,8 @@ class MapInteractorImpl(val collectLoadedListener: OnCollectLoadedListener? = nu
     }
 
     override fun downloadOfflineArea(onMapDownloadListener: OnMapDownloadListener) {
-        val storageReference = firebaseStorage.child("mobilecollect-1.0.1.mbtiles")
+        val fileKey = "mobilecollect-1.0.3.mbtiles"
+        val storageReference = firebaseStorage.child(fileKey)
         val localFile = File(Environment.getExternalStorageDirectory().absolutePath, "mobilecollect.mbtiles")
 
         File(Environment.getExternalStorageDirectory().absolutePath, LOCK_MAP_DOWNLOAD).createNewFile()
@@ -45,7 +46,7 @@ class MapInteractorImpl(val collectLoadedListener: OnCollectLoadedListener? = nu
         storageReference.getFile(localFile).addOnSuccessListener {
             onMapDownloadListener.onMapDownloadSuccess()
         }.addOnFailureListener {
-            val file = File(Environment.getExternalStorageDirectory().absolutePath + "/mobilecollect-1.0.1.mbtiles")
+            val file = File("${Environment.getExternalStorageDirectory().absolutePath}/${fileKey}")
             if (file.exists()) {
                 file.canonicalFile.delete()
             }
