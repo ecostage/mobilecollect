@@ -122,18 +122,24 @@ class MapActivity : BottomNavigationActivity(),
 
         googleMap.setOnMarkerClickListener(this)
 
-        val mapOfflinePath = Environment.getExternalStorageDirectory().absolutePath + "/mobilecollect.mbtiles"
-        val mapFile = File(mapOfflinePath)
-        val lock = File(Environment.getExternalStorageDirectory().absolutePath, MapInteractorImpl.LOCK_MAP_DOWNLOAD)
+        if (canAccessFiles()) {
+            val mapOfflinePath = Environment.getExternalStorageDirectory().absolutePath + "/mobilecollect.mbtiles"
+            val mapFile = File(mapOfflinePath)
+            val lock = File(Environment.getExternalStorageDirectory().absolutePath, MapInteractorImpl.LOCK_MAP_DOWNLOAD)
 
-        if (lock.exists()) {
-            lock.delete()
-            mapFile.delete()
-            longToast(R.string.message_download_offline_map_again)
-        } else {
-            if (mapFile.exists()) {
-                googleMap.addTileOverlay(TileOverlayOptions().tileProvider(MapBoxOfflineTileProvider(mapOfflinePath)))
+            if (lock.exists()) {
+                lock.delete()
+                mapFile.delete()
+                longToast(R.string.message_download_offline_map_again)
+            } else {
+                if (mapFile.exists()) {
+                    googleMap.addTileOverlay(TileOverlayOptions().tileProvider(MapBoxOfflineTileProvider(mapOfflinePath)))
+                }
             }
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    100)
         }
 
         accessingLocationInfo {
@@ -233,6 +239,7 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    private fun canAccessFiles(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 
     override fun showMarkerAt(latitude: Double, longitude: Double): Int {
         val position: LatLng = LatLng(latitude, longitude)
