@@ -11,6 +11,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.GradientDrawable
 import android.location.Location
 import android.os.Bundle
+import android.os.Environment
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -18,6 +19,7 @@ import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.collect.CollectActivity
 import br.com.ecostage.mobilecollect.ui.collect.CollectViewModel
+import br.com.ecostage.mobilecollect.ui.splashscreen.OfflineDataInteractor
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -27,15 +29,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_map.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
+import java.io.File
 
 @SuppressLint("MissingPermission")
 class MapActivity : BottomNavigationActivity(),
@@ -50,10 +50,11 @@ class MapActivity : BottomNavigationActivity(),
 
     companion object {
         val COLLECT_REQUEST = 1
-        val COLLECT_DATA_RESULT = "MapActivity:collectDataResult"
     }
 
-    private val mapPresenter: MapPresenter = MapPresenterImpl(this, this)
+    private val interactor = OfflineDataInteractor()
+
+    private val mapPresenter: MapPresenter = MapPresenterImpl(this)
     private val MAP_PERMISSION_REQUEST_CODE = 1
     private var googleApiClient: GoogleApiClient? = null
     private val markers: MutableList<Marker> = ArrayList()
@@ -66,6 +67,8 @@ class MapActivity : BottomNavigationActivity(),
 
         setupView()
         setupMap()
+
+        interactor.keepBasedAppDataSynced()
 
         // Load collects to show in map
         mapPresenter.loadUserCollects()
@@ -81,7 +84,6 @@ class MapActivity : BottomNavigationActivity(),
                 mapPresenter.mark(currentLocation.latitude, currentLocation.longitude)
             }
         }
-
     }
 
     fun accessingLocationInfo(body: () -> Unit) {
@@ -91,7 +93,6 @@ class MapActivity : BottomNavigationActivity(),
             mapPresenter.onPermissionNeeded()
         }
     }
-
 
     private fun setupMap() {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
@@ -105,9 +106,9 @@ class MapActivity : BottomNavigationActivity(),
                     mapPresenter.removeLastMarker()
                 } else if (resultCode == Activity.RESULT_OK) {
                     // Populate marker
-                    val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(COLLECT_DATA_RESULT)
+                    val collectViewModel: CollectViewModel? = data?.getParcelableExtra<CollectViewModel>(CollectActivity.COLLECT_DATA_RESULT)
+                    this.populateMarker(markers.lastIndex, collectViewModel, showInfo = true)
                     val marker = markers.last()
-                    this.populateMarker(marker, collectViewModel, showInfo = true)
                     this.centralizeMapCameraAt(marker.position.latitude, marker.position.longitude)
                 }
             }
@@ -117,15 +118,35 @@ class MapActivity : BottomNavigationActivity(),
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15f))
 
         googleMap.setOnMarkerClickListener(this)
+
+        if (canAccessFiles()) {
+            val mapOfflinePath = Environment.getExternalStorageDirectory().absolutePath + "/mobilecollect.mbtiles"
+            val mapFile = File(mapOfflinePath)
+            val lock = File(Environment.getExternalStorageDirectory().absolutePath, MapInteractorImpl.LOCK_MAP_DOWNLOAD)
+
+            if (lock.exists()) {
+                lock.delete()
+                mapFile.delete()
+                longToast(R.string.message_download_offline_map_again)
+            } else {
+                if (mapFile.exists()) {
+                    googleMap.addTileOverlay(TileOverlayOptions().tileProvider(MapBoxOfflineTileProvider(mapOfflinePath)))
+                }
+            }
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    100)
+        }
 
         accessingLocationInfo {
             buildGoogleApiClient()
             map.isMyLocationEnabled = true
         }
     }
-
 
     override fun onConnected(bundle: Bundle?) {
         info("Location services connected")
@@ -218,8 +239,9 @@ class MapActivity : BottomNavigationActivity(),
     }
 
     private fun canAccessLocation(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    private fun canAccessFiles(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 
-    override fun showMarkerAt(latitude: Double, longitude: Double): Marker {
+    override fun showMarkerAt(latitude: Double, longitude: Double): Int {
         val position: LatLng = LatLng(latitude, longitude)
         val descriptor = BitmapDescriptorFactory.fromBitmap(createPinMap())
         val marker = googleMap.addMarker(MarkerOptions()
@@ -228,7 +250,7 @@ class MapActivity : BottomNavigationActivity(),
 
         markers.add(marker)
 
-        return marker
+        return markers.lastIndex
     }
 
     private fun createPinMap(): Bitmap? {
@@ -282,7 +304,8 @@ class MapActivity : BottomNavigationActivity(),
         longToast(message)
     }
 
-    override fun populateMarker(marker: Marker, collectViewModel: CollectViewModel?, showInfo: Boolean) {
+    override fun populateMarker(markerIndex: Int, collectViewModel: CollectViewModel?, showInfo: Boolean) {
+        val marker = markers[markerIndex]
         marker.tag = collectViewModel?.id
         marker.title = collectViewModel?.name
         marker.snippet = "Classificacão: " + collectViewModel?.classification + " \n Data: " + collectViewModel?.date

@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.SignInButton
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_login.*
+import org.jetbrains.anko.startActivity
 
 
 /**
@@ -111,8 +112,7 @@ class LoginActivity : BaseActivity(), LoginView {
     }
 
     override fun navigateToHome() {
-        val intent = Intent(this@LoginActivity, MapActivity::class.java)
-        this@LoginActivity.startActivity(intent)
+        startActivity<MapActivity>()
         finish()
     }
 

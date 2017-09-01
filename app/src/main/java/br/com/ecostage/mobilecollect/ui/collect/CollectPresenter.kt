@@ -17,4 +17,5 @@ interface CollectPresenter {
     fun compressCollectPhoto(filePath: String, format: Bitmap.CompressFormat, qualityLevel: Int): ByteArray
     fun setupCollectMode(mode: CollectView.CollectMode)
     fun convertCollectPhoto(img: ByteArray): Bitmap
+    fun generateCollectId(): String?
 }

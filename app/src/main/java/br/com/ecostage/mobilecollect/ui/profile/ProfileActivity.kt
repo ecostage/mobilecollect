@@ -1,7 +1,15 @@
 package br.com.ecostage.mobilecollect.ui.profile
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.view.View
+import android.view.WindowManager
 import br.com.ecostage.mobilecollect.BottomNavigationActivity
 import br.com.ecostage.mobilecollect.R
 import br.com.ecostage.mobilecollect.ui.helper.ProgressBarHandler
@@ -9,6 +17,7 @@ import br.com.ecostage.mobilecollect.ui.login.LoginActivity
 import br.com.ecostage.mobilecollect.ui.profile.collect.UserCollectActivity
 import br.com.ecostage.mobilecollect.ui.ranking.RankingActivity
 import kotlinx.android.synthetic.main.activity_profile.*
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivity
 
 /**
@@ -20,9 +29,11 @@ class ProfileActivity :
         BottomNavigationActivity(),
         ProfileView {
 
+    companion object {
+        private val WRITE_PERMISSION_CODE = 456
+    }
 
     private val presenter: ProfilePresenter = ProfilePresenterImpl(this)
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +51,18 @@ class ProfileActivity :
             startActivity<RankingActivity>()
         }
 
+        downloadOfflineMapArea.setOnClickListener {
+            if (canWriteFiles()) {
+                presenter.downloadOfflineArea()
+            } else {
+                presenter.onPermissionNeeded()
+            }
+        }
+
+//        manageOfflineMapLinearLayout.setOnClickListener {
+//            startActivity<ManageOfflineMapActivity>()
+//        }
+
         profileChangePassword.setOnClickListener {
             presenter.resetPasswordRequest()
         }
@@ -48,6 +71,20 @@ class ProfileActivity :
             presenter.signOut()
         }
 
+        profileSyncData.setOnClickListener {
+            if (isNetworkAvailable()) {
+                profileSyncData.isEnabled = false
+                presenter.syncCollectedData()
+            } else {
+                longToast(R.string.profile_message_sync_no_networking_available)
+            }
+        }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
     private fun loadData() {
@@ -55,6 +92,7 @@ class ProfileActivity :
         presenter.loadTotalCollectsFromUser()
         presenter.loadTotalScoresFromUser()
         presenter.loadTeamsListFromUser()
+        presenter.loadDataToSync()
     }
 
     override fun getContentViewId(): Int {
@@ -128,10 +166,107 @@ class ProfileActivity :
 
     override fun setUserScoreOnError() {
         userScoreTextView.text = defaultUserScore()
+    }
 
+    override fun showMapDownloadSuccess() {
+        longToast(R.string.map_downloaded_message)
+    }
+
+    override fun showMapDownloadFailure() {
+        longToast(R.string.map_download_failure_message)
+    }
+
+    override fun showMenuBar() {
+        bottom_navigation.visibility = View.VISIBLE
+    }
+
+    override fun showMapDownloadProgress() {
+        this.showProgress()
+        mapProgressText.visibility = View.VISIBLE
+    }
+
+    override fun hideMapDownloadProgress() {
+        this.hideProgress()
+        mapProgressText.visibility = View.GONE
+    }
+
+    override fun hideMenuBar() {
+        bottom_navigation.visibility = View.GONE
+    }
+
+    override fun disableScreenTimeout() {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    override fun canWriteFiles(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun showRequestPermissionsDialog() {
+        ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                WRITE_PERMISSION_CODE)
+    }
+
+    override fun showMessageAsLongToast(message: String) {
+        longToast(message)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            WRITE_PERMISSION_CODE ->
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    presenter.onPermissionDenied(resources.getString(R.string.download_map_permission_needed))
+                } else {
+                    presenter.downloadOfflineArea()
+                }
+        }
     }
 
     private fun userScoreFormatted(userScore: Int?) = resources.getString(R.string.profile_user_score_format, userScore?.toString())
 
     private fun defaultUserScore() = resources.getString(R.string.profile_user_score_format, getString(R.string.profile_default_user_score))
+
+    override fun setSyncStatus(size: Int) {
+        when (size) {
+            0 -> applyAllDataSynced()
+            else -> applyDataToSync(size)
+        }
+    }
+
+    private fun applyAllDataSynced() {
+        syncStarted()
+        userSyncDataInfo.text = getString(R.string.default_message_user_all_data_synced)
+    }
+
+    private fun syncStarted() {
+        profileSyncData.isEnabled = false
+    }
+
+    private fun applyDataToSync(size: Int) {
+        profileSyncData.isEnabled = isNetworkAvailable()
+        userSyncDataInfo.text = getString(R.string.profile_message_collects_to_sync, size)
+    }
+
+    override fun collectSyncStarted() {
+        syncStarted()
+    }
+
+    override fun showSuccessMessageSyncedData() {
+        presenter.loadDataToSync()
+        longToast(R.string.profile_message_sync_with_success)
+    }
+
+    override fun showFailMessageSyncedData() {
+        longToast(R.string.profile_message_sync_fail)
+    }
+
+
+    override fun updateMapDownloadProgress(progress: Float) {
+        if (progress <= 0f) {
+            mapProgressText.text = getString(R.string.map_downloading_message, 0f)
+        } else {
+            mapProgressText.text = getString(R.string.map_downloading_message, progress)
+        }
+    }
 }

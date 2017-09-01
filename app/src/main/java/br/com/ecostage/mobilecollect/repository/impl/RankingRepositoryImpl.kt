@@ -8,6 +8,7 @@ import br.com.ecostage.mobilecollect.repository.RankingRepository
 import com.google.firebase.database.*
 
 /**
+ * Default ranking repository operations implementation.
  * Created by cmaia on 7/30/17.
  */
 class RankingRepositoryImpl : RankingRepository {
@@ -91,4 +92,22 @@ class RankingRepositoryImpl : RankingRepository {
 
                 })
     }
+
+    override fun keepScoreSyncedFor(currentUserId: String) {
+
+        firebaseDatabase
+                .child(RANKING_COLLECT_BY_USER_DB_TYPE)
+                .child(currentUserId)
+                .keepSynced(true)
+
+        firebaseDatabase
+                .child(SORTED_BY_POSITION_RANKING_DB_TYPE)
+                .keepSynced(true)
+
+        firebaseDatabase
+                .child(USER_RANKING_POSITION_DB_TYPE)
+                .child(currentUserId)
+                .keepSynced(true)
+    }
+
 }

@@ -10,4 +10,5 @@ import br.com.ecostage.mobilecollect.ui.collect.CollectInteractor
 interface TeamRepository {
 
     fun loadTeamsFor(userId: String, onTeamListListener: CollectInteractor.OnTeamListListener)
+    fun keepTeamsSyncedFor(currentUserId: String)
 }
